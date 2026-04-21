@@ -12,15 +12,13 @@ export default function WelcomeScreen() {
       <StatusBar style="light" />
       <View className="flex-1 bg-primary">
         <View className="flex-1 items-center justify-center px-8">
-          <View className="mb-4 items-center justify-center rounded-2xl bg-white px-6 py-4">
-            <Image
-              source={require("../../assets/anyjobs-logo.png")}
-              style={{ width: 180, height: 64 }}
-              resizeMode="contain"
-            />
-          </View>
+          <Image
+            source={require("../../assets/anyjobs-logo.png")}
+            style={{ width: 240, height: 96 }}
+            resizeMode="contain"
+          />
 
-          <Text className="mt-4 text-center text-3xl font-bold text-white">
+          <Text className="mt-8 text-center text-3xl font-bold text-white">
             Find Your Dream Job
           </Text>
           <Text className="mt-2 text-center text-base text-white/80">
