@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { View, Animated, StyleSheet } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -12,40 +12,36 @@ function TabIcon({
   color: string;
   focused: boolean;
 }) {
+  // Scale lives on a NATIVE-driven node.
   const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.9)).current;
-  const bgAnim = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  // Background opacity lives on a SEPARATE JS-driven node so the two drivers
+  // never share an animated node (prevents RN's "JS driven animation on node
+  // moved to native" error).
+  const bgOpacity = useRef(new Animated.Value(focused ? 1 : 0)).current;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.spring(scaleAnim, {
-        toValue: focused ? 1 : 0.85,
-        useNativeDriver: true,
-        speed: 16,
-        bounciness: focused ? 12 : 4,
-      }),
-      Animated.timing(bgAnim, {
-        toValue: focused ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }, [focused]);
+    Animated.spring(scaleAnim, {
+      toValue: focused ? 1 : 0.85,
+      useNativeDriver: true,
+      speed: 16,
+      bounciness: focused ? 12 : 4,
+    }).start();
 
-  const bgColor = bgAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["transparent", "#F0EEFF"],
-  });
+    Animated.timing(bgOpacity, {
+      toValue: focused ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [focused]);
 
   return (
     <Animated.View
-      style={[
-        ts.iconWrap,
-        {
-          transform: [{ scale: scaleAnim }],
-          backgroundColor: bgColor,
-        },
-      ]}
+      style={[ts.iconWrap, { transform: [{ scale: scaleAnim }] }]}
     >
+      <Animated.View
+        pointerEvents="none"
+        style={[ts.iconBg, { opacity: bgOpacity }]}
+      />
       <Ionicons name={name} size={21} color={color} />
     </Animated.View>
   );
@@ -147,5 +143,14 @@ const ts = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+  },
+  iconBg: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 12,
+    backgroundColor: "#E0E7FF",
   },
 });
