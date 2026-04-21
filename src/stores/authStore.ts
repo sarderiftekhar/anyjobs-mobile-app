@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { storage } from "../lib/storage";
 import { config } from "../constants/config";
 import { authApi } from "../api/auth";
+import { registerPushToken, unregisterPushToken } from "../lib/pushNotifications";
 import type { User } from "../types/user";
 import type { LoginPayload, RegisterPayload } from "../api/auth";
 
@@ -45,6 +46,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
         error: null,
       });
+
+      registerPushToken().catch(() => {});
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
@@ -71,6 +74,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
         error: null,
       });
+
+      registerPushToken().catch(() => {});
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
@@ -82,6 +87,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
+    // Remove push token server-side before clearing auth so the request is authorized
+    await unregisterPushToken().catch(() => {});
     try {
       await authApi.logout();
     } catch {
@@ -112,8 +119,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           isLoading: false,
         });
 
-        // Refresh user data in background
+        // Refresh user data + re-register push token in background
         get().refreshUser();
+        registerPushToken().catch(() => {});
       } else {
         set({ isLoading: false });
       }

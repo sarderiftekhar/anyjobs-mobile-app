@@ -35,6 +35,16 @@ export interface Skill {
   proficiency?: string;
 }
 
+export interface CvUpload {
+  id: number;
+  filename: string;
+  file_type: string;
+  file_size: number;
+  file_url: string | null;
+  is_primary: boolean;
+  created_at: string;
+}
+
 export interface User {
   id: number;
   first_name: string;
@@ -50,4 +60,6 @@ export interface User {
   experiences?: Experience[];
   educations?: Education[];
   skills?: Skill[];
+  cvs?: CvUpload[];
+  primary_cv_id?: number | null;
 }

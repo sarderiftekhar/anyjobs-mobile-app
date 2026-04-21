@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,11 +11,20 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import * as DocumentPicker from "expo-document-picker";
 import { useJobDetail } from "../../../src/hooks/useJobs";
 import { useApplyToJob } from "../../../src/hooks/useApplications";
+import { useCvs, useUploadCv } from "../../../src/hooks/useCvs";
 import { useAuthStore } from "../../../src/stores/authStore";
 import { Button, Card, LoadingSpinner } from "../../../src/components/ui";
 import apiClient from "../../../src/api/client";
+
+const formatFileSize = (bytes: number) => {
+  if (!bytes) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
 
 type Step = "cv" | "cover-letter" | "review";
 
@@ -27,6 +36,8 @@ export default function ApplyScreen() {
 
   const { data: job, isLoading: jobLoading } = useJobDetail(parsedJobId);
   const applyMutation = useApplyToJob();
+  const { data: cvs, isLoading: cvsLoading, refetch: refetchCvs } = useCvs();
+  const uploadCvMutation = useUploadCv();
 
   const [step, setStep] = useState<Step>("cv");
   const [coverLetter, setCoverLetter] = useState("");
@@ -34,6 +45,49 @@ export default function ApplyScreen() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Auto-select the primary CV when CVs load
+  useEffect(() => {
+    if (!cvs || cvs.length === 0 || selectedCvId !== undefined) return;
+    const primary = cvs.find((cv) => cv.is_primary) ?? cvs[0];
+    if (primary) setSelectedCvId(primary.id);
+  }, [cvs, selectedCvId]);
+
+  const handlePickCv = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ],
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled) return;
+
+      const asset = result.assets?.[0];
+      if (!asset) return;
+
+      if (asset.size && asset.size > 10 * 1024 * 1024) {
+        Alert.alert("File too large", "Please pick a file under 10MB.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("cv", {
+        uri: asset.uri,
+        name: asset.name,
+        type: asset.mimeType ?? "application/octet-stream",
+      } as any);
+
+      const uploaded = await uploadCvMutation.mutateAsync(formData);
+      if (uploaded?.id) setSelectedCvId(uploaded.id);
+      await refetchCvs();
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "Failed to upload CV. Please try again.";
+      Alert.alert("Upload failed", msg);
+    }
+  };
 
   const handleGenerateAI = async () => {
     setAiGenerating(true);
@@ -193,24 +247,76 @@ export default function ApplyScreen() {
               Choose which resume to send with your application.
             </Text>
 
-            {/* CV list - placeholder for now */}
-            <Card className="mt-4 border border-primary bg-primary-light">
-              <View className="flex-row items-center">
-                <Ionicons name="document-text" size={24} color="#574BA6" />
-                <View className="ml-3 flex-1">
-                  <Text className="text-sm font-semibold text-text-primary">
-                    {user?.name}_CV.pdf
-                  </Text>
-                  <Text className="text-xs text-text-secondary">Primary CV</Text>
-                </View>
-                <Ionicons name="checkmark-circle" size={22} color="#574BA6" />
+            {cvsLoading ? (
+              <View className="mt-6 items-center">
+                <ActivityIndicator color="#574BA6" />
               </View>
-            </Card>
+            ) : !cvs || cvs.length === 0 ? (
+              <Card className="mt-4 items-center border border-dashed border-border bg-gray-50">
+                <Ionicons name="document-outline" size={32} color="#9CA3AF" />
+                <Text className="mt-2 text-sm font-semibold text-text-primary">
+                  No CV uploaded yet
+                </Text>
+                <Text className="mt-1 text-center text-xs text-text-secondary">
+                  Upload a PDF or Word document (max 10MB) to apply.
+                </Text>
+              </Card>
+            ) : (
+              cvs.map((cv) => {
+                const selected = selectedCvId === cv.id;
+                return (
+                  <TouchableOpacity
+                    key={cv.id}
+                    activeOpacity={0.8}
+                    onPress={() => setSelectedCvId(cv.id)}
+                    className={`mt-3 rounded-xl border p-4 ${
+                      selected
+                        ? "border-primary bg-primary-light"
+                        : "border-border bg-white"
+                    }`}
+                  >
+                    <View className="flex-row items-center">
+                      <Ionicons name="document-text" size={22} color="#574BA6" />
+                      <View className="ml-3 flex-1">
+                        <Text
+                          className="text-sm font-semibold text-text-primary"
+                          numberOfLines={1}
+                        >
+                          {cv.filename}
+                        </Text>
+                        <Text className="text-xs text-text-secondary">
+                          {cv.is_primary ? "Primary CV · " : ""}
+                          {formatFileSize(cv.file_size)}
+                        </Text>
+                      </View>
+                      <Ionicons
+                        name={selected ? "checkmark-circle" : "ellipse-outline"}
+                        size={22}
+                        color={selected ? "#574BA6" : "#C0C0C0"}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                );
+              })
+            )}
 
-            <TouchableOpacity className="mt-3 flex-row items-center justify-center py-3">
-              <Ionicons name="cloud-upload-outline" size={18} color="#574BA6" />
+            <TouchableOpacity
+              className="mt-4 flex-row items-center justify-center py-3"
+              onPress={handlePickCv}
+              disabled={uploadCvMutation.isPending}
+              style={{ opacity: uploadCvMutation.isPending ? 0.6 : 1 }}
+            >
+              {uploadCvMutation.isPending ? (
+                <ActivityIndicator size="small" color="#574BA6" />
+              ) : (
+                <Ionicons name="cloud-upload-outline" size={18} color="#574BA6" />
+              )}
               <Text className="ml-2 text-sm font-medium text-primary">
-                Upload a different CV
+                {uploadCvMutation.isPending
+                  ? "Uploading..."
+                  : cvs && cvs.length > 0
+                  ? "Upload a different CV"
+                  : "Upload your CV"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -285,8 +391,8 @@ export default function ApplyScreen() {
               </Text>
               <View className="mt-1 flex-row items-center">
                 <Ionicons name="document-text" size={18} color="#574BA6" />
-                <Text className="ml-2 text-sm text-text-primary">
-                  {user?.name}_CV.pdf
+                <Text className="ml-2 flex-1 text-sm text-text-primary" numberOfLines={1}>
+                  {cvs?.find((c) => c.id === selectedCvId)?.filename ?? "No CV selected"}
                 </Text>
               </View>
             </Card>
@@ -335,12 +441,14 @@ export default function ApplyScreen() {
           <Button
             title="Continue"
             className="flex-1"
+            disabled={step === "cv" && !selectedCvId}
             onPress={() => setStep(steps[currentIndex + 1])}
           />
         ) : (
           <Button
             title="Submit Application"
             className="flex-1"
+            disabled={!selectedCvId}
             loading={applyMutation.isPending}
             onPress={handleSubmit}
           />

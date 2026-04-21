@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import type { User, Experience, Education } from "../types/user";
+import type { User, Experience, Education, CvUpload } from "../types/user";
 import type { ApiResponse } from "../types/api";
 
 export interface UpdateProfilePayload {
@@ -66,10 +66,16 @@ export const profileApi = {
     apiClient.put<ApiResponse>("/profile/skills", { skill_ids: skillIds }),
 
   // CV
+  listCvs: () =>
+    apiClient.get<ApiResponse<CvUpload[]>>("/profile/cvs"),
+
   uploadCv: (formData: FormData) =>
-    apiClient.post<ApiResponse>("/profile/cv", formData, {
+    apiClient.post<ApiResponse<CvUpload>>("/profile/cv", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+
+  setPrimaryCv: (id: number) =>
+    apiClient.patch<ApiResponse<CvUpload>>(`/profile/cv/${id}/primary`),
 
   deleteCv: (id: number) =>
     apiClient.delete<ApiResponse>(`/profile/cv/${id}`),

@@ -67,10 +67,5 @@ export function useUpdateSkills() {
   });
 }
 
-export function useUploadCv() {
-  const refreshUser = useAuthStore((s) => s.refreshUser);
-  return useMutation({
-    mutationFn: (formData: FormData) => profileApi.uploadCv(formData),
-    onSuccess: () => refreshUser(),
-  });
-}
+// CV hooks have moved to ./useCvs
+export { useCvs, useUploadCv, useSetPrimaryCv, useDeleteCv } from "./useCvs";
