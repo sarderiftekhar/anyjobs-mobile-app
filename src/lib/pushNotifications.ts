@@ -37,7 +37,7 @@ async function getExpoPushToken(): Promise<string | null> {
     await Notifications.setNotificationChannelAsync("default", {
       name: "Default",
       importance: Notifications.AndroidImportance.DEFAULT,
-      lightColor: "#574BA6",
+      lightColor: "#1E3A8A",
     });
   }
 

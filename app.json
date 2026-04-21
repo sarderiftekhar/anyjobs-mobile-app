@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#574BA6"
+      "backgroundColor": "#1E3A8A"
     },
     "ios": {
       "supportsTablet": true,
@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundColor": "#574BA6"
+        "backgroundColor": "#1E3A8A"
       },
       "package": "com.anyjobs.mobile"
     },
@@ -34,14 +34,14 @@
       [
         "expo-notifications",
         {
-          "color": "#574BA6",
+          "color": "#1E3A8A",
           "defaultChannel": "default"
         }
       ],
       "expo-document-picker"
     ],
     "notification": {
-      "color": "#574BA6"
+      "color": "#1E3A8A"
     }
   }
 }

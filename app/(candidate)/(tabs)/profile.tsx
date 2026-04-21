@@ -275,7 +275,7 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Experience</Text>
           <TouchableOpacity onPress={() => setShowExpModal(true)}>
-            <Ionicons name="add-circle-outline" size={22} color="#574BA6" />
+            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {user?.experiences && user.experiences.length > 0 ? (
@@ -317,7 +317,7 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Education</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#574BA6" />
+            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {user?.educations && user.educations.length > 0 ? (
@@ -343,7 +343,7 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Skills</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#574BA6" />
+            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {user?.skills && user.skills.length > 0 ? (
@@ -364,7 +364,7 @@ export default function ProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">About</Text>
           <TouchableOpacity>
-            <Ionicons name="create-outline" size={20} color="#574BA6" />
+            <Ionicons name="create-outline" size={20} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         <Text className="mt-2 text-sm text-text-secondary">
@@ -378,7 +378,7 @@ export default function ProfileScreen() {
           title="Sign Out"
           variant="outline"
           onPress={logout}
-          icon={<Ionicons name="log-out-outline" size={18} color="#574BA6" />}
+          icon={<Ionicons name="log-out-outline" size={18} color="#1E3A8A" />}
         />
       </View>
 

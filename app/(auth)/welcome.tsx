@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,9 +12,12 @@ export default function WelcomeScreen() {
       <StatusBar style="light" />
       <View className="flex-1 bg-primary">
         <View className="flex-1 items-center justify-center px-8">
-          {/* Logo placeholder */}
-          <View className="mb-4 h-24 w-24 items-center justify-center rounded-2xl bg-white/20">
-            <Text className="text-4xl font-bold text-white">AJ</Text>
+          <View className="mb-4 items-center justify-center rounded-2xl bg-white px-6 py-4">
+            <Image
+              source={require("../../assets/anyjobs-logo.png")}
+              style={{ width: 180, height: 64 }}
+              resizeMode="contain"
+            />
           </View>
 
           <Text className="mt-4 text-center text-3xl font-bold text-white">

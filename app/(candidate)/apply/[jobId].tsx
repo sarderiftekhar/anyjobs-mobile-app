@@ -149,7 +149,7 @@ export default function ApplyScreen() {
           You have already submitted an application for {job.title} at {job.company.name}.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#574BA6", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#1E3A8A", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => {
             if (router.canGoBack()) router.back();
             else router.replace("/(candidate)/(tabs)");
@@ -161,7 +161,7 @@ export default function ApplyScreen() {
           style={{ marginTop: 16 }}
           onPress={() => router.replace("/(candidate)/(tabs)/applications")}
         >
-          <Text style={{ color: "#574BA6", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
+          <Text style={{ color: "#1E3A8A", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
         </TouchableOpacity>
       </View>
     );
@@ -181,7 +181,7 @@ export default function ApplyScreen() {
           Your application for {job?.title} at {job?.company.name} has been sent successfully.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#574BA6", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#1E3A8A", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => router.back()}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>Done</Text>
@@ -190,7 +190,7 @@ export default function ApplyScreen() {
           style={{ marginTop: 16 }}
           onPress={() => router.replace("/(candidate)/(tabs)/applications")}
         >
-          <Text style={{ color: "#574BA6", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
+          <Text style={{ color: "#1E3A8A", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
         </TouchableOpacity>
       </View>
     );
@@ -249,7 +249,7 @@ export default function ApplyScreen() {
 
             {cvsLoading ? (
               <View className="mt-6 items-center">
-                <ActivityIndicator color="#574BA6" />
+                <ActivityIndicator color="#1E3A8A" />
               </View>
             ) : !cvs || cvs.length === 0 ? (
               <Card className="mt-4 items-center border border-dashed border-border bg-gray-50">
@@ -276,7 +276,7 @@ export default function ApplyScreen() {
                     }`}
                   >
                     <View className="flex-row items-center">
-                      <Ionicons name="document-text" size={22} color="#574BA6" />
+                      <Ionicons name="document-text" size={22} color="#1E3A8A" />
                       <View className="ml-3 flex-1">
                         <Text
                           className="text-sm font-semibold text-text-primary"
@@ -292,7 +292,7 @@ export default function ApplyScreen() {
                       <Ionicons
                         name={selected ? "checkmark-circle" : "ellipse-outline"}
                         size={22}
-                        color={selected ? "#574BA6" : "#C0C0C0"}
+                        color={selected ? "#1E3A8A" : "#C0C0C0"}
                       />
                     </View>
                   </TouchableOpacity>
@@ -307,9 +307,9 @@ export default function ApplyScreen() {
               style={{ opacity: uploadCvMutation.isPending ? 0.6 : 1 }}
             >
               {uploadCvMutation.isPending ? (
-                <ActivityIndicator size="small" color="#574BA6" />
+                <ActivityIndicator size="small" color="#1E3A8A" />
               ) : (
-                <Ionicons name="cloud-upload-outline" size={18} color="#574BA6" />
+                <Ionicons name="cloud-upload-outline" size={18} color="#1E3A8A" />
               )}
               <Text className="ml-2 text-sm font-medium text-primary">
                 {uploadCvMutation.isPending
@@ -350,9 +350,9 @@ export default function ApplyScreen() {
               style={{ opacity: aiGenerating ? 0.6 : 1 }}
             >
               {aiGenerating ? (
-                <ActivityIndicator size="small" color="#574BA6" />
+                <ActivityIndicator size="small" color="#1E3A8A" />
               ) : (
-                <Ionicons name="sparkles" size={16} color="#574BA6" />
+                <Ionicons name="sparkles" size={16} color="#1E3A8A" />
               )}
               <Text className="ml-2 text-sm font-semibold text-primary">
                 {aiGenerating ? "Generating..." : "Generate with AI"}
@@ -390,7 +390,7 @@ export default function ApplyScreen() {
                 Resume
               </Text>
               <View className="mt-1 flex-row items-center">
-                <Ionicons name="document-text" size={18} color="#574BA6" />
+                <Ionicons name="document-text" size={18} color="#1E3A8A" />
                 <Text className="ml-2 flex-1 text-sm text-text-primary" numberOfLines={1}>
                   {cvs?.find((c) => c.id === selectedCvId)?.filename ?? "No CV selected"}
                 </Text>

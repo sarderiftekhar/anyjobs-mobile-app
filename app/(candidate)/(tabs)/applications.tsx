@@ -112,14 +112,14 @@ export default function ApplicationsScreen() {
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#574BA6" className="py-4" />
+              <ActivityIndicator size="small" color="#1E3A8A" className="py-4" />
             ) : null
           }
           refreshControl={
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#574BA6"
+              tintColor="#1E3A8A"
             />
           }
         />

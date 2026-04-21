@@ -48,7 +48,7 @@ export default function EmployerProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Company Info</Text>
           <TouchableOpacity>
-            <Ionicons name="create-outline" size={20} color="#574BA6" />
+            <Ionicons name="create-outline" size={20} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {isLoading ? (
@@ -89,7 +89,7 @@ export default function EmployerProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Benefits</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#574BA6" />
+            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {company?.benefits && company.benefits.length > 0 ? (
@@ -110,7 +110,7 @@ export default function EmployerProfileScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-text-primary">Company Values</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#574BA6" />
+            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
         {company?.values && company.values.length > 0 ? (
@@ -132,7 +132,7 @@ export default function EmployerProfileScreen() {
           title="Sign Out"
           variant="outline"
           onPress={logout}
-          icon={<Ionicons name="log-out-outline" size={18} color="#574BA6" />}
+          icon={<Ionicons name="log-out-outline" size={18} color="#1E3A8A" />}
         />
       </View>
     </ScrollView>

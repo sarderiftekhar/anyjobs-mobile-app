@@ -27,7 +27,7 @@ export default function EmployerTabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#574BA6",
+        tabBarActiveTintColor: "#1E3A8A",
         tabBarInactiveTintColor: "#B0B0B0",
         tabBarStyle: {
           borderTopWidth: 0,

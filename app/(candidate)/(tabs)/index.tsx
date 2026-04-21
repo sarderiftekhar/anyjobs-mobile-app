@@ -99,7 +99,7 @@ export default function JobFeedScreen() {
     if (!isFetchingNextPage) return null;
     return (
       <View className="py-4">
-        <ActivityIndicator size="small" color="#574BA6" />
+        <ActivityIndicator size="small" color="#1E3A8A" />
       </View>
     );
   };
@@ -228,7 +228,7 @@ export default function JobFeedScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#574BA6"
+              tintColor="#1E3A8A"
             />
           }
         />
@@ -321,7 +321,7 @@ const hs = StyleSheet.create({
     borderRadius: 20,
   },
   chipActive: {
-    backgroundColor: "#574BA6",
+    backgroundColor: "#1E3A8A",
   },
   chipInactive: {
     backgroundColor: "#F3F4F6",
@@ -357,6 +357,6 @@ const hs = StyleSheet.create({
   jobCount: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#574BA6",
+    color: "#1E3A8A",
   },
 });

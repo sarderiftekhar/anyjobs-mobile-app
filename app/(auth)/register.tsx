@@ -247,7 +247,7 @@ export default function RegisterScreen() {
                 <Ionicons
                   name={value ? "checkbox" : "square-outline"}
                   size={22}
-                  color={value ? "#574BA6" : "#9CA3AF"}
+                  color={value ? "#1E3A8A" : "#9CA3AF"}
                 />
                 <Text className="ml-2 flex-1 text-sm text-text-secondary">
                   I agree to the{" "}
@@ -283,7 +283,7 @@ export default function RegisterScreen() {
           title="Sign up with Google"
           variant="outline"
           size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#574BA6" />}
+          icon={<Ionicons name="logo-google" size={20} color="#1E3A8A" />}
           onPress={() => Alert.alert("Coming Soon", "Google sign-up will be available soon.")}
         />
 

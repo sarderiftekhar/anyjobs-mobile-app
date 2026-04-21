@@ -100,7 +100,7 @@ export default function ApplicantDetailScreen() {
         {applicant.cv_url && (
           <Card className="mb-3">
             <TouchableOpacity className="flex-row items-center">
-              <Ionicons name="document-text" size={20} color="#574BA6" />
+              <Ionicons name="document-text" size={20} color="#1E3A8A" />
               <Text className="ml-2 text-sm font-medium text-primary">View Resume / CV</Text>
             </TouchableOpacity>
           </Card>
@@ -134,7 +134,7 @@ export default function ApplicantDetailScreen() {
           className="items-center justify-center rounded-md border border-primary px-4"
           onPress={() => router.push(`/(employer)/chat/${applicant.candidate.id}`)}
         >
-          <Ionicons name="chatbubble-outline" size={20} color="#574BA6" />
+          <Ionicons name="chatbubble-outline" size={20} color="#1E3A8A" />
         </TouchableOpacity>
       </View>
     </View>

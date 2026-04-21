@@ -213,7 +213,7 @@ const s = StyleSheet.create({
   companyLogoText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#574BA6",
+    color: "#1E3A8A",
   },
   companyName: {
     fontSize: 14,
@@ -285,7 +285,7 @@ const s = StyleSheet.create({
   skillText: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#574BA6",
+    color: "#1E3A8A",
   },
   divider: {
     height: 1,
@@ -317,7 +317,7 @@ const s = StyleSheet.create({
     color: "#16A34A",
   },
   applyBtn: {
-    backgroundColor: "#574BA6",
+    backgroundColor: "#1E3A8A",
     borderRadius: 14,
     paddingVertical: 12,
     alignItems: "center",

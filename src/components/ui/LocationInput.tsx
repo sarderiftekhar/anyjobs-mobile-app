@@ -123,7 +123,7 @@ export function LocationInput({
           autoCapitalize="none"
           returnKeyType="search"
         />
-        {isLoading && <ActivityIndicator size="small" color="#574BA6" />}
+        {isLoading && <ActivityIndicator size="small" color="#1E3A8A" />}
         {query.length > 0 && !isLoading && (
           <TouchableOpacity onPress={handleClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
             <Ionicons name="close-circle" size={18} color="#D1D5DB" />
@@ -142,7 +142,7 @@ export function LocationInput({
               activeOpacity={0.6}
             >
               <View style={s.suggestionIcon}>
-                <Ionicons name="location" size={14} color="#574BA6" />
+                <Ionicons name="location" size={14} color="#1E3A8A" />
               </View>
               <View style={s.suggestionText}>
                 <Text style={s.mainText} numberOfLines={1}>

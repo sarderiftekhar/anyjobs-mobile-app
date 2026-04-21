@@ -152,8 +152,8 @@ export default function EmployerJobsScreen() {
           showsVerticalScrollIndicator={false}
           onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#574BA6" /> : null}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#574BA6" />}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#1E3A8A" /> : null}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
         />
       )}
     </View>

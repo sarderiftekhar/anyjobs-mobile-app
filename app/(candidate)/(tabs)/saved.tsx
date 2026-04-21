@@ -51,7 +51,7 @@ export default function SavedJobsScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#574BA6"
+              tintColor="#1E3A8A"
             />
           }
         />

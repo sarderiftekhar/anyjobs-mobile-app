@@ -84,7 +84,7 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
             className="items-center justify-center rounded-md border border-border px-3 py-2"
             onPress={() => router.push(`/(employer)/chat/${applicant.candidate.id}`)}
           >
-            <Ionicons name="chatbubble-outline" size={16} color="#574BA6" />
+            <Ionicons name="chatbubble-outline" size={16} color="#1E3A8A" />
           </TouchableOpacity>
         </View>
       </Card>
@@ -159,8 +159,8 @@ export default function ApplicantsScreen() {
           showsVerticalScrollIndicator={false}
           onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#574BA6" /> : null}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#574BA6" />}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#1E3A8A" /> : null}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
         />
       )}
     </View>

@@ -10,7 +10,7 @@ export function LoadingSpinner({ message, fullScreen = false }: LoadingSpinnerPr
     <View
       className={`items-center justify-center ${fullScreen ? "flex-1" : "py-8"}`}
     >
-      <ActivityIndicator size="large" color="#574BA6" />
+      <ActivityIndicator size="large" color="#1E3A8A" />
       {message && (
         <Text className="mt-3 text-sm text-text-secondary">{message}</Text>
       )}

@@ -149,7 +149,7 @@ export default function CreateJobScreen() {
               onChangeText={(t) => updateForm({ description: t })}
             />
             <TouchableOpacity className="mb-4 flex-row items-center">
-              <Ionicons name="sparkles" size={16} color="#574BA6" />
+              <Ionicons name="sparkles" size={16} color="#1E3A8A" />
               <Text className="ml-1.5 text-sm font-medium text-primary">Generate with AI</Text>
             </TouchableOpacity>
 
@@ -236,7 +236,7 @@ export default function CreateJobScreen() {
                 <Text className="text-sm font-medium text-text-primary">Featured Job</Text>
                 <Text className="text-xs text-text-secondary">Highlight at the top of search results</Text>
               </View>
-              <Ionicons name={form.is_featured ? "checkbox" : "square-outline"} size={24} color="#574BA6" />
+              <Ionicons name={form.is_featured ? "checkbox" : "square-outline"} size={24} color="#1E3A8A" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -247,7 +247,7 @@ export default function CreateJobScreen() {
                 <Text className="text-sm font-medium text-text-primary">Urgent Hiring</Text>
                 <Text className="text-xs text-text-secondary">Mark as urgent to attract more applicants</Text>
               </View>
-              <Ionicons name={form.is_urgent ? "checkbox" : "square-outline"} size={24} color="#574BA6" />
+              <Ionicons name={form.is_urgent ? "checkbox" : "square-outline"} size={24} color="#1E3A8A" />
             </TouchableOpacity>
           </>
         )}

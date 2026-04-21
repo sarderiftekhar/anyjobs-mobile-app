@@ -56,7 +56,7 @@ export default function CandidateTabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#574BA6",
+        tabBarActiveTintColor: "#1E3A8A",
         tabBarInactiveTintColor: "#B8B8B8",
         tabBarStyle: ts.tabBar,
         tabBarLabelStyle: ts.tabLabel,
@@ -126,7 +126,7 @@ const ts = StyleSheet.create({
     paddingBottom: 8,
     paddingTop: 8,
     paddingHorizontal: 8,
-    shadowColor: "#574BA6",
+    shadowColor: "#1E3A8A",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 20,

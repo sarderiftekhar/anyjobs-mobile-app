@@ -156,7 +156,7 @@ export default function LoginScreen() {
           title="Sign in with Google"
           variant="outline"
           size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#574BA6" />}
+          icon={<Ionicons name="logo-google" size={20} color="#1E3A8A" />}
           onPress={() => Alert.alert("Coming Soon", "Google sign-in will be available soon.")}
         />
 

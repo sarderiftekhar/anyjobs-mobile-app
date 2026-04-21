@@ -36,7 +36,7 @@ function MessageBubble({ message, isOwn }: { message: Message; isOwn: boolean })
           <Ionicons
             name={message.read ? "checkmark-done" : "checkmark"}
             size={12}
-            color={message.read ? "#574BA6" : "#9CA3AF"}
+            color={message.read ? "#1E3A8A" : "#9CA3AF"}
           />
         )}
       </View>

@@ -71,7 +71,7 @@ export default function EmployerMessagesScreen() {
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id.toString()}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#574BA6" />}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
         />
       )}
     </View>

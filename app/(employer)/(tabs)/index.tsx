@@ -14,7 +14,7 @@ export default function EmployerDashboard() {
   const { data: unreadCount } = useUnreadNotificationCount();
 
   const metrics = [
-    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#574BA6" },
+    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#1E3A8A" },
     { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#3B82F6" },
     { label: "New Today", value: dashboard?.new_today ?? 0, icon: "trending-up-outline" as const, color: "#22C55E" },
     { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#EAB308" },
@@ -28,7 +28,7 @@ export default function EmployerDashboard() {
         paddingBottom: insets.bottom + 32,
       }}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#574BA6" />
+        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />
       }
     >
       {/* Header */}
@@ -91,14 +91,14 @@ export default function EmployerDashboard() {
             variant="outline"
             size="sm"
             className="flex-1"
-            icon={<Ionicons name="search-outline" size={16} color="#574BA6" />}
+            icon={<Ionicons name="search-outline" size={16} color="#1E3A8A" />}
           />
           <Button
             title="Analytics"
             variant="outline"
             size="sm"
             className="flex-1"
-            icon={<Ionicons name="bar-chart-outline" size={16} color="#574BA6" />}
+            icon={<Ionicons name="bar-chart-outline" size={16} color="#1E3A8A" />}
           />
         </View>
       </View>
@@ -176,7 +176,7 @@ export default function EmployerDashboard() {
                           : "location-outline"
                     }
                     size={18}
-                    color="#574BA6"
+                    color="#1E3A8A"
                   />
                 </View>
                 <View className="flex-1">

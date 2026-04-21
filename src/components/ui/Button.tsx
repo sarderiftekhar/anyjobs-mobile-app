@@ -90,7 +90,7 @@ export function Button({
         {loading ? (
           <ActivityIndicator
             size="small"
-            color={variant === "primary" || variant === "danger" ? "#fff" : "#574BA6"}
+            color={variant === "primary" || variant === "danger" ? "#fff" : "#1E3A8A"}
           />
         ) : (
           <>

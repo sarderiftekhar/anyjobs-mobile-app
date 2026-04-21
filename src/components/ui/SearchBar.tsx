@@ -34,7 +34,7 @@ export function SearchBar({
       </View>
       {onFilterPress && (
         <TouchableOpacity style={s.filterBtn} onPress={onFilterPress} activeOpacity={0.7}>
-          <Ionicons name="options-outline" size={22} color="#574BA6" />
+          <Ionicons name="options-outline" size={22} color="#1E3A8A" />
         </TouchableOpacity>
       )}
     </View>

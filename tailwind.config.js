@@ -8,12 +8,25 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Primary uses the web's brand-navy (--brand-500)
         primary: {
-          DEFAULT: "#574BA6",
-          dark: "#4B498C",
-          light: "#E8E5FF",
+          DEFAULT: "#1E3A8A",
+          dark: "#1338CB",
+          light: "#E0E7FF",
         },
-        accent: "#A79AFF",
+        // Brand tokens mirror resources/css/app.css vars on the web
+        brand: {
+          DEFAULT: "#1842E9",
+          dark: "#1338CB",
+          navy: "#1E3A8A",
+          "navy-dark": "#163284",
+        },
+        ink: {
+          DEFAULT: "#1a2230",
+          soft: "#3A4F64",
+          muted: "#6B7F94",
+        },
+        accent: "#1842E9",
         success: "#22C55E",
         warning: "#EAB308",
         danger: "#EF4444",

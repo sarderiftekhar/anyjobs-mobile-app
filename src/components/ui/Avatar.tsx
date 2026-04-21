@@ -43,7 +43,7 @@ export function Avatar({ uri, name, size = "md" }: AvatarProps) {
 
   return (
     <LinearGradient
-      colors={["#574BA6", "#A79AFF"]}
+      colors={["#1E3A8A", "#1842E9"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{
@@ -62,7 +62,7 @@ export function Avatar({ uri, name, size = "md" }: AvatarProps) {
 const styles = StyleSheet.create({
   ring: {
     borderWidth: 2,
-    borderColor: "#E8E5FF",
+    borderColor: "#E0E7FF",
     alignItems: "center",
     justifyContent: "center",
   },
