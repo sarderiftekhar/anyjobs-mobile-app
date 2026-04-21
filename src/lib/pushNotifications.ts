@@ -1,11 +1,17 @@
 import { Platform } from "react-native";
-import Constants from "expo-constants";
+import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import apiClient from "../api/client";
 import { storage } from "./storage";
 
 const STORED_TOKEN_KEY = "anyjobs_push_token";
+
+// Expo Go on Android dropped remote-push support in SDK 53+. Only a
+// development build / standalone APK can get a real push token there.
+// iOS Expo Go still works via the generic Expo project ID.
+const isExpoGo =
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,6 +25,15 @@ Notifications.setNotificationHandler({
 async function getExpoPushToken(): Promise<string | null> {
   if (!Device.isDevice) {
     if (__DEV__) console.log("[push] skipped: not a physical device");
+    return null;
+  }
+
+  if (isExpoGo && Platform.OS === "android") {
+    if (__DEV__) {
+      console.log(
+        "[push] skipped: Expo Go on Android cannot get a push token in SDK 53+. Use a dev build (eas build --profile development).",
+      );
+    }
     return null;
   }
 
