@@ -50,9 +50,13 @@ apiClient.interceptors.response.use(
     }
 
     if (__DEV__) {
-      console.error(
-        `[API Error] ${error.response?.status} ${error.config?.url}`,
-        error.response?.data
+      // console.warn (not .error) — real errors are re-thrown below and
+      // surfaced in UI by callers. Using .error here triggers RN LogBox's
+      // red banner even for transient/expected failures (timeouts, 401 on
+      // refresh), which is noisy in dev.
+      console.warn(
+        `[API Error] ${error.response?.status ?? "network"} ${error.config?.url ?? ""}`,
+        error.response?.data ?? error.message,
       );
     }
 

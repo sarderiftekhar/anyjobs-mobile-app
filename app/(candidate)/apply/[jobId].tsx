@@ -26,6 +26,14 @@ const formatFileSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
+const displayFilename = (name: string) => {
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
+  }
+};
+
 type Step = "cv" | "cover-letter" | "review";
 
 export default function ApplyScreen() {
@@ -282,7 +290,7 @@ export default function ApplyScreen() {
                           className="text-sm font-semibold text-text-primary"
                           numberOfLines={1}
                         >
-                          {cv.filename}
+                          {displayFilename(cv.filename)}
                         </Text>
                         <Text className="text-xs text-text-secondary">
                           {cv.is_primary ? "Primary CV · " : ""}
@@ -392,7 +400,10 @@ export default function ApplyScreen() {
               <View className="mt-1 flex-row items-center">
                 <Ionicons name="document-text" size={18} color="#1E3A8A" />
                 <Text className="ml-2 flex-1 text-sm text-text-primary" numberOfLines={1}>
-                  {cvs?.find((c) => c.id === selectedCvId)?.filename ?? "No CV selected"}
+                  {(() => {
+                    const sel = cvs?.find((c) => c.id === selectedCvId);
+                    return sel ? displayFilename(sel.filename) : "No CV selected";
+                  })()}
                 </Text>
               </View>
             </Card>

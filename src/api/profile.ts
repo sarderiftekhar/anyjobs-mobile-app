@@ -39,6 +39,7 @@ export const profileApi = {
   updateAvatar: (formData: FormData) =>
     apiClient.post<ApiResponse<{ avatar_url: string }>>("/profile/avatar", formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: 60_000,
     }),
 
   // Experience
@@ -72,6 +73,7 @@ export const profileApi = {
   uploadCv: (formData: FormData) =>
     apiClient.post<ApiResponse<CvUpload>>("/profile/cv", formData, {
       headers: { "Content-Type": "multipart/form-data" },
+      timeout: 60_000,
     }),
 
   setPrimaryCv: (id: number) =>
