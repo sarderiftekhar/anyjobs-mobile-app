@@ -115,9 +115,9 @@ export default function RegisterScreen() {
         )}
 
         {/* User type toggle */}
-        <View className="mt-6 flex-row rounded-md bg-gray-100 p-1">
+        <View className="mt-6 flex-row rounded-full bg-gray-100 p-1">
           <TouchableOpacity
-            className={`flex-1 items-center rounded-md py-2.5 ${
+            className={`flex-1 items-center rounded-full py-2.5 ${
               userType === "candidate" ? "bg-primary" : ""
             }`}
             onPress={() => setValue("user_type", "candidate")}
@@ -131,7 +131,7 @@ export default function RegisterScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className={`flex-1 items-center rounded-md py-2.5 ${
+            className={`flex-1 items-center rounded-full py-2.5 ${
               userType === "employer" ? "bg-primary" : ""
             }`}
             onPress={() => setValue("user_type", "employer")}

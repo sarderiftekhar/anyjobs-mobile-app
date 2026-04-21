@@ -149,7 +149,7 @@ export default function ApplyScreen() {
           You have already submitted an application for {job.title} at {job.company.name}.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#1E3A8A", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#1E3A8A", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => {
             if (router.canGoBack()) router.back();
             else router.replace("/(candidate)/(tabs)");
@@ -181,7 +181,7 @@ export default function ApplyScreen() {
           Your application for {job?.title} at {job?.company.name} has been sent successfully.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#1E3A8A", borderRadius: 14, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#1E3A8A", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => router.back()}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>Done</Text>
@@ -343,7 +343,7 @@ export default function ApplyScreen() {
             />
 
             <TouchableOpacity
-              className="mt-3 flex-row items-center rounded-xl bg-primary-light px-4 py-3"
+              className="mt-3 flex-row items-center self-start rounded-full bg-primary-light px-4 py-3"
               onPress={handleGenerateAI}
               disabled={aiGenerating}
               activeOpacity={0.7}

@@ -80,7 +80,7 @@ export function Button({
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
       <TouchableOpacity
-        className={`flex-row items-center justify-center rounded-2xl ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
+        className={`flex-row items-center justify-center rounded-full ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
         disabled={isDisabled}
         activeOpacity={0.85}
         onPressIn={handlePressIn}
