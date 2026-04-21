@@ -1,5 +1,6 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 function TabIcon({
@@ -23,6 +24,9 @@ function TabIcon({
 }
 
 export default function EmployerTabLayout() {
+  const insets = useSafeAreaInsets();
+  const bottomInset = insets.bottom + (Platform.OS === "android" ? 12 : 0);
+
   return (
     <Tabs
       screenOptions={{
@@ -32,8 +36,8 @@ export default function EmployerTabLayout() {
         tabBarStyle: {
           borderTopWidth: 0,
           backgroundColor: "#FFFFFF",
-          height: 65,
-          paddingBottom: 10,
+          height: 65 + bottomInset,
+          paddingBottom: 10 + bottomInset,
           paddingTop: 6,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },

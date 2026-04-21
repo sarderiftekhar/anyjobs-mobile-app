@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated, Platform, StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 function TabIcon({
@@ -48,13 +49,25 @@ function TabIcon({
 }
 
 export default function CandidateTabLayout() {
+  const insets = useSafeAreaInsets();
+  // Lift the tab bar above the Android gesture/nav bar. Add a small Android
+  // floor because on some devices useSafeAreaInsets returns 0 for the bottom
+  // even when system nav is present.
+  const bottomInset = insets.bottom + (Platform.OS === "android" ? 12 : 0);
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#1E3A8A",
         tabBarInactiveTintColor: "#B8B8B8",
-        tabBarStyle: ts.tabBar,
+        tabBarStyle: [
+          ts.tabBar,
+          {
+            height: 72 + bottomInset,
+            paddingBottom: 8 + bottomInset,
+          },
+        ],
         tabBarLabelStyle: ts.tabLabel,
         tabBarItemStyle: ts.tabItem,
       }}
