@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useJobDetail, useSaveJob, useUnsaveJob } from "../../../src/hooks/useJobs";
 import { Card, Badge, Button, LoadingSpinner } from "../../../src/components/ui";
+import { MatchScoreCard } from "../../../src/components/ai/MatchScoreCard";
 import { formatDistanceToNow } from "date-fns";
 
 export default function JobDetailScreen() {
@@ -152,6 +153,9 @@ export default function JobDetailScreen() {
             ))}
           </View>
         )}
+
+        {/* AI match score */}
+        <MatchScoreCard jobId={job.id} />
 
         {/* Divider */}
         <View className="my-6 border-t border-border" />

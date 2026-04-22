@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateJob } from "../../../src/hooks/useEmployer";
 import { Button, Badge } from "../../../src/components/ui";
+import { AIGenerateModal } from "../../../src/components/ai/AIGenerateModal";
 import type { CreateJobPayload } from "../../../src/api/employer";
 
 type Step = "title" | "details" | "compensation" | "settings" | "review";
@@ -26,6 +27,7 @@ export default function CreateJobScreen() {
   const insets = useSafeAreaInsets();
   const createJob = useCreateJob();
   const [step, setStep] = useState<Step>("title");
+  const [aiOpen, setAiOpen] = useState(false);
   const currentIndex = STEPS.indexOf(step);
 
   const [form, setForm] = useState<Partial<CreateJobPayload>>({
@@ -148,10 +150,29 @@ export default function CreateJobScreen() {
               value={form.description}
               onChangeText={(t) => updateForm({ description: t })}
             />
-            <TouchableOpacity className="mb-4 flex-row items-center">
+            <TouchableOpacity
+              className="mb-4 flex-row items-center"
+              onPress={() => setAiOpen(true)}
+            >
               <Ionicons name="sparkles" size={16} color="#1E3A8A" />
               <Text className="ml-1.5 text-sm font-medium text-primary">Generate with AI</Text>
             </TouchableOpacity>
+
+            <AIGenerateModal
+              visible={aiOpen}
+              onClose={() => setAiOpen(false)}
+              seedTitle={form.title}
+              seedLocation={form.location}
+              seedWorkArrangement={form.work_arrangement}
+              onAccept={(r) => {
+                updateForm({
+                  description: r.description ?? form.description,
+                  requirements: r.requirements ?? form.requirements,
+                  skills: r.skills ?? form.skills,
+                });
+                setAiOpen(false);
+              }}
+            />
 
             <Text className="mb-1.5 text-sm font-medium text-text-primary">Experience Level</Text>
             <View className="mb-4 flex-row flex-wrap gap-2">
