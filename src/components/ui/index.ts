@@ -7,3 +7,5 @@ export { EmptyState } from "./EmptyState";
 export { LoadingSpinner } from "./LoadingSpinner";
 export { SearchBar } from "./SearchBar";
 export { LocationInput } from "./LocationInput";
+export { OrbitHalo } from "./OrbitHalo";
+export type { OrbitItem } from "./OrbitHalo";
