@@ -73,14 +73,14 @@ export default function TalentDetailScreen() {
         <Card>
           <View className="items-center">
             <Avatar name={c.name} uri={c.avatar ?? undefined} size="xl" />
-            <Text className="mt-3 text-xl font-bold text-text-primary">
+            <Text className="mt-3 text-xl font-bold text-ink">
               {c.name}
             </Text>
-            <Text className="text-sm text-text-secondary">
+            <Text className="text-sm text-ink-muted">
               {p.professional_title || "Candidate"}
             </Text>
             {p.current_company ? (
-              <Text className="text-xs text-text-secondary">
+              <Text className="text-xs text-ink-muted">
                 at {p.current_company}
               </Text>
             ) : null}
@@ -88,8 +88,8 @@ export default function TalentDetailScreen() {
             <View className="mt-2 flex-row flex-wrap justify-center gap-2">
               {p.city ? (
                 <View className="flex-row items-center">
-                  <Ionicons name="location-outline" size={14} color="#6B7280" />
-                  <Text className="ml-1 text-xs text-text-secondary">
+                  <Ionicons name="location-outline" size={14} color="#6B7F94" />
+                  <Text className="ml-1 text-xs text-ink-muted">
                     {p.city}
                     {p.country ? `, ${p.country}` : ""}
                   </Text>
@@ -97,8 +97,8 @@ export default function TalentDetailScreen() {
               ) : null}
               {p.years_experience ? (
                 <View className="flex-row items-center">
-                  <Ionicons name="briefcase-outline" size={14} color="#6B7280" />
-                  <Text className="ml-1 text-xs text-text-secondary">
+                  <Ionicons name="briefcase-outline" size={14} color="#6B7F94" />
+                  <Text className="ml-1 text-xs text-ink-muted">
                     {p.years_experience} yrs
                   </Text>
                 </View>
@@ -128,7 +128,7 @@ export default function TalentDetailScreen() {
         {/* Summary */}
         {p.professional_summary ? (
           <Section title="Summary">
-            <Text className="text-sm leading-5 text-text-primary">
+            <Text className="text-sm leading-5 text-ink">
               {p.professional_summary}
             </Text>
           </Section>
@@ -157,19 +157,19 @@ export default function TalentDetailScreen() {
                 key={i}
                 className={`${i > 0 ? "mt-3 border-t border-gray-100 pt-3" : ""}`}
               >
-                <Text className="text-sm font-semibold text-text-primary">
+                <Text className="text-sm font-semibold text-ink">
                   {e.job_title}
                 </Text>
-                <Text className="text-xs text-text-secondary">
+                <Text className="text-xs text-ink-muted">
                   {e.company_name}
                 </Text>
-                <Text className="mt-0.5 text-[11px] text-text-secondary">
+                <Text className="mt-0.5 text-[11px] text-ink-muted">
                   {formatDate(e.start_date)} –{" "}
                   {e.is_current ? "Present" : formatDate(e.end_date)}
                 </Text>
                 {e.description ? (
                   <Text
-                    className="mt-1 text-xs text-text-secondary"
+                    className="mt-1 text-xs text-ink-muted"
                     numberOfLines={4}
                   >
                     {e.description}
@@ -188,14 +188,14 @@ export default function TalentDetailScreen() {
                 key={i}
                 className={`${i > 0 ? "mt-3 border-t border-gray-100 pt-3" : ""}`}
               >
-                <Text className="text-sm font-semibold text-text-primary">
+                <Text className="text-sm font-semibold text-ink">
                   {e.degree ?? "Degree"}
                   {e.field_of_study ? ` · ${e.field_of_study}` : ""}
                 </Text>
-                <Text className="text-xs text-text-secondary">
+                <Text className="text-xs text-ink-muted">
                   {e.institution}
                 </Text>
-                <Text className="mt-0.5 text-[11px] text-text-secondary">
+                <Text className="mt-0.5 text-[11px] text-ink-muted">
                   {formatDate(e.start_date)} – {formatDate(e.end_date)}
                   {e.grade ? ` · ${e.grade}` : ""}
                 </Text>
@@ -212,11 +212,11 @@ export default function TalentDetailScreen() {
                 key={i}
                 className={`${i > 0 ? "mt-2 border-t border-gray-100 pt-2" : ""}`}
               >
-                <Text className="text-sm font-semibold text-text-primary">
+                <Text className="text-sm font-semibold text-ink">
                   {cert.name}
                 </Text>
                 {cert.issuing_organization ? (
-                  <Text className="text-xs text-text-secondary">
+                  <Text className="text-xs text-ink-muted">
                     {cert.issuing_organization}
                   </Text>
                 ) : null}
@@ -251,9 +251,9 @@ function Header({ onBack, title }: { onBack: () => void; title: string }) {
         className="mr-2 h-9 w-9 items-center justify-center rounded-full bg-background"
         onPress={onBack}
       >
-        <Ionicons name="arrow-back" size={20} color="#1F2937" />
+        <Ionicons name="arrow-back" size={20} color="#1A2230" />
       </TouchableOpacity>
-      <Text className="text-lg font-bold text-text-primary">{title}</Text>
+      <Text className="text-lg font-bold text-ink">{title}</Text>
     </View>
   );
 }
@@ -267,7 +267,7 @@ function Section({
 }) {
   return (
     <View className="mt-4">
-      <Text className="mb-2 text-sm font-bold text-text-primary">{title}</Text>
+      <Text className="mb-2 text-sm font-bold text-ink">{title}</Text>
       <Card>{children}</Card>
     </View>
   );

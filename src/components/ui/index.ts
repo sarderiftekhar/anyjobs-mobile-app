@@ -4,6 +4,7 @@ export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Avatar } from "./Avatar";
 export { EmptyState } from "./EmptyState";
+export { EmptyIllustration } from "./EmptyIllustration";
 export { LoadingSpinner } from "./LoadingSpinner";
 export { SearchBar } from "./SearchBar";
 export { LocationInput } from "./LocationInput";

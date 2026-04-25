@@ -12,13 +12,16 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://dev.any-jobs.com/api"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
       "env": {
-        "API_URL": "https://api.anyjobs.com"
+        "EXPO_PUBLIC_API_URL": "https://api.any-jobs.com/api"
       },
       "ios": {
         "bundleIdentifier": "com.anyjobs.mobile"

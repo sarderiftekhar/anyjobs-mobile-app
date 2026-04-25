@@ -21,9 +21,9 @@ export default function RescheduleInterviewScreen() {
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">
+        <Text className="ml-4 text-lg font-semibold text-ink">
           Reschedule
         </Text>
       </View>

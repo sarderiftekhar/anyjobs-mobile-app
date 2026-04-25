@@ -61,7 +61,7 @@ function ChipSelect<T extends string>({
           >
             <Text
               className={`text-sm font-medium ${
-                isActive ? "text-white" : "text-text-secondary"
+                isActive ? "text-white" : "text-ink-muted"
               }`}
             >
               {opt.label}
@@ -141,14 +141,14 @@ export function FilterModal({
       <BottomSheetScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
         {/* Header */}
         <View className="mb-6 flex-row items-center justify-between">
-          <Text className="text-xl font-bold text-text-primary">Filters</Text>
+          <Text className="text-xl font-bold text-ink">Filters</Text>
           <TouchableOpacity onPress={resetFilters}>
             <Text className="text-sm font-medium text-primary">Reset</Text>
           </TouchableOpacity>
         </View>
 
         {/* Location */}
-        <Text className="mb-2 text-sm font-semibold text-text-primary">Location</Text>
+        <Text className="mb-2 text-sm font-semibold text-ink">Location</Text>
         <LocationInput
           value={localFilters.location ?? ""}
           onSelect={(loc) => setLocalFilters({ ...localFilters, location: loc || undefined })}
@@ -157,7 +157,7 @@ export function FilterModal({
         />
 
         {/* Job Type */}
-        <Text className="mb-2 mt-5 text-sm font-semibold text-text-primary">Job Type</Text>
+        <Text className="mb-2 mt-5 text-sm font-semibold text-ink">Job Type</Text>
         <ChipSelect
           options={JOB_TYPES}
           selected={localFilters.job_types ?? []}
@@ -165,7 +165,7 @@ export function FilterModal({
         />
 
         {/* Work Arrangement */}
-        <Text className="mb-2 mt-5 text-sm font-semibold text-text-primary">
+        <Text className="mb-2 mt-5 text-sm font-semibold text-ink">
           Work Arrangement
         </Text>
         <ChipSelect
@@ -175,20 +175,20 @@ export function FilterModal({
         />
 
         {/* Salary Range */}
-        <Text className="mb-2 mt-5 text-sm font-semibold text-text-primary">
+        <Text className="mb-2 mt-5 text-sm font-semibold text-ink">
           Salary Range
         </Text>
         <View className="flex-row items-center gap-3">
           <View className="flex-1 rounded-md border border-border bg-white px-3 py-2.5">
-            <Text className="text-xs text-text-secondary">Min</Text>
-            <Text className="text-sm font-medium text-text-primary">
+            <Text className="text-xs text-ink-muted">Min</Text>
+            <Text className="text-sm font-medium text-ink">
               {localFilters.salary_min ? `£${localFilters.salary_min / 1000}k` : "Any"}
             </Text>
           </View>
-          <Text className="text-text-secondary">—</Text>
+          <Text className="text-ink-muted">—</Text>
           <View className="flex-1 rounded-md border border-border bg-white px-3 py-2.5">
-            <Text className="text-xs text-text-secondary">Max</Text>
-            <Text className="text-sm font-medium text-text-primary">
+            <Text className="text-xs text-ink-muted">Max</Text>
+            <Text className="text-sm font-medium text-ink">
               {localFilters.salary_max ? `£${localFilters.salary_max / 1000}k` : "Any"}
             </Text>
           </View>
@@ -222,7 +222,7 @@ export function FilterModal({
               >
                 <Text
                   className={`text-xs font-medium ${
-                    isActive ? "text-primary" : "text-text-secondary"
+                    isActive ? "text-primary" : "text-ink-muted"
                   }`}
                 >
                   {preset.label}
@@ -233,7 +233,7 @@ export function FilterModal({
         </View>
 
         {/* Experience Level */}
-        <Text className="mb-2 mt-5 text-sm font-semibold text-text-primary">
+        <Text className="mb-2 mt-5 text-sm font-semibold text-ink">
           Experience Level
         </Text>
         <ChipSelect
@@ -243,7 +243,7 @@ export function FilterModal({
         />
 
         {/* Date Posted */}
-        <Text className="mb-2 mt-5 text-sm font-semibold text-text-primary">
+        <Text className="mb-2 mt-5 text-sm font-semibold text-ink">
           Date Posted
         </Text>
         <ChipSelect

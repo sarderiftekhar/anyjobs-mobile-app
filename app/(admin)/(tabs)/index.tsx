@@ -36,7 +36,7 @@ export default function AdminDashboard() {
       label: "Total Users",
       value: stats?.users_total ?? 0,
       icon: "people-outline" as const,
-      color: "#1E3A8A",
+      color: "#0064EC",
     },
     {
       label: "Online Now",
@@ -71,18 +71,18 @@ export default function AdminDashboard() {
         <RefreshControl
           refreshing={statsQuery.isRefetching || onlineQuery.isRefetching}
           onRefresh={refetchAll}
-          tintColor="#1E3A8A"
+          tintColor="#0064EC"
         />
       }
     >
       <View className="flex-row items-center justify-between px-4 pt-4">
         <View>
-          <Text className="text-xl font-bold text-text-primary">
+          <Text className="text-xl font-bold text-ink">
             Admin, {user?.first_name ?? "there"}
           </Text>
-          <Text className="text-sm text-text-secondary">System overview</Text>
+          <Text className="text-sm text-ink-muted">System overview</Text>
         </View>
-        <Ionicons name="shield-checkmark-outline" size={24} color="#1E3A8A" />
+        <Ionicons name="shield-checkmark-outline" size={24} color="#0064EC" />
       </View>
 
       {isLoading ? (
@@ -98,8 +98,8 @@ export default function AdminDashboard() {
                 >
                   <Ionicons name={m.icon} size={20} color={m.color} />
                 </View>
-                <Text className="text-2xl font-bold text-text-primary">{m.value}</Text>
-                <Text className="text-xs text-text-secondary">{m.label}</Text>
+                <Text className="text-2xl font-bold text-ink">{m.value}</Text>
+                <Text className="text-xs text-ink-muted">{m.label}</Text>
               </Card>
             </View>
           ))}
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
       {(statsQuery.error || onlineQuery.error) && (
         <View className="mx-4 mt-6">
           <Card>
-            <Text className="text-sm text-text-secondary">
+            <Text className="text-sm text-ink-muted">
               Some stats could not be loaded. Pull down to retry.
             </Text>
           </Card>

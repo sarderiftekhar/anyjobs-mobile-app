@@ -1,34 +1,36 @@
+// Mirror of tailwind.config.js — used in StyleSheet.create and animated values
+// where NativeWind class strings can't reach. Keep in sync with the Tailwind config.
 export const colors = {
-  // Primary = AnyJobs brand-navy (matches web's --brand-500)
   primary: {
-    DEFAULT: "#1E3A8A",
-    dark: "#1338CB",
-    light: "#E0E7FF",
+    DEFAULT: "#0064EC",
+    dark: "#0050C7",
+    light: "#E5F0FE",
   },
-  // Brand tokens mirror resources/css/app.css on the web
   brand: {
-    DEFAULT: "#1842E9",
-    dark: "#1338CB",
-    navy: "#1E3A8A",
-    navyDark: "#163284",
+    DEFAULT: "#0064EC",
+    dark: "#0050C7",
+    light: "#E5F0FE",
+    navy: "#0A2540",
+    navyDark: "#061A2E",
   },
   ink: {
-    DEFAULT: "#1a2230",
+    DEFAULT: "#1A2230",
     soft: "#3A4F64",
     muted: "#6B7F94",
   },
-  accent: "#1842E9",
+  accent: "#0064EC",
   success: "#22C55E",
   warning: "#EAB308",
   danger: "#EF4444",
   info: "#3B82F6",
   surface: "#FFFFFF",
-  background: "#F8F9FA",
-  border: "#E5E7EB",
+  background: "#F6F8FB",
+  border: "#E5E9F0",
+  borderStrong: "#CBD3DD",
   text: {
-    primary: "#1F2937",
-    secondary: "#6B7280",
-    light: "#9CA3AF",
+    primary: "#1A2230",
+    secondary: "#3A4F64",
+    muted: "#6B7F94",
     inverse: "#FFFFFF",
   },
 } as const;

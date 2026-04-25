@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../../theme/colors";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
@@ -42,27 +42,27 @@ export function Avatar({ uri, name, size = "md" }: AvatarProps) {
     : "?";
 
   return (
-    <LinearGradient
-      colors={["#1E3A8A", "#1842E9"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
+    <View
       style={{
         width: s.px,
         height: s.px,
         borderRadius: s.px / 2,
+        backgroundColor: colors.primary.light,
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <Text className={`font-bold text-white ${s.text}`}>{initials}</Text>
-    </LinearGradient>
+      <Text className={`font-bold ${s.text}`} style={{ color: colors.primary.DEFAULT }}>
+        {initials}
+      </Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   ring: {
     borderWidth: 2,
-    borderColor: "#E0E7FF",
+    borderColor: colors.primary.light,
     alignItems: "center",
     justifyContent: "center",
   },

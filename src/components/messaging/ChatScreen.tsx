@@ -24,19 +24,19 @@ function MessageBubble({ message, isOwn }: { message: Message; isOwn: boolean })
           isOwn ? "rounded-br-sm bg-primary" : "rounded-bl-sm bg-gray-100"
         }`}
       >
-        <Text className={`text-sm ${isOwn ? "text-white" : "text-text-primary"}`}>
+        <Text className={`text-sm ${isOwn ? "text-white" : "text-ink"}`}>
           {message.text}
         </Text>
       </View>
       <View className={`mt-0.5 flex-row items-center gap-1 ${isOwn ? "justify-end" : ""}`}>
-        <Text className="text-[10px] text-text-secondary">
+        <Text className="text-[10px] text-ink-muted">
           {format(new Date(message.sent_at), "h:mm a")}
         </Text>
         {isOwn && (
           <Ionicons
             name={message.read ? "checkmark-done" : "checkmark"}
             size={12}
-            color={message.read ? "#1E3A8A" : "#9CA3AF"}
+            color={message.read ? "#0064EC" : "#9CA3AF"}
           />
         )}
       </View>
@@ -108,7 +108,7 @@ export function ChatScreenComponent({ conversationId }: ChatScreenProps) {
         </TouchableOpacity>
         <View className="flex-1 max-h-[120px] rounded-2xl border border-border bg-gray-50 px-4 py-2">
           <TextInput
-            className="text-base text-text-primary"
+            className="text-base text-ink"
             placeholder="Type a message..."
             placeholderTextColor="#9CA3AF"
             value={text}

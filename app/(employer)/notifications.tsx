@@ -11,9 +11,9 @@ export default function EmployerNotificationsScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center justify-between px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-text-primary">Notifications</Text>
+        <Text className="text-lg font-semibold text-ink">Notifications</Text>
         <TouchableOpacity>
           <Text className="text-sm font-medium text-primary">Mark All</Text>
         </TouchableOpacity>

@@ -126,9 +126,9 @@ export default function JobTemplatesScreen() {
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Ionicons name="arrow-back" size={22} color="#1F2937" />
+          <Ionicons name="arrow-back" size={22} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-text-primary">Job Templates</Text>
+        <Text className="text-lg font-semibold text-ink">Job Templates</Text>
       </View>
 
       <ScrollView
@@ -138,13 +138,13 @@ export default function JobTemplatesScreen() {
         {/* Generate new template */}
         <View className="border-b border-border px-4 py-4">
           <View className="flex-row items-center">
-            <Ionicons name="sparkles" size={16} color="#1E3A8A" />
-            <Text className="ml-1.5 text-sm font-semibold text-text-primary">
+            <Ionicons name="sparkles" size={16} color="#0064EC" />
+            <Text className="ml-1.5 text-sm font-semibold text-ink">
               Generate a new template
             </Text>
           </View>
           <TextInput
-            className="mt-2 rounded-md border border-border px-3 py-2.5 text-sm text-text-primary"
+            className="mt-2 rounded-md border border-border px-3 py-2.5 text-sm text-ink"
             placeholder="e.g. DevOps engineer, mid-level, EU remote"
             value={genPrompt}
             onChangeText={setGenPrompt}
@@ -159,7 +159,7 @@ export default function JobTemplatesScreen() {
 
         {loading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#1E3A8A" />
+            <ActivityIndicator color="#0064EC" />
           </View>
         ) : (
           <View className="px-4 pt-4">
@@ -167,11 +167,11 @@ export default function JobTemplatesScreen() {
               <Card key={String(t.id)} className="mb-3">
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1 pr-2">
-                    <Text className="text-base font-semibold text-text-primary">
+                    <Text className="text-base font-semibold text-ink">
                       {t.title}
                     </Text>
                     {t.category && (
-                      <Text className="text-xs text-text-secondary">{t.category}</Text>
+                      <Text className="text-xs text-ink-muted">{t.category}</Text>
                     )}
                   </View>
                   {t.is_ai_generated && (
@@ -179,7 +179,7 @@ export default function JobTemplatesScreen() {
                   )}
                 </View>
                 <Text
-                  className="mt-2 text-sm text-text-secondary"
+                  className="mt-2 text-sm text-ink-muted"
                   numberOfLines={3}
                 >
                   {t.description}

@@ -93,16 +93,16 @@ export default function CompanyGalleryScreen() {
     >
       <View className="flex-row items-center px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">
+        <Text className="ml-4 text-lg font-semibold text-ink">
           Gallery & Images
         </Text>
       </View>
 
       {/* Logo */}
       <Card className="mx-4 mt-2">
-        <Text className="mb-2 text-sm font-semibold text-text-primary">Logo</Text>
+        <Text className="mb-2 text-sm font-semibold text-ink">Logo</Text>
         <View className="flex-row items-center">
           <View className="h-20 w-20 overflow-hidden rounded-xl bg-gray-100">
             {company?.logo_url ? (
@@ -130,7 +130,7 @@ export default function CompanyGalleryScreen() {
 
       {/* Banner */}
       <Card className="mx-4 mt-3">
-        <Text className="mb-2 text-sm font-semibold text-text-primary">
+        <Text className="mb-2 text-sm font-semibold text-ink">
           Banner
         </Text>
         <View className="mb-3 h-28 w-full overflow-hidden rounded-xl bg-gray-100">
@@ -156,11 +156,11 @@ export default function CompanyGalleryScreen() {
 
       {/* Gallery grid */}
       <View className="mx-4 mt-3 flex-row items-center justify-between">
-        <Text className="text-base font-semibold text-text-primary">
+        <Text className="text-base font-semibold text-ink">
           Gallery
         </Text>
         <TouchableOpacity onPress={() => pickAndUploadStub("Gallery image")}>
-          <Ionicons name="add-circle" size={28} color="#1E3A8A" />
+          <Ionicons name="add-circle" size={28} color="#0064EC" />
         </TouchableOpacity>
       </View>
 
@@ -185,7 +185,7 @@ export default function CompanyGalleryScreen() {
                 style={{ width: 72, height: 72, borderRadius: 10 }}
               />
               <View className="ml-3 flex-1">
-                <Text className="text-xs text-text-secondary" numberOfLines={2}>
+                <Text className="text-xs text-ink-muted" numberOfLines={2}>
                   {img.caption ?? `Image ${i + 1}`}
                 </Text>
               </View>
@@ -197,7 +197,7 @@ export default function CompanyGalleryScreen() {
                 <Ionicons
                   name="arrow-up"
                   size={20}
-                  color={i === 0 ? "#D1D5DB" : "#1E3A8A"}
+                  color={i === 0 ? "#D1D5DB" : "#0064EC"}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -208,7 +208,7 @@ export default function CompanyGalleryScreen() {
                 <Ionicons
                   name="arrow-down"
                   size={20}
-                  color={i === items.length - 1 ? "#D1D5DB" : "#1E3A8A"}
+                  color={i === items.length - 1 ? "#D1D5DB" : "#0064EC"}
                 />
               </TouchableOpacity>
               <TouchableOpacity className="p-2" onPress={() => remove(img.id)}>
@@ -229,7 +229,7 @@ export default function CompanyGalleryScreen() {
       )}
 
       {uploadImage.isPending && (
-        <Text className="mt-3 text-center text-xs text-text-secondary">
+        <Text className="mt-3 text-center text-xs text-ink-muted">
           Uploading…
         </Text>
       )}

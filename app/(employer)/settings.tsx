@@ -20,16 +20,16 @@ export default function EmployerSettingsScreen() {
     >
       <View className="flex-row items-center px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">Settings</Text>
+        <Text className="ml-4 text-lg font-semibold text-ink">Settings</Text>
       </View>
 
       <View className="mx-4 mt-8">
         <Button title="Sign Out" variant="danger" onPress={logout} />
       </View>
 
-      <Text className="mt-4 text-center text-xs text-text-secondary">
+      <Text className="mt-4 text-center text-xs text-ink-muted">
         App Version {config.APP_VERSION}
       </Text>
     </ScrollView>

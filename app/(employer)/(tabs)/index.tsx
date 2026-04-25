@@ -14,7 +14,7 @@ export default function EmployerDashboard() {
   const { data: unreadCount } = useUnreadNotificationCount();
 
   const metrics = [
-    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#1E3A8A" },
+    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#0064EC" },
     { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#3B82F6" },
     { label: "New Today", value: dashboard?.new_today ?? 0, icon: "trending-up-outline" as const, color: "#22C55E" },
     { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#EAB308" },
@@ -23,54 +23,71 @@ export default function EmployerDashboard() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerStyle={{
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom + 32,
-      }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
+      showsVerticalScrollIndicator={false}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />
+        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />
       }
     >
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 pt-4">
-        <View>
-          <Text className="text-xl font-bold text-text-primary">
-            Hi, {user?.first_name ?? "there"}
-          </Text>
-          <Text className="text-sm text-text-secondary">Your hiring overview</Text>
+      {/* Brand-tinted greeting hero */}
+      <View
+        className="bg-primary-light px-4 pb-10"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center justify-between">
+          <View className="flex-1">
+            <Text className="text-sm font-medium text-ink-soft">Welcome back</Text>
+            <Text className="text-2xl font-bold text-ink">
+              {user?.first_name ?? "there"}
+            </Text>
+            <Text className="mt-0.5 text-xs text-ink-soft">Here's your hiring overview</Text>
+          </View>
+          <TouchableOpacity
+            className="relative h-11 w-11 items-center justify-center rounded-full bg-white/70"
+            onPress={() => router.push("/(employer)/notifications")}
+          >
+            <Ionicons name="notifications-outline" size={22} color="#1A2230" />
+            {(unreadCount ?? 0) > 0 && (
+              <View className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full bg-danger border-2 border-white">
+                <Text className="text-[10px] font-bold text-white">
+                  {unreadCount! > 9 ? "9+" : unreadCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          className="relative"
-          onPress={() => router.push("/(employer)/notifications")}
-        >
-          <Ionicons name="notifications-outline" size={24} color="#1F2937" />
-          {(unreadCount ?? 0) > 0 && (
-            <View className="absolute -right-1 -top-1 h-4 w-4 items-center justify-center rounded-full bg-danger">
-              <Text className="text-[10px] font-bold text-white">
-                {unreadCount! > 9 ? "9+" : unreadCount}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
       </View>
 
-      {/* Metrics grid */}
+      {/* Metrics grid — overlaps hero edge */}
       {isLoading ? (
-        <LoadingSpinner message="Loading dashboard..." />
+        <View className="-mt-7 mx-4">
+          <Card>
+            <LoadingSpinner message="Loading dashboard..." />
+          </Card>
+        </View>
       ) : (
-        <View className="flex-row flex-wrap px-4 pt-4">
-          {metrics.map((m) => (
-            <View key={m.label} className="w-1/2 p-1.5">
-              <Card className="items-center py-5">
-                <View
-                  className="mb-2 h-10 w-10 items-center justify-center rounded-full"
-                  style={{ backgroundColor: m.color + "20" }}
-                >
-                  <Ionicons name={m.icon} size={20} color={m.color} />
+        <View className="-mt-7 mx-4 flex-row flex-wrap">
+          {metrics.map((m, i) => (
+            <View
+              key={m.label}
+              className={`w-1/2 ${i % 2 === 0 ? "pr-1" : "pl-1"} ${i < 2 ? "mb-2" : ""}`}
+            >
+              <View
+                className="rounded-2xl border border-border bg-surface p-4"
+                style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+              >
+                <View className="flex-row items-center justify-between">
+                  <View
+                    className="h-10 w-10 items-center justify-center rounded-full"
+                    style={{ backgroundColor: m.color + "20" }}
+                  >
+                    <Ionicons name={m.icon} size={20} color={m.color} />
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color="#6B7F94" />
                 </View>
-                <Text className="text-2xl font-bold text-text-primary">{m.value}</Text>
-                <Text className="text-xs text-text-secondary">{m.label}</Text>
-              </Card>
+                <Text className="mt-3 text-3xl font-bold text-ink">{m.value}</Text>
+                <Text className="text-xs font-medium text-ink-muted">{m.label}</Text>
+              </View>
             </View>
           ))}
         </View>
@@ -78,7 +95,7 @@ export default function EmployerDashboard() {
 
       {/* Quick actions */}
       <View className="px-4 pt-4">
-        <Text className="mb-3 text-base font-semibold text-text-primary">Quick Actions</Text>
+        <Text className="mb-3 text-base font-semibold text-ink">Quick Actions</Text>
         <Button
           title="Post New Job"
           size="lg"
@@ -91,14 +108,14 @@ export default function EmployerDashboard() {
             variant="outline"
             size="sm"
             className="flex-1"
-            icon={<Ionicons name="search-outline" size={16} color="#1E3A8A" />}
+            icon={<Ionicons name="search-outline" size={16} color="#0064EC" />}
           />
           <Button
             title="Analytics"
             variant="outline"
             size="sm"
             className="flex-1"
-            icon={<Ionicons name="bar-chart-outline" size={16} color="#1E3A8A" />}
+            icon={<Ionicons name="bar-chart-outline" size={16} color="#0064EC" />}
           />
         </View>
       </View>
@@ -106,7 +123,7 @@ export default function EmployerDashboard() {
       {/* Recent applications */}
       <View className="px-4 pt-6">
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Recent Applications</Text>
+          <Text className="text-base font-semibold text-ink">Recent Applications</Text>
           <TouchableOpacity onPress={() => router.push("/(employer)/(tabs)/applicants")}>
             <Text className="text-sm font-medium text-primary">See all</Text>
           </TouchableOpacity>
@@ -124,19 +141,19 @@ export default function EmployerDashboard() {
               >
                 <Avatar name={app.candidate_name} uri={app.candidate_avatar} size="md" />
                 <View className="ml-3 flex-1">
-                  <Text className="text-sm font-semibold text-text-primary">
+                  <Text className="text-sm font-semibold text-ink">
                     {app.candidate_name}
                   </Text>
-                  <Text className="text-xs text-text-secondary">{app.job_title}</Text>
+                  <Text className="text-xs text-ink-muted">{app.job_title}</Text>
                 </View>
                 <View className="items-end">
                   <View className="flex-row items-center">
                     <Ionicons name="star" size={12} color="#EAB308" />
-                    <Text className="ml-1 text-xs font-semibold text-text-primary">
+                    <Text className="ml-1 text-xs font-semibold text-ink">
                       {app.match_score}%
                     </Text>
                   </View>
-                  <Text className="text-[10px] text-text-secondary">
+                  <Text className="text-[10px] text-ink-muted">
                     {new Date(app.applied_at).toLocaleDateString()}
                   </Text>
                 </View>
@@ -145,7 +162,7 @@ export default function EmployerDashboard() {
           </Card>
         ) : (
           <Card>
-            <Text className="text-center text-sm text-text-secondary">
+            <Text className="text-center text-sm text-ink-muted">
               No recent applications. Post a job to start receiving applicants.
             </Text>
           </Card>
@@ -154,7 +171,7 @@ export default function EmployerDashboard() {
 
       {/* Upcoming interviews */}
       <View className="px-4 pt-6">
-        <Text className="mb-3 text-base font-semibold text-text-primary">
+        <Text className="mb-3 text-base font-semibold text-ink">
           Upcoming Interviews
         </Text>
         {dashboard?.upcoming_interviews && dashboard.upcoming_interviews.length > 0 ? (
@@ -176,20 +193,20 @@ export default function EmployerDashboard() {
                           : "location-outline"
                     }
                     size={18}
-                    color="#1E3A8A"
+                    color="#0064EC"
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm font-semibold text-text-primary">
+                  <Text className="text-sm font-semibold text-ink">
                     {interview.candidate_name}
                   </Text>
-                  <Text className="text-xs text-text-secondary">{interview.job_title}</Text>
+                  <Text className="text-xs text-ink-muted">{interview.job_title}</Text>
                 </View>
                 <View className="items-end">
-                  <Text className="text-xs font-medium text-text-primary">
+                  <Text className="text-xs font-medium text-ink">
                     {new Date(interview.scheduled_at).toLocaleDateString()}
                   </Text>
-                  <Text className="text-[10px] text-text-secondary capitalize">
+                  <Text className="text-[10px] text-ink-muted capitalize">
                     {interview.type}
                   </Text>
                 </View>
@@ -198,7 +215,7 @@ export default function EmployerDashboard() {
           </Card>
         ) : (
           <Card>
-            <Text className="text-center text-sm text-text-secondary">
+            <Text className="text-center text-sm text-ink-muted">
               No upcoming interviews scheduled.
             </Text>
           </Card>

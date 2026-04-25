@@ -48,9 +48,9 @@ export default function InterviewDetailScreen() {
       <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
         <View className="flex-row items-center border-b border-border px-4 py-3">
           <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#1F2937" />
+            <Ionicons name="arrow-back" size={24} color="#1A2230" />
           </TouchableOpacity>
-          <Text className="ml-4 text-lg font-semibold text-text-primary">Interview</Text>
+          <Text className="ml-4 text-lg font-semibold text-ink">Interview</Text>
         </View>
         <LoadingSpinner fullScreen />
       </View>
@@ -118,9 +118,9 @@ export default function InterviewDetailScreen() {
       <View className="flex-row items-center justify-between border-b border-border bg-white px-4 py-3">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#1F2937" />
+            <Ionicons name="arrow-back" size={24} color="#1A2230" />
           </TouchableOpacity>
-          <Text className="text-lg font-semibold text-text-primary">Interview</Text>
+          <Text className="text-lg font-semibold text-ink">Interview</Text>
         </View>
         <Badge
           text={interview.status.replace("_", " ")}
@@ -141,10 +141,10 @@ export default function InterviewDetailScreen() {
               size="md"
             />
             <View className="ml-3 flex-1">
-              <Text className="text-base font-semibold text-text-primary">
+              <Text className="text-base font-semibold text-ink">
                 {interview.candidate?.name ?? "Candidate"}
               </Text>
-              <Text className="text-xs text-text-secondary">
+              <Text className="text-xs text-ink-muted">
                 {interview.job?.title ?? `Job #${interview.job_id}`}
               </Text>
             </View>
@@ -153,7 +153,7 @@ export default function InterviewDetailScreen() {
 
         {/* Details */}
         <Card className="mb-3">
-          <Text className="mb-2 text-xs font-semibold uppercase text-text-secondary">
+          <Text className="mb-2 text-xs font-semibold uppercase text-ink-muted">
             {interview.title || "Details"}
           </Text>
           <DetailRow icon="calendar-outline" label="When" value={dateLabel} />
@@ -178,7 +178,7 @@ export default function InterviewDetailScreen() {
               className="mt-2 flex-row items-center"
               onPress={() => Linking.openURL(interview.meeting_link!)}
             >
-              <Ionicons name="link-outline" size={16} color="#1E3A8A" />
+              <Ionicons name="link-outline" size={16} color="#0064EC" />
               <Text
                 className="ml-2 flex-1 text-sm text-primary"
                 numberOfLines={1}
@@ -194,10 +194,10 @@ export default function InterviewDetailScreen() {
 
         {interview.description ? (
           <Card className="mb-3">
-            <Text className="mb-1 text-xs font-semibold uppercase text-text-secondary">
+            <Text className="mb-1 text-xs font-semibold uppercase text-ink-muted">
               Notes
             </Text>
-            <Text className="text-sm leading-5 text-text-secondary">
+            <Text className="text-sm leading-5 text-ink-muted">
               {interview.description}
             </Text>
           </Card>
@@ -208,7 +208,7 @@ export default function InterviewDetailScreen() {
             <Text className="mb-1 text-xs font-semibold uppercase text-danger">
               Cancellation reason
             </Text>
-            <Text className="text-sm leading-5 text-text-secondary">
+            <Text className="text-sm leading-5 text-ink-muted">
               {interview.cancellation_reason}
             </Text>
           </Card>
@@ -268,10 +268,10 @@ export default function InterviewDetailScreen() {
       >
         <View className="flex-1 items-center justify-center bg-black/50 px-6">
           <View className="w-full rounded-2xl bg-white p-5">
-            <Text className="mb-2 text-lg font-semibold text-text-primary">
+            <Text className="mb-2 text-lg font-semibold text-ink">
               Cancel interview
             </Text>
-            <Text className="mb-3 text-sm text-text-secondary">
+            <Text className="mb-3 text-sm text-ink-muted">
               Please tell the candidate why. Required.
             </Text>
             <TextInput
@@ -281,7 +281,7 @@ export default function InterviewDetailScreen() {
               numberOfLines={4}
               placeholder="Reason..."
               placeholderTextColor="#9CA3AF"
-              className="min-h-[90px] rounded-md border border-border p-3 text-sm text-text-primary"
+              className="min-h-[90px] rounded-md border border-border p-3 text-sm text-ink"
               style={{ textAlignVertical: "top" }}
             />
             <View className="mt-4 flex-row gap-2">
@@ -317,9 +317,9 @@ function DetailRow({
 }) {
   return (
     <View className="mt-1.5 flex-row items-center">
-      <Ionicons name={icon} size={16} color="#6B7280" />
-      <Text className="ml-2 text-xs text-text-secondary">{label}:</Text>
-      <Text className="ml-1 flex-1 text-sm capitalize text-text-primary" numberOfLines={2}>
+      <Ionicons name={icon} size={16} color="#6B7F94" />
+      <Text className="ml-2 text-xs text-ink-muted">{label}:</Text>
+      <Text className="ml-1 flex-1 text-sm capitalize text-ink" numberOfLines={2}>
         {value}
       </Text>
     </View>

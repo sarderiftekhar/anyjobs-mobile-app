@@ -36,10 +36,10 @@ function RecommendationCard({ job }: { job: RecommendedJob }) {
             </Text>
           </View>
           <View className="flex-1">
-            <Text className="text-base font-semibold text-text-primary" numberOfLines={1}>
+            <Text className="text-base font-semibold text-ink" numberOfLines={1}>
               {job.title}
             </Text>
-            <Text className="text-sm text-text-secondary" numberOfLines={1}>
+            <Text className="text-sm text-ink-muted" numberOfLines={1}>
               {job.company_name}
             </Text>
           </View>
@@ -51,20 +51,20 @@ function RecommendationCard({ job }: { job: RecommendedJob }) {
         <View className="mt-3 gap-1">
           {job.location && (
             <View className="flex-row items-center">
-              <Ionicons name="location-outline" size={14} color="#6B7280" />
-              <Text className="ml-1.5 text-xs text-text-secondary">{job.location}</Text>
+              <Ionicons name="location-outline" size={14} color="#6B7F94" />
+              <Text className="ml-1.5 text-xs text-ink-muted">{job.location}</Text>
             </View>
           )}
           {job.salary_label && (
             <View className="flex-row items-center">
-              <Ionicons name="cash-outline" size={14} color="#6B7280" />
-              <Text className="ml-1.5 text-xs text-text-secondary">{job.salary_label}</Text>
+              <Ionicons name="cash-outline" size={14} color="#6B7F94" />
+              <Text className="ml-1.5 text-xs text-ink-muted">{job.salary_label}</Text>
             </View>
           )}
           {job.posted_at && (
             <View className="flex-row items-center">
-              <Ionicons name="time-outline" size={14} color="#6B7280" />
-              <Text className="ml-1.5 text-xs text-text-secondary">
+              <Ionicons name="time-outline" size={14} color="#6B7F94" />
+              <Text className="ml-1.5 text-xs text-ink-muted">
                 Posted {formatDistanceToNow(new Date(job.posted_at), { addSuffix: true })}
               </Text>
             </View>
@@ -95,13 +95,13 @@ export default function RecommendationsScreen() {
       <View className="flex-row items-center px-4 py-3">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
         <View className="flex-1">
-          <Text className="text-xl font-bold text-text-primary">Recommended for you</Text>
-          <Text className="text-xs text-text-secondary">
+          <Text className="text-xl font-bold text-ink">Recommended for you</Text>
+          <Text className="text-xs text-ink-muted">
             Jobs matched to your profile, skills and preferences
           </Text>
         </View>
@@ -127,7 +127,7 @@ export default function RecommendationsScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />

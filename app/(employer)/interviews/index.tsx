@@ -50,9 +50,9 @@ export default function InterviewsListScreen() {
       <View className="flex-row items-center justify-between border-b border-border bg-white px-4 py-3">
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => router.back()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#1F2937" />
+            <Ionicons name="arrow-back" size={24} color="#1A2230" />
           </TouchableOpacity>
-          <Text className="text-lg font-semibold text-text-primary">Interviews</Text>
+          <Text className="text-lg font-semibold text-ink">Interviews</Text>
         </View>
         <TouchableOpacity
           onPress={() => router.push("/(employer)/interviews/schedule")}
@@ -81,7 +81,7 @@ export default function InterviewsListScreen() {
               }`}
             >
               <Text
-                className={`text-xs font-medium ${active ? "text-white" : "text-text-secondary"}`}
+                className={`text-xs font-medium ${active ? "text-white" : "text-ink-muted"}`}
               >
                 {f.label}
               </Text>
@@ -107,7 +107,7 @@ export default function InterviewsListScreen() {
           keyExtractor={(i) => String(i.id)}
           contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 32 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />
           }
           renderItem={({ item }) => <InterviewRow interview={item} />}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
@@ -136,26 +136,26 @@ function InterviewRow({ interview }: { interview: Interview }) {
       <Card animated={false}>
         <View className="flex-row items-start">
           <View className="mr-3 h-10 w-10 items-center justify-center rounded-full bg-primary-light">
-            <Ionicons name={typeIcon(interview.type) as any} size={18} color="#1E3A8A" />
+            <Ionicons name={typeIcon(interview.type) as any} size={18} color="#0064EC" />
           </View>
           <View className="flex-1">
             <View className="flex-row items-center justify-between">
-              <Text className="flex-1 text-sm font-semibold text-text-primary" numberOfLines={1}>
+              <Text className="flex-1 text-sm font-semibold text-ink" numberOfLines={1}>
                 {interview.candidate?.name ?? interview.title ?? "Interview"}
               </Text>
               <Badge text={interview.status.replace("_", " ")} variant={statusVariant(interview.status)} />
             </View>
-            <Text className="mt-0.5 text-xs text-text-secondary" numberOfLines={1}>
+            <Text className="mt-0.5 text-xs text-ink-muted" numberOfLines={1}>
               {interview.job?.title ?? `Job #${interview.job_id}`}
             </Text>
             <View className="mt-2 flex-row items-center">
-              <Ionicons name="time-outline" size={12} color="#6B7280" />
-              <Text className="ml-1 text-[11px] text-text-secondary">{dateLabel}</Text>
-              <Text className="ml-2 text-[11px] text-text-secondary capitalize">
+              <Ionicons name="time-outline" size={12} color="#6B7F94" />
+              <Text className="ml-1 text-[11px] text-ink-muted">{dateLabel}</Text>
+              <Text className="ml-2 text-[11px] text-ink-muted capitalize">
                 · {interview.type}
               </Text>
               {interview.duration_minutes ? (
-                <Text className="ml-2 text-[11px] text-text-secondary">
+                <Text className="ml-2 text-[11px] text-ink-muted">
                   · {interview.duration_minutes} min
                 </Text>
               ) : null}

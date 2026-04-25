@@ -48,7 +48,7 @@ function TalentCard({ candidate }: { candidate: TalentListItem }) {
           <View className="ml-3 flex-1">
             <View className="flex-row items-center">
               <Text
-                className="flex-1 text-base font-semibold text-text-primary"
+                className="flex-1 text-base font-semibold text-ink"
                 numberOfLines={1}
               >
                 {candidate.name}
@@ -57,13 +57,13 @@ function TalentCard({ candidate }: { candidate: TalentListItem }) {
                 <View className="ml-1 h-2 w-2 rounded-full bg-success" />
               )}
             </View>
-            <Text className="text-sm text-text-secondary" numberOfLines={1}>
+            <Text className="text-sm text-ink-muted" numberOfLines={1}>
               {candidate.professional_title}
             </Text>
             {candidate.location ? (
               <View className="mt-0.5 flex-row items-center">
-                <Ionicons name="location-outline" size={12} color="#6B7280" />
-                <Text className="ml-1 text-xs text-text-secondary">
+                <Ionicons name="location-outline" size={12} color="#6B7F94" />
+                <Text className="ml-1 text-xs text-ink-muted">
                   {candidate.location}
                 </Text>
               </View>
@@ -71,7 +71,7 @@ function TalentCard({ candidate }: { candidate: TalentListItem }) {
           </View>
           {typeof candidate.match_score === "number" && (
             <View className="items-center">
-              <Ionicons name="sparkles" size={14} color="#1E3A8A" />
+              <Ionicons name="sparkles" size={14} color="#0064EC" />
               <Text className="text-sm font-bold text-primary">
                 {candidate.match_score}%
               </Text>
@@ -88,14 +88,14 @@ function TalentCard({ candidate }: { candidate: TalentListItem }) {
         )}
 
         <View className="mt-3 flex-row items-center justify-between">
-          <Text className="text-xs text-text-secondary">
+          <Text className="text-xs text-ink-muted">
             {candidate.years_experience
               ? `${candidate.years_experience} yrs exp`
               : "Experience: N/A"}
           </Text>
           {candidate.has_cv && (
             <View className="flex-row items-center">
-              <Ionicons name="document-text-outline" size={12} color="#1E3A8A" />
+              <Ionicons name="document-text-outline" size={12} color="#0064EC" />
               <Text className="ml-1 text-xs font-medium text-primary">CV</Text>
             </View>
           )}
@@ -156,15 +156,15 @@ export default function TalentListScreen() {
             className="mr-2 h-9 w-9 items-center justify-center rounded-full bg-background"
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={20} color="#1F2937" />
+            <Ionicons name="arrow-back" size={20} color="#1A2230" />
           </TouchableOpacity>
-          <Text className="flex-1 text-xl font-bold text-text-primary">
+          <Text className="flex-1 text-xl font-bold text-ink">
             Browse Talent
           </Text>
           <TouchableOpacity
             onPress={() => router.push("/(employer)/resume-alerts")}
           >
-            <Ionicons name="notifications-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="notifications-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
 
@@ -188,7 +188,7 @@ export default function TalentListScreen() {
           >
             <Text
               className={`text-xs font-semibold ${
-                availableOnly ? "text-white" : "text-text-secondary"
+                availableOnly ? "text-white" : "text-ink-muted"
               }`}
             >
               Available now
@@ -208,7 +208,7 @@ export default function TalentListScreen() {
             >
               <Text
                 className={`text-xs font-semibold ${
-                  activeExp === f.key ? "text-white" : "text-text-secondary"
+                  activeExp === f.key ? "text-white" : "text-ink-muted"
                 }`}
               >
                 {f.label}
@@ -220,7 +220,7 @@ export default function TalentListScreen() {
 
       {/* Summary */}
       <View className="flex-row items-center justify-between px-4 py-2">
-        <Text className="text-xs text-text-secondary">
+        <Text className="text-xs text-ink-muted">
           {total > 0 ? `${total} candidates` : ""}
         </Text>
       </View>
@@ -254,14 +254,14 @@ export default function TalentListScreen() {
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#1E3A8A" />
+              <ActivityIndicator size="small" color="#0064EC" />
             ) : null
           }
           refreshControl={
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />

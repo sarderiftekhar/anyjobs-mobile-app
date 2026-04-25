@@ -34,21 +34,21 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
         <View className="flex-row items-center">
           <Avatar name={applicant.candidate.name} uri={applicant.candidate.avatar_url} size="lg" />
           <View className="ml-3 flex-1">
-            <Text className="text-base font-semibold text-text-primary">
+            <Text className="text-base font-semibold text-ink">
               {applicant.candidate.name}
             </Text>
-            <Text className="text-sm text-text-secondary" numberOfLines={1}>
+            <Text className="text-sm text-ink-muted" numberOfLines={1}>
               {applicant.candidate.title ?? "Candidate"}
             </Text>
             {applicant.candidate.location && (
-              <Text className="text-xs text-text-secondary">{applicant.candidate.location}</Text>
+              <Text className="text-xs text-ink-muted">{applicant.candidate.location}</Text>
             )}
           </View>
         </View>
 
         {/* Job + match */}
         <View className="mt-2 flex-row items-center justify-between">
-          <Text className="text-xs text-text-secondary">For: {applicant.job_title}</Text>
+          <Text className="text-xs text-ink-muted">For: {applicant.job_title}</Text>
           <View className="flex-row items-center">
             <Ionicons name="star" size={14} color="#EAB308" />
             <Text className="ml-1 text-sm font-bold text-primary">{applicant.match_score}%</Text>
@@ -65,7 +65,7 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
         )}
 
         {/* Date */}
-        <Text className="mt-2 text-xs text-text-secondary">
+        <Text className="mt-2 text-xs text-ink-muted">
           Applied {new Date(applicant.applied_at).toLocaleDateString()}
         </Text>
 
@@ -84,7 +84,7 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
             className="items-center justify-center rounded-md border border-border px-3 py-2"
             onPress={() => router.push(`/(employer)/chat/${applicant.candidate.id}`)}
           >
-            <Ionicons name="chatbubble-outline" size={16} color="#1E3A8A" />
+            <Ionicons name="chatbubble-outline" size={16} color="#0064EC" />
           </TouchableOpacity>
         </View>
       </Card>
@@ -106,7 +106,7 @@ export default function ApplicantsScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="px-4 pb-2 pt-4">
-        <Text className="text-2xl font-bold text-text-primary">Applicants</Text>
+        <Text className="text-2xl font-bold text-ink">Applicants</Text>
       </View>
 
       {/* Tabs */}
@@ -121,7 +121,7 @@ export default function ApplicantsScreen() {
               className={`rounded-full px-4 py-2 ${activeTab === item.key ? "bg-primary" : "bg-white border border-border"}`}
               onPress={() => setActiveTab(item.key)}
             >
-              <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-text-secondary"}`}>
+              <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-ink-muted"}`}>
                 {item.label}
               </Text>
             </TouchableOpacity>
@@ -132,7 +132,7 @@ export default function ApplicantsScreen() {
 
       {/* Sort */}
       <View className="flex-row items-center justify-end px-4 py-2">
-        <Text className="text-xs text-text-secondary">Sort by: </Text>
+        <Text className="text-xs text-ink-muted">Sort by: </Text>
         <TouchableOpacity
           onPress={() => setSortBy(sortBy === "match_score" ? "applied_at" : "match_score")}
         >
@@ -159,8 +159,8 @@ export default function ApplicantsScreen() {
           showsVerticalScrollIndicator={false}
           onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#1E3A8A" /> : null}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#0064EC" /> : null}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />}
         />
       )}
     </View>

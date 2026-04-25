@@ -15,11 +15,11 @@ export default function EmployerChatScreen() {
       {/* Header */}
       <View className="flex-row items-center border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
         <Avatar name="Candidate" size="sm" />
         <View className="ml-2 flex-1">
-          <Text className="text-sm font-semibold text-text-primary">Conversation</Text>
+          <Text className="text-sm font-semibold text-ink">Conversation</Text>
           <Text className="text-xs text-success">Online</Text>
         </View>
       </View>

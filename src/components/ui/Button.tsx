@@ -4,8 +4,11 @@ import {
   Text,
   ActivityIndicator,
   Animated,
+  View,
   type TouchableOpacityProps,
 } from "react-native";
+import { colors } from "../../theme/colors";
+import { shadows } from "../../theme/shadows";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
@@ -21,7 +24,7 @@ interface ButtonProps extends TouchableOpacityProps {
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-primary",
   secondary: "bg-primary-light",
-  outline: "bg-transparent border-2 border-primary/20",
+  outline: "bg-transparent border border-primary/30",
   ghost: "bg-transparent",
   danger: "bg-danger",
 };
@@ -35,9 +38,9 @@ const variantTextStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "py-2.5 px-4",
-  md: "py-3.5 px-6",
-  lg: "py-4 px-8",
+  sm: "py-2.5 px-4 min-h-[36px]",
+  md: "py-3 px-5 min-h-[44px]",
+  lg: "py-4 px-6 min-h-[52px]",
 };
 
 const sizeTextStyles: Record<ButtonSize, string> = {
@@ -54,6 +57,7 @@ export function Button({
   icon,
   disabled,
   className,
+  style,
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
@@ -77,8 +81,12 @@ export function Button({
     }).start();
   };
 
+  const showBrandShadow = variant === "primary" && !isDisabled;
+
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+    <Animated.View
+      style={[{ transform: [{ scale: scaleAnim }] }, showBrandShadow && shadows.brand, style]}
+    >
       <TouchableOpacity
         className={`flex-row items-center justify-center rounded-full ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
         disabled={isDisabled}
@@ -90,13 +98,13 @@ export function Button({
         {loading ? (
           <ActivityIndicator
             size="small"
-            color={variant === "primary" || variant === "danger" ? "#fff" : "#1E3A8A"}
+            color={variant === "primary" || variant === "danger" ? "#fff" : colors.primary.DEFAULT}
           />
         ) : (
           <>
-            {icon && <>{icon}</>}
+            {icon && <View className="mr-2">{icon}</View>}
             <Text
-              className={`font-semibold ${variantTextStyles[variant]} ${sizeTextStyles[size]} ${icon ? "ml-2" : ""}`}
+              className={`font-semibold ${variantTextStyles[variant]} ${sizeTextStyles[size]}`}
             >
               {title}
             </Text>

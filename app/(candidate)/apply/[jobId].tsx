@@ -150,14 +150,14 @@ export default function ApplyScreen() {
         <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "#FFF7ED", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
           <Ionicons name="information-circle" size={48} color="#F59E0B" />
         </View>
-        <Text style={{ fontSize: 22, fontWeight: "700", color: "#1F2937", textAlign: "center" }}>
+        <Text style={{ fontSize: 22, fontWeight: "700", color: "#1A2230", textAlign: "center" }}>
           Already Applied
         </Text>
-        <Text style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginTop: 8, lineHeight: 22 }}>
+        <Text style={{ fontSize: 15, color: "#6B7F94", textAlign: "center", marginTop: 8, lineHeight: 22 }}>
           You have already submitted an application for {job.title} at {job.company.name}.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#1E3A8A", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#0064EC", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => {
             if (router.canGoBack()) router.back();
             else router.replace("/(candidate)/(tabs)");
@@ -169,7 +169,7 @@ export default function ApplyScreen() {
           style={{ marginTop: 16 }}
           onPress={() => router.replace("/(candidate)/(tabs)/applications")}
         >
-          <Text style={{ color: "#1E3A8A", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
+          <Text style={{ color: "#0064EC", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
         </TouchableOpacity>
       </View>
     );
@@ -182,14 +182,14 @@ export default function ApplyScreen() {
         <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "#F0FDF4", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
           <Ionicons name="checkmark-circle" size={48} color="#22C55E" />
         </View>
-        <Text style={{ fontSize: 24, fontWeight: "700", color: "#1F2937", textAlign: "center" }}>
+        <Text style={{ fontSize: 24, fontWeight: "700", color: "#1A2230", textAlign: "center" }}>
           Application Submitted!
         </Text>
-        <Text style={{ fontSize: 15, color: "#6B7280", textAlign: "center", marginTop: 8, lineHeight: 22 }}>
+        <Text style={{ fontSize: 15, color: "#6B7F94", textAlign: "center", marginTop: 8, lineHeight: 22 }}>
           Your application for {job?.title} at {job?.company.name} has been sent successfully.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: "#1E3A8A", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
+          style={{ backgroundColor: "#0064EC", borderRadius: 999, paddingVertical: 14, paddingHorizontal: 32, marginTop: 28 }}
           onPress={() => router.back()}
         >
           <Text style={{ color: "#fff", fontSize: 16, fontWeight: "600" }}>Done</Text>
@@ -198,7 +198,7 @@ export default function ApplyScreen() {
           style={{ marginTop: 16 }}
           onPress={() => router.replace("/(candidate)/(tabs)/applications")}
         >
-          <Text style={{ color: "#1E3A8A", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
+          <Text style={{ color: "#0064EC", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
         </TouchableOpacity>
       </View>
     );
@@ -215,9 +215,9 @@ export default function ApplyScreen() {
           }}
           style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: "#F3F4F6", alignItems: "center", justifyContent: "center" }}
         >
-          <Ionicons name="close" size={22} color="#1F2937" />
+          <Ionicons name="close" size={22} color="#1A2230" />
         </TouchableOpacity>
-        <Text style={{ fontSize: 18, fontWeight: "600", color: "#1F2937" }}>Apply</Text>
+        <Text style={{ fontSize: 18, fontWeight: "600", color: "#1A2230" }}>Apply</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -237,10 +237,10 @@ export default function ApplyScreen() {
       {/* Job info header */}
       {job && (
         <View className="border-b border-border px-4 py-3">
-          <Text className="text-sm font-semibold text-text-primary" numberOfLines={1}>
+          <Text className="text-sm font-semibold text-ink" numberOfLines={1}>
             {job.title}
           </Text>
-          <Text className="text-xs text-text-secondary">{job.company.name}</Text>
+          <Text className="text-xs text-ink-muted">{job.company.name}</Text>
         </View>
       )}
 
@@ -248,24 +248,24 @@ export default function ApplyScreen() {
         {/* Step: Select CV */}
         {step === "cv" && (
           <View className="pt-6">
-            <Text className="text-lg font-semibold text-text-primary">
+            <Text className="text-lg font-semibold text-ink">
               Select your CV
             </Text>
-            <Text className="mt-1 text-sm text-text-secondary">
+            <Text className="mt-1 text-sm text-ink-muted">
               Choose which resume to send with your application.
             </Text>
 
             {cvsLoading ? (
               <View className="mt-6 items-center">
-                <ActivityIndicator color="#1E3A8A" />
+                <ActivityIndicator color="#0064EC" />
               </View>
             ) : !cvs || cvs.length === 0 ? (
               <Card className="mt-4 items-center border border-dashed border-border bg-gray-50">
                 <Ionicons name="document-outline" size={32} color="#9CA3AF" />
-                <Text className="mt-2 text-sm font-semibold text-text-primary">
+                <Text className="mt-2 text-sm font-semibold text-ink">
                   No CV uploaded yet
                 </Text>
-                <Text className="mt-1 text-center text-xs text-text-secondary">
+                <Text className="mt-1 text-center text-xs text-ink-muted">
                   Upload a PDF or Word document (max 10MB) to apply.
                 </Text>
               </Card>
@@ -284,15 +284,15 @@ export default function ApplyScreen() {
                     }`}
                   >
                     <View className="flex-row items-center">
-                      <Ionicons name="document-text" size={22} color="#1E3A8A" />
+                      <Ionicons name="document-text" size={22} color="#0064EC" />
                       <View className="ml-3 flex-1">
                         <Text
-                          className="text-sm font-semibold text-text-primary"
+                          className="text-sm font-semibold text-ink"
                           numberOfLines={1}
                         >
                           {displayFilename(cv.filename)}
                         </Text>
-                        <Text className="text-xs text-text-secondary">
+                        <Text className="text-xs text-ink-muted">
                           {cv.is_primary ? "Primary CV · " : ""}
                           {formatFileSize(cv.file_size)}
                         </Text>
@@ -300,7 +300,7 @@ export default function ApplyScreen() {
                       <Ionicons
                         name={selected ? "checkmark-circle" : "ellipse-outline"}
                         size={22}
-                        color={selected ? "#1E3A8A" : "#C0C0C0"}
+                        color={selected ? "#0064EC" : "#C0C0C0"}
                       />
                     </View>
                   </TouchableOpacity>
@@ -315,9 +315,9 @@ export default function ApplyScreen() {
               style={{ opacity: uploadCvMutation.isPending ? 0.6 : 1 }}
             >
               {uploadCvMutation.isPending ? (
-                <ActivityIndicator size="small" color="#1E3A8A" />
+                <ActivityIndicator size="small" color="#0064EC" />
               ) : (
-                <Ionicons name="cloud-upload-outline" size={18} color="#1E3A8A" />
+                <Ionicons name="cloud-upload-outline" size={18} color="#0064EC" />
               )}
               <Text className="ml-2 text-sm font-medium text-primary">
                 {uploadCvMutation.isPending
@@ -333,15 +333,15 @@ export default function ApplyScreen() {
         {/* Step: Cover Letter */}
         {step === "cover-letter" && (
           <View className="pt-6">
-            <Text className="text-lg font-semibold text-text-primary">
+            <Text className="text-lg font-semibold text-ink">
               Cover Letter
             </Text>
-            <Text className="mt-1 text-sm text-text-secondary">
+            <Text className="mt-1 text-sm text-ink-muted">
               Optional — add a personalized message to stand out.
             </Text>
 
             <TextInput
-              className="mt-4 min-h-[200px] rounded-md border border-border bg-gray-50 p-4 text-sm text-text-primary"
+              className="mt-4 min-h-[200px] rounded-md border border-border bg-gray-50 p-4 text-sm text-ink"
               multiline
               textAlignVertical="top"
               placeholder="Write your cover letter here... Explain why you're a great fit for this role."
@@ -358,16 +358,16 @@ export default function ApplyScreen() {
               style={{ opacity: aiGenerating ? 0.6 : 1 }}
             >
               {aiGenerating ? (
-                <ActivityIndicator size="small" color="#1E3A8A" />
+                <ActivityIndicator size="small" color="#0064EC" />
               ) : (
-                <Ionicons name="sparkles" size={16} color="#1E3A8A" />
+                <Ionicons name="sparkles" size={16} color="#0064EC" />
               )}
               <Text className="ml-2 text-sm font-semibold text-primary">
                 {aiGenerating ? "Generating..." : "Generate with AI"}
               </Text>
             </TouchableOpacity>
 
-            <Text className="mt-2 text-right text-xs text-text-secondary">
+            <Text className="mt-2 text-right text-xs text-ink-muted">
               {coverLetter.length}/2000 characters
             </Text>
           </View>
@@ -376,30 +376,30 @@ export default function ApplyScreen() {
         {/* Step: Review */}
         {step === "review" && (
           <View className="pt-6">
-            <Text className="text-lg font-semibold text-text-primary">
+            <Text className="text-lg font-semibold text-ink">
               Review Application
             </Text>
-            <Text className="mt-1 text-sm text-text-secondary">
+            <Text className="mt-1 text-sm text-ink-muted">
               Make sure everything looks good before submitting.
             </Text>
 
             <Card className="mt-4">
-              <Text className="text-xs font-semibold uppercase text-text-secondary">
+              <Text className="text-xs font-semibold uppercase text-ink-muted">
                 Applying to
               </Text>
-              <Text className="mt-1 text-base font-semibold text-text-primary">
+              <Text className="mt-1 text-base font-semibold text-ink">
                 {job?.title}
               </Text>
-              <Text className="text-sm text-text-secondary">{job?.company.name}</Text>
+              <Text className="text-sm text-ink-muted">{job?.company.name}</Text>
             </Card>
 
             <Card className="mt-3">
-              <Text className="text-xs font-semibold uppercase text-text-secondary">
+              <Text className="text-xs font-semibold uppercase text-ink-muted">
                 Resume
               </Text>
               <View className="mt-1 flex-row items-center">
-                <Ionicons name="document-text" size={18} color="#1E3A8A" />
-                <Text className="ml-2 flex-1 text-sm text-text-primary" numberOfLines={1}>
+                <Ionicons name="document-text" size={18} color="#0064EC" />
+                <Text className="ml-2 flex-1 text-sm text-ink" numberOfLines={1}>
                   {(() => {
                     const sel = cvs?.find((c) => c.id === selectedCvId);
                     return sel ? displayFilename(sel.filename) : "No CV selected";
@@ -410,10 +410,10 @@ export default function ApplyScreen() {
 
             {coverLetter.length > 0 && (
               <Card className="mt-3">
-                <Text className="text-xs font-semibold uppercase text-text-secondary">
+                <Text className="text-xs font-semibold uppercase text-ink-muted">
                   Cover Letter
                 </Text>
-                <Text className="mt-1 text-sm text-text-secondary" numberOfLines={4}>
+                <Text className="mt-1 text-sm text-ink-muted" numberOfLines={4}>
                   {coverLetter}
                 </Text>
               </Card>

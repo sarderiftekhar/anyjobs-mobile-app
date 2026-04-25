@@ -173,7 +173,7 @@ function OrbitIcon({ point, yaw, pitch, radius, size, item }: OrbitIconProps) {
           borderRadius: size / 2,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: item.bg ?? "rgba(30, 58, 138, 0.10)",
+          backgroundColor: item.bg ?? "rgba(0, 100, 236, 0.10)",
         },
         style,
       ]}
@@ -181,7 +181,7 @@ function OrbitIcon({ point, yaw, pitch, radius, size, item }: OrbitIconProps) {
       <Ionicons
         name={item.icon}
         size={size * 0.55}
-        color={item.color ?? "#1E3A8A"}
+        color={item.color ?? "#0064EC"}
       />
     </Animated.View>
   );

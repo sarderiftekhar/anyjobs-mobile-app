@@ -22,9 +22,9 @@ export default function EmployerMessagesScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center justify-between px-4 pb-2 pt-4">
-        <Text className="text-2xl font-bold text-text-primary">Messages</Text>
+        <Text className="text-2xl font-bold text-ink">Messages</Text>
         <TouchableOpacity>
-          <Ionicons name="search-outline" size={22} color="#1F2937" />
+          <Ionicons name="search-outline" size={22} color="#1A2230" />
         </TouchableOpacity>
       </View>
 
@@ -47,10 +47,10 @@ export default function EmployerMessagesScreen() {
               <Avatar name={item.participant.name} uri={item.participant.avatar_url} size="md" />
               <View className="ml-3 flex-1">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-sm font-semibold text-text-primary" numberOfLines={1}>
+                  <Text className="text-sm font-semibold text-ink" numberOfLines={1}>
                     {item.participant.name}
                   </Text>
-                  <Text className="text-[10px] text-text-secondary">
+                  <Text className="text-[10px] text-ink-muted">
                     {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
                   </Text>
                 </View>
@@ -58,7 +58,7 @@ export default function EmployerMessagesScreen() {
                   <Text className="text-xs text-primary" numberOfLines={1}>{item.job_title}</Text>
                 )}
                 {item.last_message && (
-                  <Text className="text-sm text-text-secondary" numberOfLines={1}>
+                  <Text className="text-sm text-ink-muted" numberOfLines={1}>
                     {item.last_message.text}
                   </Text>
                 )}
@@ -71,7 +71,7 @@ export default function EmployerMessagesScreen() {
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id.toString()}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />}
         />
       )}
     </View>

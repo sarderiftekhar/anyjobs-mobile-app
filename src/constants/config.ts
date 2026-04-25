@@ -1,37 +1,23 @@
 import Constants from "expo-constants";
-import { Platform } from "react-native";
 
-// Laragon serves anyjobs.test via virtual host on port 80
-const LOCAL_IP = "192.168.1.43";
+// Resolve API base URL with this precedence:
+//   1. EXPO_PUBLIC_API_URL (injected by EAS profile env in eas.json) — used for
+//      preview/production APKs to point at the right backend per build profile.
+//   2. Dev fallback to https://dev.any-jobs.com (same default used in Expo Go).
+//   3. Prod fallback to https://api.any-jobs.com when bundled as a release without env.
+const ENV_API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const ENV = {
-  development: {
-    // Web (PC browser) can resolve anyjobs.test directly
-    // Mobile devices on same WiFi use IP + Host header
-    API_URL:
-      Platform.OS === "web"
-        ? "http://anyjobs.test/api"
-        : `http://${LOCAL_IP}/api`,
-    API_HOST: Platform.OS === "web" ? null : "anyjobs.test",
-  },
-  production: {
-    API_URL: "https://api.anyjobs.com/api",
-    API_HOST: null,
-  },
-};
+const FALLBACK_API_URL = __DEV__
+  ? "https://dev.any-jobs.com/api"
+  : "https://api.any-jobs.com/api";
 
-const getEnvVars = () => {
-  const isDev = __DEV__;
-  return isDev ? ENV.development : ENV.production;
-};
-
-const envVars = getEnvVars();
+const API_URL = ENV_API_URL ?? FALLBACK_API_URL;
 
 export const config = {
-  API_BASE_URL: envVars.API_URL,
-  API_MOBILE_URL: `${envVars.API_URL}/v1/mobile`,
-  API_PUBLIC_URL: `${envVars.API_URL}/v1`,
-  API_HOST: envVars.API_HOST,
+  API_BASE_URL: API_URL,
+  API_MOBILE_URL: `${API_URL}/v1/mobile`,
+  API_PUBLIC_URL: `${API_URL}/v1`,
+  API_HOST: null,
   APP_VERSION: Constants.expoConfig?.version ?? "1.0.0",
   APP_NAME: "AnyJobs",
   TOKEN_KEY: "anyjobs_auth_token",

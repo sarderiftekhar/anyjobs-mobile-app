@@ -4,6 +4,8 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import type { Job } from "../../types/job";
 import { formatDistanceToNow } from "date-fns";
+import { colors } from "../../theme/colors";
+import { shadows } from "../../theme/shadows";
 
 interface JobCardProps {
   job: Job;
@@ -61,6 +63,7 @@ export function JobCard({
     <Animated.View
       style={[
         s.cardWrap,
+        shadows.card,
         {
           opacity: fadeAnim,
           transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
@@ -93,7 +96,7 @@ export function JobCard({
                 <Ionicons
                   name={job.is_saved ? "heart" : "heart-outline"}
                   size={18}
-                  color={job.is_saved ? "#EF4444" : "#C0C0C0"}
+                  color={job.is_saved ? colors.danger : colors.ink.muted}
                 />
               </TouchableOpacity>
             )}
@@ -104,7 +107,7 @@ export function JobCard({
 
           {/* Location */}
           <View style={s.locationRow}>
-            <Ionicons name="location-outline" size={13} color="#9CA3AF" />
+            <Ionicons name="location-outline" size={13} color={colors.ink.muted} />
             <Text style={s.locationText} numberOfLines={1}>{job.location}</Text>
             <View style={s.dot} />
             <Text style={s.locationText}>{job.work_arrangement}</Text>
@@ -114,12 +117,12 @@ export function JobCard({
           {(job.is_featured || job.is_urgent) && (
             <View style={s.badgeRow}>
               {job.is_featured && (
-                <View style={[s.badge, { backgroundColor: "#FFF7ED", borderColor: "#FED7AA" }]}>
+                <View style={[s.badge, { backgroundColor: "#FFF7ED" }]}>
                   <Text style={[s.badgeText, { color: "#B45309" }]}>Featured</Text>
                 </View>
               )}
               {job.is_urgent && (
-                <View style={[s.badge, { backgroundColor: "#FEF2F2", borderColor: "#FECACA" }]}>
+                <View style={[s.badge, { backgroundColor: "#FEF2F2" }]}>
                   <Text style={[s.badgeText, { color: "#DC2626" }]}>Urgent</Text>
                 </View>
               )}
@@ -135,8 +138,8 @@ export function JobCard({
                 </View>
               ))}
               {job.skills.length > 4 && (
-                <View style={[s.skillBadge, { backgroundColor: "#F3F4F6", borderColor: "#E5E7EB" }]}>
-                  <Text style={[s.skillText, { color: "#6B7280" }]}>+{job.skills.length - 4}</Text>
+                <View style={[s.skillBadge, { backgroundColor: colors.background }]}>
+                  <Text style={[s.skillText, { color: colors.ink.muted }]}>+{job.skills.length - 4}</Text>
                 </View>
               )}
             </View>
@@ -154,7 +157,7 @@ export function JobCard({
           {/* Apply */}
           {job.has_applied ? (
             <View style={s.appliedBanner}>
-              <Ionicons name="checkmark-circle" size={16} color="#22C55E" />
+              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
               <Text style={s.appliedText}>Applied</Text>
             </View>
           ) : showApplyButton ? (
@@ -177,19 +180,14 @@ export function JobCard({
 
 const s = StyleSheet.create({
   cardWrap: {
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 14,
-    elevation: 4,
+    marginBottom: 14,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 18,
     borderWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: colors.border,
   },
   row: {
     flexDirection: "row",
@@ -205,7 +203,7 @@ const s = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: "#F0EEFF",
+    backgroundColor: colors.primary.light,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -213,11 +211,11 @@ const s = StyleSheet.create({
   companyLogoText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E3A8A",
+    color: colors.primary.DEFAULT,
   },
   companyName: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.ink.muted,
     fontWeight: "500",
     flex: 1,
   },
@@ -225,14 +223,14 @@ const s = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.ink.DEFAULT,
     marginTop: 14,
     lineHeight: 24,
   },
@@ -243,14 +241,14 @@ const s = StyleSheet.create({
   },
   locationText: {
     fontSize: 13,
-    color: "#9CA3AF",
+    color: colors.ink.muted,
     marginLeft: 4,
   },
   dot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#D1D5DB",
+    backgroundColor: colors.borderStrong,
     marginHorizontal: 6,
   },
   badgeRow: {
@@ -261,8 +259,7 @@ const s = StyleSheet.create({
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 3,
-    borderRadius: 20,
-    borderWidth: 1,
+    borderRadius: 999,
   },
   badgeText: {
     fontSize: 11,
@@ -277,29 +274,27 @@ const s = StyleSheet.create({
   skillBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 20,
-    backgroundColor: "#F0EEFF",
-    borderWidth: 1,
-    borderColor: "#DDD8FF",
+    borderRadius: 999,
+    backgroundColor: colors.primary.light,
   },
   skillText: {
     fontSize: 12,
-    fontWeight: "500",
-    color: "#1E3A8A",
+    fontWeight: "600",
+    color: colors.primary.DEFAULT,
   },
   divider: {
     height: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: colors.border,
     marginVertical: 14,
   },
   salary: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#1F2937",
+    color: colors.ink.DEFAULT,
   },
   postedDate: {
     fontSize: 12,
-    color: "#B0B0B0",
+    color: colors.ink.muted,
   },
   appliedBanner: {
     flexDirection: "row",
@@ -317,8 +312,8 @@ const s = StyleSheet.create({
     color: "#16A34A",
   },
   applyBtn: {
-    backgroundColor: "#1E3A8A",
-    borderRadius: 14,
+    backgroundColor: colors.primary.DEFAULT,
+    borderRadius: 999,
     paddingVertical: 12,
     alignItems: "center",
     marginTop: 14,

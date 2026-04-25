@@ -51,7 +51,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className="flex-1 bg-surface"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style="dark" />
@@ -67,22 +67,22 @@ export default function LoginScreen() {
         {/* Back button */}
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mb-8 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mb-8 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
 
         {/* Header */}
-        <Text className="text-3xl font-bold text-text-primary">
+        <Text className="text-3xl font-bold text-ink">
           Welcome Back
         </Text>
-        <Text className="mt-1 text-base text-text-secondary">
+        <Text className="mt-1 text-base text-ink-soft">
           Sign in to continue
         </Text>
 
         {/* Error message */}
         {error && (
-          <View className="mt-4 rounded-md bg-red-50 p-3">
+          <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
             <Text className="text-sm text-danger">{error}</Text>
           </View>
         )}
@@ -129,7 +129,7 @@ export default function LoginScreen() {
             className="mb-6 self-end"
             onPress={() => router.push("/(auth)/forgot-password")}
           >
-            <Text className="text-sm font-medium text-primary">
+            <Text className="text-sm font-semibold text-primary">
               Forgot Password?
             </Text>
           </TouchableOpacity>
@@ -145,7 +145,7 @@ export default function LoginScreen() {
         {/* Divider */}
         <View className="my-6 flex-row items-center">
           <View className="flex-1 border-b border-border" />
-          <Text className="mx-4 text-sm text-text-secondary">
+          <Text className="mx-4 text-sm text-ink-muted">
             or continue with
           </Text>
           <View className="flex-1 border-b border-border" />
@@ -156,13 +156,13 @@ export default function LoginScreen() {
           title="Sign in with Google"
           variant="outline"
           size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#1E3A8A" />}
+          icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
           onPress={() => Alert.alert("Coming Soon", "Google sign-in will be available soon.")}
         />
 
         {/* Register link */}
         <View className="mt-8 flex-row items-center justify-center">
-          <Text className="text-sm text-text-secondary">
+          <Text className="text-sm text-ink-soft">
             Don't have an account?{" "}
           </Text>
           <TouchableOpacity onPress={() => router.replace("/(auth)/register")}>

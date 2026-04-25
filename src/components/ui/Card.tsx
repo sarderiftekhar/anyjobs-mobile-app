@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { View, Animated, type ViewProps, StyleSheet } from "react-native";
+import { View, Animated, type ViewProps } from "react-native";
+import { shadows } from "../../theme/shadows";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -40,9 +41,9 @@ export function Card({
 
   const shadowStyle =
     variant === "elevated"
-      ? styles.elevatedShadow
+      ? shadows.cardHover
       : variant === "default"
-        ? styles.defaultShadow
+        ? shadows.card
         : undefined;
 
   return (
@@ -57,8 +58,8 @@ export function Card({
       ]}
     >
       <View
-        className={`rounded-2xl bg-white p-4 ${
-          variant === "flat" ? "" : "border border-gray-100"
+        className={`rounded-2xl bg-surface p-4 ${
+          variant === "flat" ? "" : "border border-border"
         } ${className ?? ""}`}
         {...props}
       >
@@ -67,20 +68,3 @@ export function Card({
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  defaultShadow: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  elevatedShadow: {
-    shadowColor: "#1E3A8A",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
-  },
-});

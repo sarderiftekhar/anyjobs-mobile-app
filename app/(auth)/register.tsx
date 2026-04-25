@@ -78,7 +78,7 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className="flex-1 bg-surface"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style="dark" />
@@ -94,28 +94,28 @@ export default function RegisterScreen() {
         {/* Back button */}
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
 
         {/* Header */}
-        <Text className="text-3xl font-bold text-text-primary">
+        <Text className="text-3xl font-bold text-ink">
           Create Account
         </Text>
-        <Text className="mt-1 text-base text-text-secondary">
+        <Text className="mt-1 text-base text-ink-soft">
           Join AnyJobs today
         </Text>
 
         {/* Error message */}
         {error && (
-          <View className="mt-4 rounded-md bg-red-50 p-3">
+          <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
             <Text className="text-sm text-danger">{error}</Text>
           </View>
         )}
 
         {/* User type toggle */}
-        <View className="mt-6 flex-row rounded-full bg-gray-100 p-1">
+        <View className="mt-6 flex-row rounded-full bg-background p-1">
           <TouchableOpacity
             className={`flex-1 items-center rounded-full py-2.5 ${
               userType === "candidate" ? "bg-primary" : ""
@@ -124,7 +124,7 @@ export default function RegisterScreen() {
           >
             <Text
               className={`font-semibold ${
-                userType === "candidate" ? "text-white" : "text-text-secondary"
+                userType === "candidate" ? "text-white" : "text-ink-muted"
               }`}
             >
               Candidate
@@ -138,7 +138,7 @@ export default function RegisterScreen() {
           >
             <Text
               className={`font-semibold ${
-                userType === "employer" ? "text-white" : "text-text-secondary"
+                userType === "employer" ? "text-white" : "text-ink-muted"
               }`}
             >
               Employer
@@ -247,12 +247,12 @@ export default function RegisterScreen() {
                 <Ionicons
                   name={value ? "checkbox" : "square-outline"}
                   size={22}
-                  color={value ? "#1E3A8A" : "#9CA3AF"}
+                  color={value ? "#0064EC" : "#6B7F94"}
                 />
-                <Text className="ml-2 flex-1 text-sm text-text-secondary">
+                <Text className="ml-2 flex-1 text-sm text-ink-soft">
                   I agree to the{" "}
-                  <Text className="text-primary">Terms of Service</Text> &{" "}
-                  <Text className="text-primary">Privacy Policy</Text>
+                  <Text className="font-semibold text-primary">Terms of Service</Text> &{" "}
+                  <Text className="font-semibold text-primary">Privacy Policy</Text>
                 </Text>
               </TouchableOpacity>
             )}
@@ -274,7 +274,7 @@ export default function RegisterScreen() {
         {/* Divider */}
         <View className="my-6 flex-row items-center">
           <View className="flex-1 border-b border-border" />
-          <Text className="mx-4 text-sm text-text-secondary">or</Text>
+          <Text className="mx-4 text-sm text-ink-muted">or</Text>
           <View className="flex-1 border-b border-border" />
         </View>
 
@@ -283,13 +283,13 @@ export default function RegisterScreen() {
           title="Sign up with Google"
           variant="outline"
           size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#1E3A8A" />}
+          icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
           onPress={() => Alert.alert("Coming Soon", "Google sign-up will be available soon.")}
         />
 
         {/* Login link */}
         <View className="mt-8 flex-row items-center justify-center">
-          <Text className="text-sm text-text-secondary">
+          <Text className="text-sm text-ink-soft">
             Already have an account?{" "}
           </Text>
           <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>

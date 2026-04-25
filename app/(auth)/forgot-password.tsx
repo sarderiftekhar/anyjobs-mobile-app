@@ -55,7 +55,7 @@ export default function ForgotPasswordScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className="flex-1 bg-surface"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar style="dark" />
@@ -70,20 +70,20 @@ export default function ForgotPasswordScreen() {
       >
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mb-8 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mb-8 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
 
         {sent ? (
           <View className="items-center py-12">
-            <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <Ionicons name="mail-outline" size={32} color="#22C55E" />
+            <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-success/10">
+              <Ionicons name="mail-outline" size={36} color="#22C55E" />
             </View>
-            <Text className="text-center text-2xl font-bold text-text-primary">
+            <Text className="text-center text-2xl font-bold text-ink">
               Check Your Email
             </Text>
-            <Text className="mt-2 text-center text-base text-text-secondary">
+            <Text className="mt-2 text-center text-base text-ink-soft">
               We've sent a password reset link to your email address.
             </Text>
             <Button
@@ -94,15 +94,15 @@ export default function ForgotPasswordScreen() {
           </View>
         ) : (
           <>
-            <Text className="text-3xl font-bold text-text-primary">
+            <Text className="text-3xl font-bold text-ink">
               Forgot Password?
             </Text>
-            <Text className="mt-2 text-base text-text-secondary">
+            <Text className="mt-2 text-base text-ink-soft">
               Enter your email and we'll send you a link to reset your password.
             </Text>
 
             {error && (
-              <View className="mt-4 rounded-md bg-red-50 p-3">
+              <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
                 <Text className="text-sm text-danger">{error}</Text>
               </View>
             )}

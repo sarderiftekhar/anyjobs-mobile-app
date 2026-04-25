@@ -30,9 +30,9 @@ export default function ResumeAlertMatchesScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center border-b border-border bg-white px-4 py-3">
         <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-text-primary">Matching candidates</Text>
+        <Text className="text-lg font-semibold text-ink">Matching candidates</Text>
       </View>
 
       {isLoading ? (
@@ -52,7 +52,7 @@ export default function ResumeAlertMatchesScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
           renderItem={({ item }) => <MatchRow item={item} />}
@@ -75,7 +75,7 @@ function MatchRow({ item }: { item: TalentListItem }) {
           <View className="ml-3 flex-1">
             <View className="flex-row items-center">
               <Text
-                className="flex-1 text-sm font-semibold text-text-primary"
+                className="flex-1 text-sm font-semibold text-ink"
                 numberOfLines={1}
               >
                 {item.name}
@@ -84,13 +84,13 @@ function MatchRow({ item }: { item: TalentListItem }) {
                 <Badge text="Open" variant="success" />
               ) : null}
             </View>
-            <Text className="text-xs text-text-secondary" numberOfLines={1}>
+            <Text className="text-xs text-ink-muted" numberOfLines={1}>
               {item.professional_title || "Candidate"}
             </Text>
             {item.location ? (
               <View className="mt-1 flex-row items-center">
-                <Ionicons name="location-outline" size={11} color="#6B7280" />
-                <Text className="ml-1 text-[11px] text-text-secondary">
+                <Ionicons name="location-outline" size={11} color="#6B7F94" />
+                <Text className="ml-1 text-[11px] text-ink-muted">
                   {item.location}
                 </Text>
               </View>

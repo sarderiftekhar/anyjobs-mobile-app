@@ -54,10 +54,10 @@ function InterviewCard({
     <Card className="mb-3">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 pr-3">
-          <Text className="text-base font-semibold text-text-primary" numberOfLines={1}>
+          <Text className="text-base font-semibold text-ink" numberOfLines={1}>
             {interview.job_title}
           </Text>
-          <Text className="mt-0.5 text-sm text-text-secondary" numberOfLines={1}>
+          <Text className="mt-0.5 text-sm text-ink-muted" numberOfLines={1}>
             {interview.company_name}
           </Text>
         </View>
@@ -70,11 +70,11 @@ function InterviewCard({
       <View className="mt-3 gap-1.5">
         {scheduled && (
           <View className="flex-row items-center">
-            <Ionicons name="calendar-outline" size={15} color="#6B7280" />
-            <Text className="ml-1.5 text-sm text-text-primary">
+            <Ionicons name="calendar-outline" size={15} color="#6B7F94" />
+            <Text className="ml-1.5 text-sm text-ink">
               {format(scheduled, "EEE, MMM d · h:mm a")}
             </Text>
-            <Text className="ml-2 text-xs text-text-secondary">
+            <Text className="ml-2 text-xs text-ink-muted">
               ({formatDistanceToNow(scheduled, { addSuffix: true })})
             </Text>
           </View>
@@ -89,17 +89,17 @@ function InterviewCard({
                   : "location-outline"
             }
             size={15}
-            color="#6B7280"
+            color="#6B7F94"
           />
-          <Text className="ml-1.5 text-sm text-text-secondary">
+          <Text className="ml-1.5 text-sm text-ink-muted">
             {interview.type.replace("-", " ")}
             {interview.duration_minutes ? ` · ${interview.duration_minutes} min` : ""}
           </Text>
         </View>
         {interview.location && (
           <View className="flex-row items-center">
-            <Ionicons name="pin-outline" size={15} color="#6B7280" />
-            <Text className="ml-1.5 text-sm text-text-secondary" numberOfLines={1}>
+            <Ionicons name="pin-outline" size={15} color="#6B7F94" />
+            <Text className="ml-1.5 text-sm text-ink-muted" numberOfLines={1}>
               {interview.location}
             </Text>
           </View>
@@ -177,11 +177,11 @@ export default function InterviewsScreen() {
       <View className="flex-row items-center px-4 py-3">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-gray-100"
+          className="mr-2 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold text-text-primary">Interviews</Text>
+        <Text className="text-xl font-bold text-ink">Interviews</Text>
       </View>
 
       {/* Tabs */}
@@ -195,7 +195,7 @@ export default function InterviewsScreen() {
               onPress={() => setTab(t.key)}
             >
               <Text
-                className={`text-sm font-semibold ${active ? "text-primary" : "text-text-secondary"}`}
+                className={`text-sm font-semibold ${active ? "text-primary" : "text-ink-muted"}`}
               >
                 {t.label}
               </Text>
@@ -233,7 +233,7 @@ export default function InterviewsScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />

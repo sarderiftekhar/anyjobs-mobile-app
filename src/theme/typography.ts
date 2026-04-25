@@ -7,6 +7,7 @@ export const typography = {
     xl: 20,
     "2xl": 24,
     "3xl": 30,
+    "4xl": 36,
   },
   weights: {
     regular: "400" as const,
@@ -17,5 +18,12 @@ export const typography = {
   fontFamily: {
     regular: "Satoshi-Variable",
     italic: "Satoshi-VariableItalic",
+  },
+  lineHeights: {
+    tight: 1.15,
+    snug: 1.25,
+    normal: 1.4,
+    relaxed: 1.5,
+    loose: 1.6,
   },
 } as const;

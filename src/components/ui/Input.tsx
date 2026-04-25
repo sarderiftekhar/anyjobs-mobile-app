@@ -7,10 +7,12 @@ import {
   type TextInputProps,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { colors } from "../../theme/colors";
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
+  hint?: string;
   icon?: keyof typeof Ionicons.glyphMap;
   isPassword?: boolean;
 }
@@ -18,53 +20,74 @@ interface InputProps extends TextInputProps {
 export function Input({
   label,
   error,
+  hint,
   icon,
   isPassword,
   className,
+  onFocus,
+  onBlur,
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [focused, setFocused] = useState(false);
+
+  const borderClass = error
+    ? "border-danger"
+    : focused
+      ? "border-primary"
+      : "border-border";
 
   return (
     <View className={`mb-4 ${className ?? ""}`}>
       {label && (
-        <Text className="mb-1.5 text-sm font-medium text-text-primary">
+        <Text className="mb-1.5 text-sm font-medium text-ink">
           {label}
         </Text>
       )}
       <View
-        className={`flex-row items-center rounded-md border bg-white px-3 py-3 ${
-          error ? "border-danger" : "border-border"
-        }`}
+        className={`flex-row items-center rounded-xl border bg-surface px-4 py-3.5 min-h-[52px] ${borderClass}`}
       >
         {icon && (
           <Ionicons
             name={icon}
             size={20}
-            color="#6B7280"
-            style={{ marginRight: 8 }}
+            color={focused ? colors.primary.DEFAULT : colors.ink.muted}
+            style={{ marginRight: 10 }}
           />
         )}
         <TextInput
-          className="flex-1 text-base text-text-primary"
-          placeholderTextColor="#9CA3AF"
+          className="flex-1 text-base text-ink"
+          placeholderTextColor={colors.ink.muted}
           secureTextEntry={isPassword && !showPassword}
           autoCapitalize="none"
+          onFocus={(e) => {
+            setFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
           {...props}
         />
         {isPassword && (
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
             <Ionicons
               name={showPassword ? "eye-off-outline" : "eye-outline"}
               size={20}
-              color="#6B7280"
+              color={colors.ink.muted}
             />
           </TouchableOpacity>
         )}
       </View>
-      {error && (
-        <Text className="mt-1 text-xs text-danger">{error}</Text>
-      )}
+      {error ? (
+        <Text className="mt-1.5 text-xs text-danger">{error}</Text>
+      ) : hint ? (
+        <Text className="mt-1.5 text-xs text-ink-muted">{hint}</Text>
+      ) : null}
     </View>
   );
 }

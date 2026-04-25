@@ -59,9 +59,9 @@ export default function ResumeAlertsScreen() {
           className="mr-2 h-9 w-9 items-center justify-center rounded-full bg-background"
           onPress={() => router.back()}
         >
-          <Ionicons name="arrow-back" size={20} color="#1F2937" />
+          <Ionicons name="arrow-back" size={20} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="flex-1 text-xl font-bold text-text-primary">
+        <Text className="flex-1 text-xl font-bold text-ink">
           Resume Alerts
         </Text>
         <TouchableOpacity
@@ -100,7 +100,7 @@ export default function ResumeAlertsScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
           renderItem={({ item }) => (
@@ -114,11 +114,11 @@ export default function ResumeAlertsScreen() {
               <Card>
                 <View className="flex-row items-start">
                   <View className="flex-1">
-                    <Text className="text-base font-semibold text-text-primary">
+                    <Text className="text-base font-semibold text-ink">
                       {item.alert_name}
                     </Text>
                     {item.job_title ? (
-                      <Text className="text-sm text-text-secondary">
+                      <Text className="text-sm text-ink-muted">
                         {item.job_title}
                       </Text>
                     ) : null}
@@ -141,7 +141,7 @@ export default function ResumeAlertsScreen() {
                   <Switch
                     value={item.is_active}
                     onValueChange={() => toggleMutation.mutate(item)}
-                    trackColor={{ false: "#E5E7EB", true: "#1E3A8A" }}
+                    trackColor={{ false: "#E5E7EB", true: "#0064EC" }}
                     thumbColor="#FFFFFF"
                   />
                 </View>
@@ -155,7 +155,7 @@ export default function ResumeAlertsScreen() {
                       )
                     }
                   >
-                    <Ionicons name="people-outline" size={14} color="#1E3A8A" />
+                    <Ionicons name="people-outline" size={14} color="#0064EC" />
                     <Text className="ml-1 text-xs font-semibold text-primary">
                       {item.matches_count ?? 0} matches
                     </Text>
@@ -170,7 +170,7 @@ export default function ResumeAlertsScreen() {
                       <Ionicons
                         name="create-outline"
                         size={18}
-                        color="#1E3A8A"
+                        color="#0064EC"
                       />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => confirmDelete(item)}>
@@ -190,7 +190,7 @@ export default function ResumeAlertsScreen() {
               title="Create New Alert"
               variant="outline"
               className="mt-2"
-              icon={<Ionicons name="add" size={16} color="#1E3A8A" />}
+              icon={<Ionicons name="add" size={16} color="#0064EC" />}
               onPress={() => router.push("/(employer)/resume-alerts/create")}
             />
           }

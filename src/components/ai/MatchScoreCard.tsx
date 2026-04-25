@@ -38,8 +38,8 @@ export function MatchScoreCard({ jobId }: { jobId: number }) {
     return (
       <Card className="mt-4 bg-primary-light/20">
         <View className="flex-row items-center">
-          <ActivityIndicator size="small" color="#1E3A8A" />
-          <Text className="ml-2 text-sm text-text-secondary">
+          <ActivityIndicator size="small" color="#0064EC" />
+          <Text className="ml-2 text-sm text-ink-muted">
             Calculating match score...
           </Text>
         </View>
@@ -55,8 +55,8 @@ export function MatchScoreCard({ jobId }: { jobId: number }) {
   return (
     <Card className="mt-4">
       <View className="flex-row items-center">
-        <Ionicons name="sparkles" size={16} color="#1E3A8A" />
-        <Text className="ml-1.5 text-base font-semibold text-text-primary">
+        <Ionicons name="sparkles" size={16} color="#0064EC" />
+        <Text className="ml-1.5 text-base font-semibold text-ink">
           AI Match Score
         </Text>
       </View>
@@ -74,11 +74,11 @@ export function MatchScoreCard({ jobId }: { jobId: number }) {
         </View>
       </View>
       {data.reasoning && (
-        <Text className="mt-3 text-sm text-text-secondary">{data.reasoning}</Text>
+        <Text className="mt-3 text-sm text-ink-muted">{data.reasoning}</Text>
       )}
       {data.missing_skills && data.missing_skills.length > 0 && (
         <View className="mt-3">
-          <Text className="text-xs font-medium text-text-primary">Skills to add</Text>
+          <Text className="text-xs font-medium text-ink">Skills to add</Text>
           <View className="mt-1.5 flex-row flex-wrap gap-1.5">
             {data.missing_skills.slice(0, 6).map((s) => (
               <Badge key={s} text={s} variant="warning" />

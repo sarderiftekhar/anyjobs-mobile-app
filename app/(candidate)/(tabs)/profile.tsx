@@ -55,9 +55,9 @@ function ExperienceModal({
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <View className="flex-1 bg-white p-6">
         <View className="flex-row items-center justify-between">
-          <Text className="text-xl font-bold text-text-primary">Add Experience</Text>
+          <Text className="text-xl font-bold text-ink">Add Experience</Text>
           <TouchableOpacity onPress={onClose}>
-            <Ionicons name="close" size={24} color="#1F2937" />
+            <Ionicons name="close" size={24} color="#1A2230" />
           </TouchableOpacity>
         </View>
 
@@ -68,9 +68,9 @@ function ExperienceModal({
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <View className="mb-4">
-                <Text className="mb-1.5 text-sm font-medium text-text-primary">Job Title *</Text>
+                <Text className="mb-1.5 text-sm font-medium text-ink">Job Title *</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="e.g. Frontend Developer"
                   value={value}
                   onChangeText={onChange}
@@ -84,9 +84,9 @@ function ExperienceModal({
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <View className="mb-4">
-                <Text className="mb-1.5 text-sm font-medium text-text-primary">Company *</Text>
+                <Text className="mb-1.5 text-sm font-medium text-ink">Company *</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="e.g. TechCorp"
                   value={value}
                   onChangeText={onChange}
@@ -99,9 +99,9 @@ function ExperienceModal({
             name="location"
             render={({ field: { onChange, value } }) => (
               <View className="mb-4">
-                <Text className="mb-1.5 text-sm font-medium text-text-primary">Location</Text>
+                <Text className="mb-1.5 text-sm font-medium text-ink">Location</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="e.g. London, UK"
                   value={value}
                   onChangeText={onChange}
@@ -115,9 +115,9 @@ function ExperienceModal({
             rules={{ required: true }}
             render={({ field: { onChange, value } }) => (
               <View className="mb-4">
-                <Text className="mb-1.5 text-sm font-medium text-text-primary">Start Date *</Text>
+                <Text className="mb-1.5 text-sm font-medium text-ink">Start Date *</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="YYYY-MM-DD"
                   value={value}
                   onChangeText={onChange}
@@ -130,9 +130,9 @@ function ExperienceModal({
             name="description"
             render={({ field: { onChange, value } }) => (
               <View className="mb-4">
-                <Text className="mb-1.5 text-sm font-medium text-text-primary">Description</Text>
+                <Text className="mb-1.5 text-sm font-medium text-ink">Description</Text>
                 <TextInput
-                  className="min-h-[100px] rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="min-h-[100px] rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="Describe your responsibilities..."
                   value={value}
                   onChangeText={onChange}
@@ -197,72 +197,85 @@ export default function ProfileScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerStyle={{
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom + 32,
-      }}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}
+      showsVerticalScrollIndicator={false}
     >
-      {/* Header bar */}
-      <View className="flex-row items-center justify-end px-4 pt-4">
-        <TouchableOpacity
-          className="mr-3"
-          onPress={() => router.push("/(candidate)/settings")}
-        >
-          <Ionicons name="settings-outline" size={24} color="#1F2937" />
-        </TouchableOpacity>
-      </View>
+      {/* Brand-tinted hero — avatar + identity */}
+      <View
+        className="bg-primary-light px-4 pb-12"
+        style={{ paddingTop: insets.top + 12 }}
+      >
+        <View className="flex-row items-center justify-end">
+          <TouchableOpacity
+            className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
+            onPress={() => router.push("/(candidate)/settings")}
+          >
+            <Ionicons name="settings-outline" size={20} color="#1A2230" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Profile header */}
-      <View className="items-center px-4 pb-6">
-        <Avatar name={user?.name} size="xl" uri={user?.profile?.avatar_url} />
-        <Text className="mt-3 text-xl font-bold text-text-primary">
-          {user?.name}
-        </Text>
-        <Text className="text-sm text-text-secondary">
-          {user?.profile?.title ?? "Add your professional title"}
-        </Text>
-        {user?.profile?.location && (
-          <View className="mt-1 flex-row items-center">
-            <Ionicons name="location-outline" size={14} color="#6B7280" />
-            <Text className="ml-1 text-sm text-text-secondary">
-              {user.profile.location}
-            </Text>
+        <View className="mt-2 items-center">
+          <View
+            className="rounded-full bg-white p-1.5"
+            style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
+          >
+            <Avatar name={user?.name} size="xl" uri={user?.profile?.avatar_url} />
           </View>
-        )}
+          <Text className="mt-3 text-xl font-bold text-ink">{user?.name}</Text>
+          <Text className="mt-0.5 text-sm text-ink-soft">
+            {user?.profile?.title ?? "Add your professional title"}
+          </Text>
+          {user?.profile?.location && (
+            <View className="mt-1.5 flex-row items-center">
+              <Ionicons name="location-outline" size={14} color="#3A4F64" />
+              <Text className="ml-1 text-sm text-ink-soft">
+                {user.profile.location}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
 
-      {/* Stats row */}
-      <View className="mx-4 flex-row justify-around rounded-md bg-white p-4 shadow-sm">
-        <View className="items-center">
-          <Text className="text-lg font-bold text-primary">0</Text>
-          <Text className="text-xs text-text-secondary">Applications</Text>
+      {/* Stats row — overlaps the hero edge */}
+      <View
+        className="-mt-7 mx-4 flex-row rounded-2xl border border-border bg-surface p-4"
+        style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+      >
+        <View className="flex-1 items-center">
+          <Text className="text-2xl font-bold text-primary">0</Text>
+          <Text className="mt-0.5 text-xs font-medium text-ink-muted">Applications</Text>
         </View>
-        <View className="items-center">
-          <Text className="text-lg font-bold text-primary">0</Text>
-          <Text className="text-xs text-text-secondary">Saved</Text>
+        <View className="mx-2 w-px bg-border" />
+        <View className="flex-1 items-center">
+          <Text className="text-2xl font-bold text-primary">0</Text>
+          <Text className="mt-0.5 text-xs font-medium text-ink-muted">Saved</Text>
         </View>
-        <View className="items-center">
-          <Text className="text-lg font-bold text-primary">0</Text>
-          <Text className="text-xs text-text-secondary">Interviews</Text>
+        <View className="mx-2 w-px bg-border" />
+        <View className="flex-1 items-center">
+          <Text className="text-2xl font-bold text-primary">0</Text>
+          <Text className="mt-0.5 text-xs font-medium text-ink-muted">Interviews</Text>
         </View>
       </View>
 
       {/* Profile strength */}
-      <Card className="mx-4 mt-4">
+      <Card className="mx-4 mt-4" delay={50}>
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm font-semibold text-text-primary">
-            Profile Strength
-          </Text>
-          <Text className="text-sm font-bold text-primary">{strengthPercent}%</Text>
+          <View className="flex-row items-center">
+            <Ionicons name="trending-up" size={18} color="#0064EC" />
+            <Text className="ml-2 text-sm font-semibold text-ink">
+              Profile Strength
+            </Text>
+          </View>
+          <Text className="text-base font-bold text-primary">{strengthPercent}%</Text>
         </View>
-        <View className="mt-2 h-2 rounded-full bg-gray-200">
+        <View className="mt-3 h-2 rounded-full bg-primary/10 overflow-hidden">
           <View
             className="h-2 rounded-full bg-primary"
             style={{ width: `${strengthPercent}%` }}
           />
         </View>
         {strengthPercent < 100 && (
-          <Text className="mt-1.5 text-xs text-text-secondary">
+          <Text className="mt-2.5 text-xs text-ink-muted">
             {!user?.profile?.title && "Add a professional title. "}
             {(user?.experiences?.length ?? 0) === 0 && "Add work experience. "}
             {(user?.skills?.length ?? 0) === 0 && "Add your skills. "}
@@ -271,11 +284,11 @@ export default function ProfileScreen() {
       </Card>
 
       {/* Experience section */}
-      <Card className="mx-4 mt-4">
+      <Card className="mx-4 mt-4" delay={120}>
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Experience</Text>
+          <Text className="text-base font-semibold text-ink">Experience</Text>
           <TouchableOpacity onPress={() => setShowExpModal(true)}>
-            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {user?.experiences && user.experiences.length > 0 ? (
@@ -283,14 +296,14 @@ export default function ProfileScreen() {
             <View key={exp.id} className="mt-3 border-t border-gray-100 pt-3">
               <View className="flex-row items-start justify-between">
                 <View className="flex-1">
-                  <Text className="text-sm font-semibold text-text-primary">
+                  <Text className="text-sm font-semibold text-ink">
                     {exp.title}
                   </Text>
-                  <Text className="text-xs text-text-secondary">
+                  <Text className="text-xs text-ink-muted">
                     {exp.company}
                     {exp.location ? ` · ${exp.location}` : ""}
                   </Text>
-                  <Text className="text-xs text-text-secondary">
+                  <Text className="text-xs text-ink-muted">
                     {exp.start_date} — {exp.is_current ? "Present" : exp.end_date}
                   </Text>
                 </View>
@@ -299,51 +312,51 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
               </View>
               {exp.description && (
-                <Text className="mt-1 text-xs text-text-secondary" numberOfLines={2}>
+                <Text className="mt-1 text-xs text-ink-muted" numberOfLines={2}>
                   {exp.description}
                 </Text>
               )}
             </View>
           ))
         ) : (
-          <Text className="mt-2 text-sm text-text-secondary">
+          <Text className="mt-2 text-sm text-ink-muted">
             Add your work experience to stand out to employers.
           </Text>
         )}
       </Card>
 
       {/* Education section */}
-      <Card className="mx-4 mt-3">
+      <Card className="mx-4 mt-3" delay={180}>
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Education</Text>
+          <Text className="text-base font-semibold text-ink">Education</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {user?.educations && user.educations.length > 0 ? (
           user.educations.map((edu) => (
             <View key={edu.id} className="mt-3 border-t border-gray-100 pt-3">
-              <Text className="text-sm font-semibold text-text-primary">
+              <Text className="text-sm font-semibold text-ink">
                 {edu.degree} {edu.field ? `in ${edu.field}` : ""}
               </Text>
-              <Text className="text-xs text-text-secondary">
+              <Text className="text-xs text-ink-muted">
                 {edu.school} · {edu.start_date} — {edu.end_date ?? "Present"}
               </Text>
             </View>
           ))
         ) : (
-          <Text className="mt-2 text-sm text-text-secondary">
+          <Text className="mt-2 text-sm text-ink-muted">
             Add your education background.
           </Text>
         )}
       </Card>
 
       {/* Skills section */}
-      <Card className="mx-4 mt-3">
+      <Card className="mx-4 mt-3" delay={240}>
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Skills</Text>
+          <Text className="text-base font-semibold text-ink">Skills</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {user?.skills && user.skills.length > 0 ? (
@@ -353,21 +366,21 @@ export default function ProfileScreen() {
             ))}
           </View>
         ) : (
-          <Text className="mt-2 text-sm text-text-secondary">
+          <Text className="mt-2 text-sm text-ink-muted">
             Add your skills to match with relevant jobs.
           </Text>
         )}
       </Card>
 
       {/* Bio section */}
-      <Card className="mx-4 mt-3">
+      <Card className="mx-4 mt-3" delay={300}>
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">About</Text>
+          <Text className="text-base font-semibold text-ink">About</Text>
           <TouchableOpacity>
-            <Ionicons name="create-outline" size={20} color="#1E3A8A" />
+            <Ionicons name="create-outline" size={20} color="#0064EC" />
           </TouchableOpacity>
         </View>
-        <Text className="mt-2 text-sm text-text-secondary">
+        <Text className="mt-2 text-sm text-ink-muted">
           {user?.profile?.bio ?? "Tell employers about yourself, your career goals, and what makes you unique."}
         </Text>
       </Card>
@@ -378,7 +391,7 @@ export default function ProfileScreen() {
           title="Sign Out"
           variant="outline"
           onPress={logout}
-          icon={<Ionicons name="log-out-outline" size={18} color="#1E3A8A" />}
+          icon={<Ionicons name="log-out-outline" size={18} color="#0064EC" />}
         />
       </View>
 

@@ -16,9 +16,9 @@ export default function ScheduleInterviewScreen() {
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">
+        <Text className="ml-4 text-lg font-semibold text-ink">
           Schedule Interview
         </Text>
       </View>
@@ -26,7 +26,7 @@ export default function ScheduleInterviewScreen() {
       {!applicationIdNum ? (
         <View className="flex-1 items-center justify-center px-6">
           <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text className="mt-3 text-center text-sm text-text-secondary">
+          <Text className="mt-3 text-center text-sm text-ink-muted">
             Open this screen from an applicant to schedule an interview.
           </Text>
         </View>

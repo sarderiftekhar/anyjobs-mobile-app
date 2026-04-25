@@ -22,23 +22,23 @@ export default function EmployerProfileScreen() {
     >
       <View className="flex-row items-center justify-end px-4 pt-4">
         <TouchableOpacity onPress={() => router.push("/(employer)/settings")}>
-          <Ionicons name="settings-outline" size={24} color="#1F2937" />
+          <Ionicons name="settings-outline" size={24} color="#1A2230" />
         </TouchableOpacity>
       </View>
 
       {/* Company header */}
       <View className="items-center px-4 pb-6">
         <Avatar name={company?.name ?? user?.name} size="xl" uri={company?.logo_url} />
-        <Text className="mt-3 text-xl font-bold text-text-primary">
+        <Text className="mt-3 text-xl font-bold text-ink">
           {company?.name ?? user?.name}
         </Text>
-        <Text className="text-sm text-text-secondary">
+        <Text className="text-sm text-ink-muted">
           {company?.industry ?? "Complete your company profile"}
         </Text>
         {company?.location && (
           <View className="mt-1 flex-row items-center">
-            <Ionicons name="location-outline" size={14} color="#6B7280" />
-            <Text className="ml-1 text-sm text-text-secondary">{company.location}</Text>
+            <Ionicons name="location-outline" size={14} color="#6B7F94" />
+            <Text className="ml-1 text-sm text-ink-muted">{company.location}</Text>
           </View>
         )}
       </View>
@@ -46,9 +46,9 @@ export default function EmployerProfileScreen() {
       {/* Company info */}
       <Card className="mx-4">
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Company Info</Text>
+          <Text className="text-base font-semibold text-ink">Company Info</Text>
           <TouchableOpacity>
-            <Ionicons name="create-outline" size={20} color="#1E3A8A" />
+            <Ionicons name="create-outline" size={20} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {isLoading ? (
@@ -56,26 +56,26 @@ export default function EmployerProfileScreen() {
         ) : (
           <View className="mt-3 gap-2">
             {company?.description ? (
-              <Text className="text-sm text-text-secondary">{company.description}</Text>
+              <Text className="text-sm text-ink-muted">{company.description}</Text>
             ) : (
-              <Text className="text-sm italic text-text-secondary">Add a company description</Text>
+              <Text className="text-sm italic text-ink-muted">Add a company description</Text>
             )}
             <View className="mt-2 flex-row flex-wrap gap-3">
               {company?.size && (
                 <View className="flex-row items-center">
-                  <Ionicons name="people-outline" size={14} color="#6B7280" />
-                  <Text className="ml-1 text-xs text-text-secondary">{company.size}</Text>
+                  <Ionicons name="people-outline" size={14} color="#6B7F94" />
+                  <Text className="ml-1 text-xs text-ink-muted">{company.size}</Text>
                 </View>
               )}
               {company?.founded_year && (
                 <View className="flex-row items-center">
-                  <Ionicons name="calendar-outline" size={14} color="#6B7280" />
-                  <Text className="ml-1 text-xs text-text-secondary">Founded {company.founded_year}</Text>
+                  <Ionicons name="calendar-outline" size={14} color="#6B7F94" />
+                  <Text className="ml-1 text-xs text-ink-muted">Founded {company.founded_year}</Text>
                 </View>
               )}
               {company?.website && (
                 <View className="flex-row items-center">
-                  <Ionicons name="globe-outline" size={14} color="#6B7280" />
+                  <Ionicons name="globe-outline" size={14} color="#6B7F94" />
                   <Text className="ml-1 text-xs text-primary">{company.website}</Text>
                 </View>
               )}
@@ -87,9 +87,9 @@ export default function EmployerProfileScreen() {
       {/* Benefits */}
       <Card className="mx-4 mt-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Benefits</Text>
+          <Text className="text-base font-semibold text-ink">Benefits</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {company?.benefits && company.benefits.length > 0 ? (
@@ -99,7 +99,7 @@ export default function EmployerProfileScreen() {
             ))}
           </View>
         ) : (
-          <Text className="mt-2 text-sm text-text-secondary">
+          <Text className="mt-2 text-sm text-ink-muted">
             Add company benefits to attract candidates.
           </Text>
         )}
@@ -108,9 +108,9 @@ export default function EmployerProfileScreen() {
       {/* Values */}
       <Card className="mx-4 mt-3">
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-semibold text-text-primary">Company Values</Text>
+          <Text className="text-base font-semibold text-ink">Company Values</Text>
           <TouchableOpacity>
-            <Ionicons name="add-circle-outline" size={22} color="#1E3A8A" />
+            <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
           </TouchableOpacity>
         </View>
         {company?.values && company.values.length > 0 ? (
@@ -120,7 +120,7 @@ export default function EmployerProfileScreen() {
             ))}
           </View>
         ) : (
-          <Text className="mt-2 text-sm text-text-secondary">
+          <Text className="mt-2 text-sm text-ink-muted">
             Share what your company stands for.
           </Text>
         )}
@@ -132,7 +132,7 @@ export default function EmployerProfileScreen() {
           title="Sign Out"
           variant="outline"
           onPress={logout}
-          icon={<Ionicons name="log-out-outline" size={18} color="#1E3A8A" />}
+          icon={<Ionicons name="log-out-outline" size={18} color="#0064EC" />}
         />
       </View>
     </ScrollView>

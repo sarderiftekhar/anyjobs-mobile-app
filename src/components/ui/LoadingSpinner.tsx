@@ -1,4 +1,5 @@
 import { View, ActivityIndicator, Text } from "react-native";
+import { colors } from "../../theme/colors";
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -10,9 +11,9 @@ export function LoadingSpinner({ message, fullScreen = false }: LoadingSpinnerPr
     <View
       className={`items-center justify-center ${fullScreen ? "flex-1" : "py-8"}`}
     >
-      <ActivityIndicator size="large" color="#1E3A8A" />
+      <ActivityIndicator size="large" color={colors.primary.DEFAULT} />
       {message && (
-        <Text className="mt-3 text-sm text-text-secondary">{message}</Text>
+        <Text className="mt-3 text-sm text-ink-muted">{message}</Text>
       )}
     </View>
   );

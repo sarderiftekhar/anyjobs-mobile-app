@@ -21,8 +21,8 @@ function SettingsRow({
       onPress={onPress}
     >
       <View className="flex-row items-center">
-        <Ionicons name={icon} size={20} color="#6B7280" />
-        <Text className="ml-3 text-base text-text-primary">{title}</Text>
+        <Ionicons name={icon} size={20} color="#6B7F94" />
+        <Text className="ml-3 text-base text-ink">{title}</Text>
       </View>
       <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
     </TouchableOpacity>
@@ -43,12 +43,12 @@ export default function SettingsScreen() {
     >
       <View className="flex-row items-center px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">Settings</Text>
+        <Text className="ml-4 text-lg font-semibold text-ink">Settings</Text>
       </View>
 
-      <Text className="px-4 pb-2 pt-4 text-xs font-semibold uppercase text-text-secondary">
+      <Text className="px-4 pb-2 pt-4 text-xs font-semibold uppercase text-ink-muted">
         Account
       </Text>
       <Card className="mx-4">
@@ -57,7 +57,7 @@ export default function SettingsScreen() {
         <SettingsRow icon="call-outline" title="Phone Number" />
       </Card>
 
-      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-text-secondary">
+      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">
         Notifications
       </Text>
       <Card className="mx-4">
@@ -65,7 +65,7 @@ export default function SettingsScreen() {
         <SettingsRow icon="mail-outline" title="Email Alerts" />
       </Card>
 
-      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-text-secondary">
+      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">
         Support
       </Text>
       <Card className="mx-4">
@@ -79,7 +79,7 @@ export default function SettingsScreen() {
         <Button title="Sign Out" variant="danger" onPress={logout} />
       </View>
 
-      <Text className="mt-4 text-center text-xs text-text-secondary">
+      <Text className="mt-4 text-center text-xs text-ink-muted">
         App Version {config.APP_VERSION}
       </Text>
     </ScrollView>

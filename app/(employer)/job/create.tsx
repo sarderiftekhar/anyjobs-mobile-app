@@ -71,9 +71,9 @@ export default function CreateJobScreen() {
       {/* Header */}
       <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="close" size={24} color="#1F2937" />
+          <Ionicons name="close" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-text-primary">Post a Job</Text>
+        <Text className="text-lg font-semibold text-ink">Post a Job</Text>
         <TouchableOpacity onPress={() => handlePublish("draft")}>
           <Text className="text-sm font-medium text-primary">Save Draft</Text>
         </TouchableOpacity>
@@ -87,28 +87,28 @@ export default function CreateJobScreen() {
           </View>
         ))}
       </View>
-      <Text className="px-4 pt-2 text-xs text-text-secondary">
+      <Text className="px-4 pt-2 text-xs text-ink-muted">
         Step {currentIndex + 1} of {STEPS.length}: {STEP_TITLES[step]}
       </Text>
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}>
         {step === "title" && (
           <>
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Job Title *</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Job Title *</Text>
             <TextInput
-              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-text-primary"
+              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-ink"
               placeholder="e.g. Senior React Developer"
               value={form.title}
               onChangeText={(t) => updateForm({ title: t })}
             />
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Location *</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Location *</Text>
             <TextInput
-              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-text-primary"
+              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-ink"
               placeholder="e.g. London, UK"
               value={form.location}
               onChangeText={(t) => updateForm({ location: t })}
             />
-            <Text className="mb-2 text-sm font-medium text-text-primary">Work Arrangement</Text>
+            <Text className="mb-2 text-sm font-medium text-ink">Work Arrangement</Text>
             <View className="mb-4 flex-row flex-wrap gap-2">
               {WORK_ARRANGEMENTS.map((wa) => (
                 <TouchableOpacity
@@ -116,13 +116,13 @@ export default function CreateJobScreen() {
                   className={`rounded-full border px-4 py-2 ${form.work_arrangement === wa ? "border-primary bg-primary" : "border-border"}`}
                   onPress={() => updateForm({ work_arrangement: wa })}
                 >
-                  <Text className={`text-sm font-medium capitalize ${form.work_arrangement === wa ? "text-white" : "text-text-secondary"}`}>
+                  <Text className={`text-sm font-medium capitalize ${form.work_arrangement === wa ? "text-white" : "text-ink-muted"}`}>
                     {wa}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <Text className="mb-2 text-sm font-medium text-text-primary">Job Type</Text>
+            <Text className="mb-2 text-sm font-medium text-ink">Job Type</Text>
             <View className="flex-row flex-wrap gap-2">
               {JOB_TYPES.map((jt) => (
                 <TouchableOpacity
@@ -130,7 +130,7 @@ export default function CreateJobScreen() {
                   className={`rounded-full border px-4 py-2 ${(form.job_type ?? []).includes(jt) ? "border-primary bg-primary" : "border-border"}`}
                   onPress={() => toggleArrayItem("job_type", jt)}
                 >
-                  <Text className={`text-sm font-medium capitalize ${(form.job_type ?? []).includes(jt) ? "text-white" : "text-text-secondary"}`}>
+                  <Text className={`text-sm font-medium capitalize ${(form.job_type ?? []).includes(jt) ? "text-white" : "text-ink-muted"}`}>
                     {jt.replace("-", " ")}
                   </Text>
                 </TouchableOpacity>
@@ -141,9 +141,9 @@ export default function CreateJobScreen() {
 
         {step === "details" && (
           <>
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Job Description *</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Job Description *</Text>
             <TextInput
-              className="mb-4 min-h-[180px] rounded-md border border-border px-3 py-3 text-sm text-text-primary"
+              className="mb-4 min-h-[180px] rounded-md border border-border px-3 py-3 text-sm text-ink"
               placeholder="Describe the role, team, and what the candidate will do..."
               multiline
               textAlignVertical="top"
@@ -154,7 +154,7 @@ export default function CreateJobScreen() {
               className="mb-4 flex-row items-center"
               onPress={() => setAiOpen(true)}
             >
-              <Ionicons name="sparkles" size={16} color="#1E3A8A" />
+              <Ionicons name="sparkles" size={16} color="#0064EC" />
               <Text className="ml-1.5 text-sm font-medium text-primary">Generate with AI</Text>
             </TouchableOpacity>
 
@@ -174,7 +174,7 @@ export default function CreateJobScreen() {
               }}
             />
 
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Experience Level</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Experience Level</Text>
             <View className="mb-4 flex-row flex-wrap gap-2">
               {["Entry Level", "Mid Level", "Senior", "Lead", "Executive"].map((level) => (
                 <TouchableOpacity
@@ -182,7 +182,7 @@ export default function CreateJobScreen() {
                   className={`rounded-full border px-3 py-1.5 ${form.experience_level === level ? "border-primary bg-primary" : "border-border"}`}
                   onPress={() => updateForm({ experience_level: form.experience_level === level ? undefined : level })}
                 >
-                  <Text className={`text-xs font-medium ${form.experience_level === level ? "text-white" : "text-text-secondary"}`}>
+                  <Text className={`text-xs font-medium ${form.experience_level === level ? "text-white" : "text-ink-muted"}`}>
                     {level}
                   </Text>
                 </TouchableOpacity>
@@ -193,12 +193,12 @@ export default function CreateJobScreen() {
 
         {step === "compensation" && (
           <>
-            <Text className="mb-2 text-sm font-medium text-text-primary">Salary Range</Text>
+            <Text className="mb-2 text-sm font-medium text-ink">Salary Range</Text>
             <View className="mb-4 flex-row gap-3">
               <View className="flex-1">
-                <Text className="mb-1 text-xs text-text-secondary">Min</Text>
+                <Text className="mb-1 text-xs text-ink-muted">Min</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="30000"
                   keyboardType="numeric"
                   value={form.salary_min?.toString() ?? ""}
@@ -206,9 +206,9 @@ export default function CreateJobScreen() {
                 />
               </View>
               <View className="flex-1">
-                <Text className="mb-1 text-xs text-text-secondary">Max</Text>
+                <Text className="mb-1 text-xs text-ink-muted">Max</Text>
                 <TextInput
-                  className="rounded-md border border-border px-3 py-3 text-base text-text-primary"
+                  className="rounded-md border border-border px-3 py-3 text-base text-ink"
                   placeholder="60000"
                   keyboardType="numeric"
                   value={form.salary_max?.toString() ?? ""}
@@ -217,9 +217,9 @@ export default function CreateJobScreen() {
               </View>
             </View>
 
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Benefits</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Benefits</Text>
             <TextInput
-              className="mb-2 rounded-md border border-border px-3 py-3 text-sm text-text-primary"
+              className="mb-2 rounded-md border border-border px-3 py-3 text-sm text-ink"
               placeholder="Add a benefit and press enter"
               onSubmitEditing={(e) => {
                 const val = e.nativeEvent.text.trim();
@@ -241,9 +241,9 @@ export default function CreateJobScreen() {
 
         {step === "settings" && (
           <>
-            <Text className="mb-1.5 text-sm font-medium text-text-primary">Application Deadline</Text>
+            <Text className="mb-1.5 text-sm font-medium text-ink">Application Deadline</Text>
             <TextInput
-              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-text-primary"
+              className="mb-4 rounded-md border border-border px-3 py-3 text-base text-ink"
               placeholder="YYYY-MM-DD (optional)"
               value={form.application_deadline ?? ""}
               onChangeText={(t) => updateForm({ application_deadline: t || undefined })}
@@ -254,10 +254,10 @@ export default function CreateJobScreen() {
               onPress={() => updateForm({ is_featured: !form.is_featured })}
             >
               <View>
-                <Text className="text-sm font-medium text-text-primary">Featured Job</Text>
-                <Text className="text-xs text-text-secondary">Highlight at the top of search results</Text>
+                <Text className="text-sm font-medium text-ink">Featured Job</Text>
+                <Text className="text-xs text-ink-muted">Highlight at the top of search results</Text>
               </View>
-              <Ionicons name={form.is_featured ? "checkbox" : "square-outline"} size={24} color="#1E3A8A" />
+              <Ionicons name={form.is_featured ? "checkbox" : "square-outline"} size={24} color="#0064EC" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -265,10 +265,10 @@ export default function CreateJobScreen() {
               onPress={() => updateForm({ is_urgent: !form.is_urgent })}
             >
               <View>
-                <Text className="text-sm font-medium text-text-primary">Urgent Hiring</Text>
-                <Text className="text-xs text-text-secondary">Mark as urgent to attract more applicants</Text>
+                <Text className="text-sm font-medium text-ink">Urgent Hiring</Text>
+                <Text className="text-xs text-ink-muted">Mark as urgent to attract more applicants</Text>
               </View>
-              <Ionicons name={form.is_urgent ? "checkbox" : "square-outline"} size={24} color="#1E3A8A" />
+              <Ionicons name={form.is_urgent ? "checkbox" : "square-outline"} size={24} color="#0064EC" />
             </TouchableOpacity>
           </>
         )}
@@ -276,23 +276,23 @@ export default function CreateJobScreen() {
         {step === "review" && (
           <>
             <View className="rounded-md border border-border p-4">
-              <Text className="text-xl font-bold text-text-primary">{form.title || "Untitled"}</Text>
-              <Text className="mt-1 text-sm text-text-secondary">{form.location} · {form.work_arrangement}</Text>
+              <Text className="text-xl font-bold text-ink">{form.title || "Untitled"}</Text>
+              <Text className="mt-1 text-sm text-ink-muted">{form.location} · {form.work_arrangement}</Text>
               {form.job_type && form.job_type.length > 0 && (
                 <View className="mt-2 flex-row flex-wrap gap-1">
                   {form.job_type.map((t) => <Badge key={t} text={t.replace("-", " ")} variant="primary" />)}
                 </View>
               )}
               {form.salary_min && form.salary_max && (
-                <Text className="mt-2 text-sm font-medium text-text-primary">
+                <Text className="mt-2 text-sm font-medium text-ink">
                   £{form.salary_min.toLocaleString()} - £{form.salary_max.toLocaleString()}/yr
                 </Text>
               )}
               {form.experience_level && (
-                <Text className="mt-1 text-sm text-text-secondary">{form.experience_level}</Text>
+                <Text className="mt-1 text-sm text-ink-muted">{form.experience_level}</Text>
               )}
               {form.description && (
-                <Text className="mt-3 text-sm text-text-secondary" numberOfLines={5}>{form.description}</Text>
+                <Text className="mt-3 text-sm text-ink-muted" numberOfLines={5}>{form.description}</Text>
               )}
               {form.is_featured && <Badge text="Featured" variant="warning" />}
               {form.is_urgent && <Badge text="Urgent" variant="danger" />}

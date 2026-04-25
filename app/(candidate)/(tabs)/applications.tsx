@@ -50,11 +50,11 @@ export default function ApplicationsScreen() {
       {/* Header */}
       <View className="px-4 pb-2 pt-4">
         <View className="flex-row items-center justify-between">
-          <Text className="text-2xl font-bold text-text-primary">
+          <Text className="text-2xl font-bold text-ink">
             My Applications
           </Text>
           <TouchableOpacity>
-            <Ionicons name="search-outline" size={22} color="#1F2937" />
+            <Ionicons name="search-outline" size={22} color="#1A2230" />
           </TouchableOpacity>
         </View>
       </View>
@@ -75,7 +75,7 @@ export default function ApplicationsScreen() {
             >
               <Text
                 className={`text-sm font-medium ${
-                  activeTab === item.key ? "text-white" : "text-text-secondary"
+                  activeTab === item.key ? "text-white" : "text-ink-muted"
                 }`}
               >
                 {item.label}
@@ -104,7 +104,9 @@ export default function ApplicationsScreen() {
       ) : (
         <FlatList
           data={applications}
-          renderItem={({ item }) => <ApplicationCard application={item} />}
+          renderItem={({ item, index }) => (
+            <ApplicationCard application={item} index={index} />
+          )}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}
           showsVerticalScrollIndicator={false}
@@ -112,14 +114,14 @@ export default function ApplicationsScreen() {
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#1E3A8A" className="py-4" />
+              <ActivityIndicator size="small" color="#0064EC" className="py-4" />
             ) : null
           }
           refreshControl={
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />

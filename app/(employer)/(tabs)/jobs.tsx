@@ -38,16 +38,16 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
 
   return (
     <Card className="mb-3">
-      <Text className="text-base font-semibold text-text-primary" numberOfLines={1}>
+      <Text className="text-base font-semibold text-ink" numberOfLines={1}>
         {job.title}
       </Text>
-      <Text className="text-sm text-text-secondary">
+      <Text className="text-sm text-ink-muted">
         {job.location} · {job.work_arrangement}
       </Text>
 
       <View className="mt-2 flex-row items-center gap-2">
         <Badge text={job.status} variant={STATUS_BADGE[job.status] ?? "gray"} />
-        <Text className="text-xs text-text-secondary">
+        <Text className="text-xs text-ink-muted">
           Posted {new Date(job.posted_at).toLocaleDateString()}
         </Text>
       </View>
@@ -55,16 +55,16 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
       {/* Analytics */}
       <View className="mt-3 flex-row gap-4">
         <View className="flex-row items-center">
-          <Ionicons name="eye-outline" size={14} color="#6B7280" />
-          <Text className="ml-1 text-xs text-text-secondary">{job.views_count} views</Text>
+          <Ionicons name="eye-outline" size={14} color="#6B7F94" />
+          <Text className="ml-1 text-xs text-ink-muted">{job.views_count} views</Text>
         </View>
         <View className="flex-row items-center">
-          <Ionicons name="document-text-outline" size={14} color="#6B7280" />
-          <Text className="ml-1 text-xs text-text-secondary">{job.applications_count} applicants</Text>
+          <Ionicons name="document-text-outline" size={14} color="#6B7F94" />
+          <Text className="ml-1 text-xs text-ink-muted">{job.applications_count} applicants</Text>
         </View>
         <View className="flex-row items-center">
-          <Ionicons name="star-outline" size={14} color="#6B7280" />
-          <Text className="ml-1 text-xs text-text-secondary">{job.shortlisted_count} shortlisted</Text>
+          <Ionicons name="star-outline" size={14} color="#6B7F94" />
+          <Text className="ml-1 text-xs text-ink-muted">{job.shortlisted_count} shortlisted</Text>
         </View>
       </View>
 
@@ -101,7 +101,7 @@ export default function EmployerJobsScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center justify-between px-4 pb-2 pt-4">
-        <Text className="text-2xl font-bold text-text-primary">My Jobs</Text>
+        <Text className="text-2xl font-bold text-ink">My Jobs</Text>
         <Button
           title="New"
           size="sm"
@@ -124,7 +124,7 @@ export default function EmployerJobsScreen() {
               }`}
               onPress={() => setActiveTab(item.key)}
             >
-              <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-text-secondary"}`}>
+              <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-ink-muted"}`}>
                 {item.label}
               </Text>
             </TouchableOpacity>
@@ -152,8 +152,8 @@ export default function EmployerJobsScreen() {
           showsVerticalScrollIndicator={false}
           onEndReached={() => hasNextPage && !isFetchingNextPage && fetchNextPage()}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#1E3A8A" /> : null}
-          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />}
+          ListFooterComponent={isFetchingNextPage ? <ActivityIndicator size="small" color="#0064EC" /> : null}
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />}
         />
       )}
     </View>

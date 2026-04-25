@@ -89,7 +89,7 @@ export function InterviewForm({
         />
       )}
 
-      <Text className="mb-1.5 text-sm font-medium text-text-primary">Type</Text>
+      <Text className="mb-1.5 text-sm font-medium text-ink">Type</Text>
       <View className="mb-4 flex-row gap-2">
         {TYPES.map((t) => (
           <Button

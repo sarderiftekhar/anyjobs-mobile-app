@@ -99,7 +99,7 @@ export default function JobFeedScreen() {
     if (!isFetchingNextPage) return null;
     return (
       <View className="py-4">
-        <ActivityIndicator size="small" color="#1E3A8A" />
+        <ActivityIndicator size="small" color="#0064EC" />
       </View>
     );
   };
@@ -117,7 +117,7 @@ export default function JobFeedScreen() {
             style={hs.notifBtn}
             onPress={() => router.push("/(candidate)/notifications")}
           >
-            <Ionicons name="notifications-outline" size={22} color="#1F2937" />
+            <Ionicons name="notifications-outline" size={22} color="#1A2230" />
             {(unreadCount ?? 0) > 0 && (
               <View style={hs.notifBadge}>
                 <Text style={hs.notifBadgeText}>
@@ -219,7 +219,7 @@ export default function JobFeedScreen() {
             />
           )}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20, backgroundColor: "#F8F9FA" }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20, backgroundColor: "#F6F8FB" }}
           showsVerticalScrollIndicator={false}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
@@ -228,7 +228,7 @@ export default function JobFeedScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />
@@ -281,7 +281,7 @@ const hs = StyleSheet.create({
   name: {
     fontSize: 26,
     fontWeight: "800",
-    color: "#1F2937",
+    color: "#1A2230",
     marginTop: 2,
   },
   notifBtn: {
@@ -321,7 +321,7 @@ const hs = StyleSheet.create({
     borderRadius: 20,
   },
   chipActive: {
-    backgroundColor: "#1E3A8A",
+    backgroundColor: "#0064EC",
   },
   chipInactive: {
     backgroundColor: "#F3F4F6",
@@ -336,7 +336,7 @@ const hs = StyleSheet.create({
     color: "#FFFFFF",
   },
   chipTextInactive: {
-    color: "#6B7280",
+    color: "#6B7F94",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -345,18 +345,18 @@ const hs = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 8,
     paddingTop: 18,
-    backgroundColor: "#F8F9FA",
+    backgroundColor: "#F6F8FB",
     zIndex: 1,
     position: "relative",
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#1F2937",
+    color: "#1A2230",
   },
   jobCount: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1E3A8A",
+    color: "#0064EC",
   },
 });

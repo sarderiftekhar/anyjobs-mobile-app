@@ -20,9 +20,9 @@ export default function SavedJobsScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <View className="flex-row items-center justify-between px-4 pb-2 pt-4">
-        <Text className="text-2xl font-bold text-text-primary">Saved Jobs</Text>
+        <Text className="text-2xl font-bold text-ink">Saved Jobs</Text>
         {savedJobs && savedJobs.length > 0 && (
-          <Text className="text-sm text-text-secondary">{savedJobs.length} saved</Text>
+          <Text className="text-sm text-ink-muted">{savedJobs.length} saved</Text>
         )}
       </View>
 
@@ -51,7 +51,7 @@ export default function SavedJobsScreen() {
             <RefreshControl
               refreshing={isRefetching}
               onRefresh={() => refetch()}
-              tintColor="#1E3A8A"
+              tintColor="#0064EC"
             />
           }
         />

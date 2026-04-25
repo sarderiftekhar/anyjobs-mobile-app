@@ -79,25 +79,25 @@ export function StatusTimeline({ history, currentStatus }: StatusTimelineProps) 
               <Text
                 className={`text-sm font-semibold ${
                   isCompleted || isCurrent
-                    ? "text-text-primary"
-                    : "text-text-secondary"
+                    ? "text-ink"
+                    : "text-ink-muted"
                 }`}
               >
                 {STATUS_LABELS[status]}
               </Text>
               {historyEntry ? (
                 <>
-                  <Text className="mt-0.5 text-xs text-text-secondary">
+                  <Text className="mt-0.5 text-xs text-ink-muted">
                     {format(new Date(historyEntry.changed_at), "MMM d, yyyy · h:mm a")}
                   </Text>
                   {historyEntry.note && (
-                    <Text className="mt-1 text-xs text-text-secondary">
+                    <Text className="mt-1 text-xs text-ink-muted">
                       {historyEntry.note}
                     </Text>
                   )}
                 </>
               ) : (
-                <Text className="mt-0.5 text-xs text-text-secondary">
+                <Text className="mt-0.5 text-xs text-ink-muted">
                   {isCurrent ? "In progress..." : "Waiting..."}
                 </Text>
               )}
@@ -119,7 +119,7 @@ export function StatusTimeline({ history, currentStatus }: StatusTimelineProps) 
               {isRejected ? "Rejected" : "Withdrawn"}
             </Text>
             {history.find((h) => h.status === currentStatus) && (
-              <Text className="mt-0.5 text-xs text-text-secondary">
+              <Text className="mt-0.5 text-xs text-ink-muted">
                 {format(
                   new Date(
                     history.find((h) => h.status === currentStatus)!.changed_at

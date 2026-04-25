@@ -42,26 +42,26 @@ function StatTile({
               size={12}
               color={up ? "#16A34A" : "#DC2626"}
             />
-            <Text className={`ml-0.5 text-xs font-semibold ${up ? "text-green-600" : "text-red-600"}`}>
+            <Text className={`ml-0.5 text-xs font-semibold ${up ? "text-green-600" : "text-danger"}`}>
               {Math.abs(changePct).toFixed(1)}%
             </Text>
           </View>
         )}
       </View>
-      <Text className="mt-3 text-2xl font-bold text-text-primary">
+      <Text className="mt-3 text-2xl font-bold text-ink">
         {value}
         {suffix}
       </Text>
-      <Text className="text-xs text-text-secondary">{label}</Text>
+      <Text className="text-xs text-ink-muted">{label}</Text>
     </Card>
   );
 }
 
-function BarChart({ data, color = "#1E3A8A" }: { data: TimeSeriesPoint[]; color?: string }) {
+function BarChart({ data, color = "#0064EC" }: { data: TimeSeriesPoint[]; color?: string }) {
   if (!data || data.length === 0) {
     return (
       <View className="h-32 items-center justify-center">
-        <Text className="text-xs text-text-secondary">No data for this range</Text>
+        <Text className="text-xs text-ink-muted">No data for this range</Text>
       </View>
     );
   }
@@ -81,10 +81,10 @@ function BarChart({ data, color = "#1E3A8A" }: { data: TimeSeriesPoint[]; color?
         })}
       </View>
       <View className="mt-1 flex-row justify-between">
-        <Text className="text-[10px] text-text-secondary">
+        <Text className="text-[10px] text-ink-muted">
           {data[0] ? new Date(data[0].date).toLocaleDateString(undefined, { month: "short", day: "numeric" }) : ""}
         </Text>
-        <Text className="text-[10px] text-text-secondary">
+        <Text className="text-[10px] text-ink-muted">
           {data[data.length - 1]
             ? new Date(data[data.length - 1].date).toLocaleDateString(undefined, { month: "short", day: "numeric" })
             : ""}
@@ -111,9 +111,9 @@ export default function AnalyticsDashboardScreen() {
       {/* Header */}
       <View className="flex-row items-center border-b border-border px-4 py-3">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="ml-4 text-lg font-semibold text-text-primary">Analytics</Text>
+        <Text className="ml-4 text-lg font-semibold text-ink">Analytics</Text>
       </View>
 
       {/* Range tabs */}
@@ -126,7 +126,7 @@ export default function AnalyticsDashboardScreen() {
               range === r ? "bg-primary" : "bg-white border border-border"
             }`}
           >
-            <Text className={`text-xs font-medium ${range === r ? "text-white" : "text-text-secondary"}`}>
+            <Text className={`text-xs font-medium ${range === r ? "text-white" : "text-ink-muted"}`}>
               Last {r === "7d" ? "7 days" : r === "30d" ? "30 days" : "90 days"}
             </Text>
           </TouchableOpacity>
@@ -148,7 +148,7 @@ export default function AnalyticsDashboardScreen() {
           className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#1E3A8A" />
+            <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor="#0064EC" />
           }
         >
           <DashboardBody data={data!} />
@@ -170,7 +170,7 @@ function DashboardBody({ data }: { data: DashboardAnalytics }) {
           label="Total Views"
           value={overview.total_views.toLocaleString()}
           changePct={overview.views_change_pct}
-          color="#1E3A8A"
+          color="#0064EC"
         />
         <StatTile
           icon="document-text-outline"
@@ -198,21 +198,21 @@ function DashboardBody({ data }: { data: DashboardAnalytics }) {
 
       {/* Applications chart */}
       <Card className="mt-4">
-        <Text className="text-sm font-semibold text-text-primary">Applications Over Time</Text>
+        <Text className="text-sm font-semibold text-ink">Applications Over Time</Text>
         <BarChart data={applications_over_time} color="#059669" />
       </Card>
 
       {/* Views chart */}
       <Card className="mt-4">
-        <Text className="text-sm font-semibold text-text-primary">Job Views Over Time</Text>
-        <BarChart data={views_over_time} color="#1E3A8A" />
+        <Text className="text-sm font-semibold text-ink">Job Views Over Time</Text>
+        <BarChart data={views_over_time} color="#0064EC" />
       </Card>
 
       {/* Top jobs */}
       <Card className="mt-4">
-        <Text className="text-sm font-semibold text-text-primary">Top Performing Jobs</Text>
+        <Text className="text-sm font-semibold text-ink">Top Performing Jobs</Text>
         {top_jobs.length === 0 ? (
-          <Text className="mt-2 text-xs text-text-secondary">No job data yet.</Text>
+          <Text className="mt-2 text-xs text-ink-muted">No job data yet.</Text>
         ) : (
           <View className="mt-2">
             {top_jobs.slice(0, 5).map((job) => (
@@ -222,10 +222,10 @@ function DashboardBody({ data }: { data: DashboardAnalytics }) {
                 onPress={() => router.push(`/(employer)/analytics/job/${job.id}`)}
               >
                 <View className="flex-1 pr-3">
-                  <Text className="text-sm font-medium text-text-primary" numberOfLines={1}>
+                  <Text className="text-sm font-medium text-ink" numberOfLines={1}>
                     {job.title}
                   </Text>
-                  <Text className="mt-0.5 text-xs text-text-secondary">
+                  <Text className="mt-0.5 text-xs text-ink-muted">
                     {job.views} views · {job.applications} applications
                   </Text>
                 </View>
@@ -233,7 +233,7 @@ function DashboardBody({ data }: { data: DashboardAnalytics }) {
                   <Text className="text-sm font-bold text-primary">
                     {job.conversion_rate.toFixed(1)}%
                   </Text>
-                  <Text className="text-[10px] text-text-secondary">conv.</Text>
+                  <Text className="text-[10px] text-ink-muted">conv.</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
               </TouchableOpacity>

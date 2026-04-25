@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { publicApiClient } from "../../api/client";
+import { colors } from "../../theme/colors";
 
 interface LocationSuggestion {
   place_id: string;
@@ -35,9 +36,9 @@ export function LocationInput({
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [focused, setFocused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Sync external value changes
   useEffect(() => {
     setQuery(value);
   }, [value]);
@@ -66,7 +67,6 @@ export function LocationInput({
   const handleChangeText = (text: string) => {
     setQuery(text);
 
-    // Clear previous timer
     if (timerRef.current) clearTimeout(timerRef.current);
 
     if (text.length < 2) {
@@ -76,7 +76,6 @@ export function LocationInput({
       return;
     }
 
-    // Debounce 400ms
     timerRef.current = setTimeout(() => {
       fetchSuggestions(text);
     }, 400);
@@ -96,7 +95,6 @@ export function LocationInput({
     setShowSuggestions(false);
   };
 
-  // Also trigger search on submit (Enter key)
   const handleSubmit = () => {
     if (query.length >= 2) {
       onSelect(query);
@@ -106,32 +104,47 @@ export function LocationInput({
 
   return (
     <View style={s.wrapper}>
-      <View style={[s.inputRow, compact ? s.inputCompact : s.inputNormal]}>
-        <Ionicons name="location-outline" size={compact ? 16 : 18} color="#9CA3AF" />
+      <View
+        style={[
+          s.inputRow,
+          compact ? s.inputCompact : s.inputNormal,
+          focused && { borderColor: colors.primary.DEFAULT },
+        ]}
+      >
+        <Ionicons
+          name="location-outline"
+          size={compact ? 16 : 18}
+          color={focused ? colors.primary.DEFAULT : colors.ink.muted}
+        />
         <TextInput
           style={[s.input, compact ? s.inputTextCompact : s.inputTextNormal]}
           placeholder={placeholder}
-          placeholderTextColor="#C0C0C0"
+          placeholderTextColor={colors.ink.muted}
           value={query}
           onChangeText={handleChangeText}
-          onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+          onFocus={() => {
+            setFocused(true);
+            if (suggestions.length > 0) setShowSuggestions(true);
+          }}
           onBlur={() => {
-            // Delay hiding so tap on suggestion registers
+            setFocused(false);
             setTimeout(() => setShowSuggestions(false), 200);
           }}
           onSubmitEditing={handleSubmit}
           autoCapitalize="none"
           returnKeyType="search"
         />
-        {isLoading && <ActivityIndicator size="small" color="#1E3A8A" />}
+        {isLoading && <ActivityIndicator size="small" color={colors.primary.DEFAULT} />}
         {query.length > 0 && !isLoading && (
-          <TouchableOpacity onPress={handleClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="close-circle" size={18} color="#D1D5DB" />
+          <TouchableOpacity
+            onPress={handleClear}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close-circle" size={18} color={colors.borderStrong} />
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Suggestions dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <View style={s.dropdown}>
           {suggestions.slice(0, 5).map((item, index) => (
@@ -142,7 +155,7 @@ export function LocationInput({
               activeOpacity={0.6}
             >
               <View style={s.suggestionIcon}>
-                <Ionicons name="location" size={14} color="#1E3A8A" />
+                <Ionicons name="location" size={14} color={colors.primary.DEFAULT} />
               </View>
               <View style={s.suggestionText}>
                 <Text style={s.mainText} numberOfLines={1}>
@@ -168,25 +181,25 @@ const s = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 16,
+    borderColor: colors.border,
+    borderRadius: 9999,
   },
   inputCompact: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
     minHeight: 52,
   },
   inputNormal: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     minHeight: 56,
   },
   input: {
     flex: 1,
     marginLeft: 10,
-    color: "#1F2937",
+    color: colors.ink.DEFAULT,
     paddingVertical: 0,
   },
   inputTextCompact: {
@@ -200,17 +213,17 @@ const s = StyleSheet.create({
     top: "100%",
     left: 0,
     right: 0,
-    marginTop: 4,
+    marginTop: 6,
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     ...Platform.select({
       web: {
-        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+        boxShadow: "0 8px 24px rgba(10,37,64,0.12)",
       },
       default: {
-        shadowColor: "#000",
+        shadowColor: colors.brand.navy,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.12,
         shadowRadius: 16,
@@ -228,13 +241,13 @@ const s = StyleSheet.create({
   },
   suggestionBorder: {
     borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    borderTopColor: colors.border,
   },
   suggestionIcon: {
     width: 30,
     height: 30,
     borderRadius: 10,
-    backgroundColor: "#F0EEFF",
+    backgroundColor: colors.primary.light,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
@@ -245,11 +258,11 @@ const s = StyleSheet.create({
   mainText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1F2937",
+    color: colors.ink.DEFAULT,
   },
   secondaryText: {
     fontSize: 12,
-    color: "#9CA3AF",
+    color: colors.ink.muted,
     marginTop: 1,
   },
 });

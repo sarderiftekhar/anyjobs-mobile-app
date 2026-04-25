@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text, Image } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
+import Animated, { FadeIn, FadeOut, FadeInDown } from "react-native-reanimated";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { Button, OrbitHalo } from "../../src/components/ui";
+import { colors } from "../../src/theme/colors";
 
 const TAGLINES = [
   "Connect with top employers and discover opportunities that match your skills",
@@ -17,6 +19,8 @@ const TAGLINES = [
   "Join a community where ambition meets opportunity",
 ];
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const [taglineIndex, setTaglineIndex] = useState(0);
@@ -24,35 +28,57 @@ export default function WelcomeScreen() {
   useEffect(() => {
     const id = setInterval(() => {
       setTaglineIndex((i) => (i + 1) % TAGLINES.length);
-    }, 10000);
+    }, 6000);
     return () => clearInterval(id);
   }, []);
 
+  // Halo radius scales with viewport — compact phones don't get clipped, big screens fill
+  const haloRadius = Math.min(140, SCREEN_WIDTH * 0.36);
+
   return (
-    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
       <StatusBar style="dark" />
-      <View className="items-center px-8 pt-20">
-        <Image
-          source={require("../../assets/anyjobs-logo.png")}
-          style={{ width: 200, height: 80 }}
-          resizeMode="contain"
+
+      {/* Decorative tinted backdrop behind halo */}
+      <View pointerEvents="none" style={s.backdropWrap}>
+        <LinearGradient
+          colors={[colors.primary.light, "rgba(229,240,254,0)"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={s.backdrop}
         />
-        <Text className="mt-6 text-center text-3xl font-bold text-text-primary">
-          Find Your Dream Job
-        </Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-8">
+      {/* Header — logo + display tagline */}
+      <Animated.View
+        entering={FadeInDown.duration(600).delay(100)}
+        className="items-center px-8 pt-12"
+      >
+        <Image
+          source={require("../../assets/anyjobs-logo.png")}
+          style={{ width: 168, height: 64 }}
+          resizeMode="contain"
+        />
+        <Text className="mt-7 text-center text-4xl font-bold text-ink leading-[1.1]">
+          Find your{"\n"}
+          <Text className="text-primary">dream job</Text>
+        </Text>
+      </Animated.View>
+
+      {/* Halo + rotating tagline */}
+      <View className="flex-1 items-center justify-center px-6">
         <View className="items-center justify-center">
           <View style={{ position: "absolute" }}>
-            <OrbitHalo radius={120} iconSize={40} />
+            <OrbitHalo radius={haloRadius} iconSize={Math.min(46, haloRadius * 0.34)} />
           </View>
-          <View className="max-w-[220px] rounded-2xl bg-white/90 px-3 py-2">
+
+          {/* Tagline pill — compact, brand-tinted border */}
+          <View style={s.taglineCard}>
             <Animated.Text
               key={taglineIndex}
               entering={FadeIn.duration(500)}
               exiting={FadeOut.duration(500)}
-              className="text-center text-sm text-text-secondary"
+              className="text-center text-sm font-medium text-ink-soft leading-5"
             >
               {TAGLINES[taglineIndex]}
             </Animated.Text>
@@ -60,9 +86,11 @@ export default function WelcomeScreen() {
         </View>
       </View>
 
-      <View
+      {/* CTAs */}
+      <Animated.View
+        entering={FadeInDown.duration(600).delay(300)}
         className="px-6"
-        style={{ paddingBottom: insets.bottom + 40 }}
+        style={{ paddingBottom: insets.bottom + 28 }}
       >
         <Button
           title="Get Started"
@@ -77,7 +105,35 @@ export default function WelcomeScreen() {
           size="lg"
           onPress={() => router.push("/(auth)/login")}
         />
-      </View>
+        <Text className="mt-5 text-center text-xs text-ink-muted">
+          By continuing, you agree to our{" "}
+          <Text className="font-semibold text-primary">Terms</Text> and{" "}
+          <Text className="font-semibold text-primary">Privacy Policy</Text>.
+        </Text>
+      </Animated.View>
     </View>
   );
 }
+
+const s = StyleSheet.create({
+  backdropWrap: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "60%",
+    overflow: "hidden",
+  },
+  backdrop: {
+    flex: 1,
+  },
+  taglineCard: {
+    maxWidth: 240,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+});

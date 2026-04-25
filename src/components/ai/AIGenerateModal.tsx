@@ -82,29 +82,29 @@ export function AIGenerateModal({
       <View className="flex-1 bg-white">
         <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
           <View className="flex-row items-center">
-            <Ionicons name="sparkles" size={18} color="#1E3A8A" />
-            <Text className="ml-2 text-lg font-semibold text-text-primary">
+            <Ionicons name="sparkles" size={18} color="#0064EC" />
+            <Text className="ml-2 text-lg font-semibold text-ink">
               Generate with AI
             </Text>
           </View>
           <TouchableOpacity onPress={handleClose}>
-            <Ionicons name="close" size={24} color="#1F2937" />
+            <Ionicons name="close" size={24} color="#1A2230" />
           </TouchableOpacity>
         </View>
 
         <ScrollView className="flex-1 px-4 py-4" keyboardShouldPersistTaps="handled">
-          <Text className="mb-1.5 text-sm font-medium text-text-primary">
+          <Text className="mb-1.5 text-sm font-medium text-ink">
             Describe the role
           </Text>
           <TextInput
-            className="min-h-[100px] rounded-md border border-border px-3 py-3 text-sm text-text-primary"
+            className="min-h-[100px] rounded-md border border-border px-3 py-3 text-sm text-ink"
             placeholder="e.g. Senior React developer, remote, €70k, 5+ years"
             multiline
             textAlignVertical="top"
             value={prompt}
             onChangeText={setPrompt}
           />
-          <Text className="mt-2 text-xs text-text-secondary">
+          <Text className="mt-2 text-xs text-ink-muted">
             The AI will draft a title, description, skills, requirements and
             benefits. You can edit everything before publishing.
           </Text>
@@ -117,8 +117,8 @@ export function AIGenerateModal({
 
           {loading && (
             <View className="mt-6 items-center">
-              <ActivityIndicator color="#1E3A8A" />
-              <Text className="mt-2 text-sm text-text-secondary">
+              <ActivityIndicator color="#0064EC" />
+              <Text className="mt-2 text-sm text-ink-muted">
                 Generating...
               </Text>
             </View>
@@ -126,16 +126,16 @@ export function AIGenerateModal({
 
           {result && !loading && (
             <View className="mt-4">
-              <Text className="text-base font-semibold text-text-primary">
+              <Text className="text-base font-semibold text-ink">
                 {result.title}
               </Text>
-              <Text className="mt-2 text-sm text-text-secondary" numberOfLines={8}>
+              <Text className="mt-2 text-sm text-ink-muted" numberOfLines={8}>
                 {result.description}
               </Text>
 
               {result.skills?.length > 0 && (
                 <>
-                  <Text className="mt-4 text-sm font-medium text-text-primary">
+                  <Text className="mt-4 text-sm font-medium text-ink">
                     Skills
                   </Text>
                   <View className="mt-1.5 flex-row flex-wrap gap-1.5">
@@ -148,11 +148,11 @@ export function AIGenerateModal({
 
               {result.requirements?.length > 0 && (
                 <>
-                  <Text className="mt-4 text-sm font-medium text-text-primary">
+                  <Text className="mt-4 text-sm font-medium text-ink">
                     Requirements
                   </Text>
                   {result.requirements.slice(0, 5).map((r, i) => (
-                    <Text key={i} className="mt-1 text-xs text-text-secondary">
+                    <Text key={i} className="mt-1 text-xs text-ink-muted">
                       • {r}
                     </Text>
                   ))}
@@ -161,7 +161,7 @@ export function AIGenerateModal({
 
               {result.benefits?.length > 0 && (
                 <>
-                  <Text className="mt-4 text-sm font-medium text-text-primary">
+                  <Text className="mt-4 text-sm font-medium text-ink">
                     Benefits
                   </Text>
                   <View className="mt-1.5 flex-row flex-wrap gap-1.5">
