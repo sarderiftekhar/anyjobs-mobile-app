@@ -31,6 +31,9 @@ function mapFilters(filters: JobFilters): Record<string, any> {
   const params: Record<string, any> = {};
   if (filters.q) params.keywords = filters.q;
   if (filters.location) params.location = filters.location;
+  if (filters.latitude != null) params.latitude = filters.latitude;
+  if (filters.longitude != null) params.longitude = filters.longitude;
+  if (filters.location_radius != null) params.location_radius = filters.location_radius;
   if (filters.job_types?.length) params.job_type = filters.job_types.map(toApiValue);
   if (filters.work_arrangements?.length) params.work_arrangement = filters.work_arrangements.map(toApiValue);
   if (filters.salary_min) params.salary_min = filters.salary_min;

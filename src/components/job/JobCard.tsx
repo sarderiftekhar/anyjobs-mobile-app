@@ -11,6 +11,7 @@ interface JobCardProps {
   job: Job;
   onSaveToggle?: (jobId: number, isSaved: boolean) => void;
   onApply?: (jobId: number) => void;
+  onPress?: (jobId: number) => void;
   showApplyButton?: boolean;
   index?: number;
 }
@@ -19,6 +20,7 @@ export function JobCard({
   job,
   onSaveToggle,
   onApply,
+  onPress,
   showApplyButton = true,
   index = 0,
 }: JobCardProps) {
@@ -71,7 +73,11 @@ export function JobCard({
       ]}
     >
       <TouchableOpacity
-        onPress={() => router.push(`/(candidate)/job/${job.id}`)}
+        onPress={() =>
+          onPress
+            ? onPress(job.id)
+            : router.push(`/(candidate)/job/${job.id}`)
+        }
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         activeOpacity={1}

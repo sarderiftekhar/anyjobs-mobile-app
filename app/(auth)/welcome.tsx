@@ -1,39 +1,37 @@
-import { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
-import Animated, { FadeIn, FadeOut, FadeInDown } from "react-native-reanimated";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  TouchableOpacity,
+  Keyboard,
+} from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import { Button, OrbitHalo } from "../../src/components/ui";
 import { colors } from "../../src/theme/colors";
-
-const TAGLINES = [
-  "Connect with top employers and discover opportunities that match your skills",
-  "Your next career move is just a tap away",
-  "Thousands of jobs across every industry, updated daily",
-  "Let recruiters come to you — build a profile that stands out",
-  "Apply in seconds with your saved CV",
-  "Track every application, interview, and offer in one place",
-  "Remote, hybrid, on-site — filter to find the right fit",
-  "Join a community where ambition meets opportunity",
-];
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
-  const [taglineIndex, setTaglineIndex] = useState(0);
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTaglineIndex((i) => (i + 1) % TAGLINES.length);
-    }, 6000);
-    return () => clearInterval(id);
-  }, []);
+  const submitSearch = () => {
+    Keyboard.dismiss();
+    const q = query.trim();
+    router.push(q ? `/(public)/jobs?q=${encodeURIComponent(q)}` : "/(public)/jobs");
+  };
 
-  // Halo radius scales with viewport — compact phones don't get clipped, big screens fill
-  const haloRadius = Math.min(140, SCREEN_WIDTH * 0.36);
+  // Halo radius scales with viewport — leave room at the edges so icons don't clip
+  const haloRadius = Math.min(140, SCREEN_WIDTH * 0.33);
 
   return (
     <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
@@ -49,67 +47,86 @@ export default function WelcomeScreen() {
         />
       </View>
 
-      {/* Header — logo + display tagline */}
-      <Animated.View
-        entering={FadeInDown.duration(600).delay(100)}
-        className="items-center px-8 pt-12"
-      >
-        <Image
-          source={require("../../assets/anyjobs-logo.png")}
-          style={{ width: 168, height: 64 }}
-          resizeMode="contain"
-        />
-        <Text className="mt-7 text-center text-4xl font-bold text-ink leading-[1.1]">
-          Find your{"\n"}
-          <Text className="text-primary">dream job</Text>
-        </Text>
+      {/* Header — logo + heading */}
+      <Animated.View entering={FadeInDown.duration(600).delay(100)} style={s.headerWrap}>
+        <View style={s.headerInner}>
+          <Image
+            source={require("../../assets/anyjobs-logo.png")}
+            style={s.logo}
+            resizeMode="contain"
+          />
+          <Text className="mt-4 text-center text-3xl font-bold text-ink leading-[1.1]">
+            Find your <Text className="text-primary">dream job</Text>
+          </Text>
+        </View>
       </Animated.View>
 
-      {/* Halo + rotating tagline */}
+      {/* Orbit halo with search input centered inside */}
       <View className="flex-1 items-center justify-center px-6">
         <View className="items-center justify-center">
           <View style={{ position: "absolute" }}>
-            <OrbitHalo radius={haloRadius} iconSize={Math.min(46, haloRadius * 0.34)} />
+            <OrbitHalo radius={haloRadius} iconSize={Math.min(44, haloRadius * 0.32)} />
           </View>
 
-          {/* Tagline pill — compact, brand-tinted border */}
-          <View style={s.taglineCard}>
-            <Animated.Text
-              key={taglineIndex}
-              entering={FadeIn.duration(500)}
-              exiting={FadeOut.duration(500)}
-              className="text-center text-sm font-medium text-ink-soft leading-5"
-            >
-              {TAGLINES[taglineIndex]}
-            </Animated.Text>
-          </View>
+          {/* Search card — sits where the tagline used to */}
+          <Animated.View
+            entering={FadeInDown.duration(600).delay(200)}
+            style={s.searchCard}
+          >
+            <View style={s.searchWrap}>
+              <Ionicons name="search-outline" size={18} color={colors.ink.muted} />
+              <TextInput
+                value={query}
+                onChangeText={setQuery}
+                onSubmitEditing={submitSearch}
+                returnKeyType="search"
+                placeholder="Search jobs, companies…"
+                placeholderTextColor={colors.ink.muted}
+                style={s.searchInput}
+              />
+              <TouchableOpacity
+                onPress={submitSearch}
+                activeOpacity={0.85}
+                style={s.searchBtn}
+                hitSlop={6}
+              >
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={submitSearch} hitSlop={6}>
+              <Text className="mt-2.5 text-center text-[11px] font-medium text-primary">
+                Browse all jobs without signing up →
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
 
       {/* CTAs */}
       <Animated.View
         entering={FadeInDown.duration(600).delay(300)}
-        className="px-6"
-        style={{ paddingBottom: insets.bottom + 28 }}
+        style={{ paddingBottom: insets.bottom + 20, paddingHorizontal: 24 }}
       >
-        <Button
-          title="Get Started"
-          variant="primary"
-          size="lg"
-          className="mb-3"
-          onPress={() => router.push("/(auth)/register")}
-        />
-        <Button
-          title="I already have an account"
-          variant="outline"
-          size="lg"
-          onPress={() => router.push("/(auth)/login")}
-        />
-        <Text className="mt-5 text-center text-xs text-ink-muted">
-          By continuing, you agree to our{" "}
-          <Text className="font-semibold text-primary">Terms</Text> and{" "}
-          <Text className="font-semibold text-primary">Privacy Policy</Text>.
-        </Text>
+        <View style={s.ctaInner}>
+          <Button
+            title="Get Started"
+            variant="primary"
+            size="md"
+            className="mb-2.5"
+            onPress={() => router.push("/(auth)/register")}
+          />
+          <Button
+            title="I already have an account"
+            variant="outline"
+            size="md"
+            onPress={() => router.push("/(auth)/login")}
+          />
+          <Text className="mt-3.5 text-center text-[11px] text-ink-muted">
+            By continuing, you agree to our{" "}
+            <Text className="font-semibold text-primary">Terms</Text> and{" "}
+            <Text className="font-semibold text-primary">Privacy Policy</Text>.
+          </Text>
+        </View>
       </Animated.View>
     </View>
   );
@@ -127,13 +144,62 @@ const s = StyleSheet.create({
   backdrop: {
     flex: 1,
   },
-  taglineCard: {
-    maxWidth: 240,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    backgroundColor: "rgba(255,255,255,0.92)",
+  headerWrap: {
+    width: "100%",
+    paddingHorizontal: 32,
+    paddingTop: 24,
+  },
+  headerInner: {
+    width: "100%",
+    alignItems: "center",
+  },
+  logo: {
+    width: 140,
+    height: 52,
+    alignSelf: "center",
+  },
+  searchCard: {
+    width: 260,
+    backgroundColor: "rgba(255,255,255,0.96)",
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: colors.border,
+    padding: 8,
+    shadowColor: colors.brand.navy,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 5,
+  },
+  searchWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 9999,
+    paddingLeft: 14,
+    paddingRight: 4,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 13,
+    color: colors.ink.DEFAULT,
+    paddingVertical: 6,
+  },
+  searchBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 9999,
+    backgroundColor: colors.primary.DEFAULT,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ctaInner: {
+    width: "100%",
+    maxWidth: 340,
+    alignSelf: "center",
   },
 });

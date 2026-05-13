@@ -435,35 +435,34 @@ export default function ApplyScreen() {
         </View>
       )}
 
-      {/* Bottom navigation */}
+      {/* Bottom navigation — stacked, kept well above the system nav */}
       <View
-        className="flex-row gap-3 border-t border-border bg-white px-4 py-3"
-        style={{ paddingBottom: insets.bottom + 8 }}
+        className="border-t border-border bg-white px-4 pt-4"
+        style={{ paddingBottom: insets.bottom + 48 }}
       >
-        {currentIndex > 0 && (
-          <Button
-            title="Back"
-            variant="outline"
-            className="flex-1"
-            onPress={() => setStep(steps[currentIndex - 1])}
-          />
-        )}
-        {currentIndex < steps.length - 1 ? (
-          <Button
-            title="Continue"
-            className="flex-1"
-            disabled={step === "cv" && !selectedCvId}
-            onPress={() => setStep(steps[currentIndex + 1])}
-          />
-        ) : (
-          <Button
-            title="Submit Application"
-            className="flex-1"
-            disabled={!selectedCvId}
-            loading={applyMutation.isPending}
-            onPress={handleSubmit}
-          />
-        )}
+        <View style={{ alignSelf: "center", width: "100%", maxWidth: 480, gap: 10 }}>
+          {currentIndex < steps.length - 1 ? (
+            <Button
+              title="Continue"
+              disabled={step === "cv" && !selectedCvId}
+              onPress={() => setStep(steps[currentIndex + 1])}
+            />
+          ) : (
+            <Button
+              title="Submit Application"
+              disabled={!selectedCvId}
+              loading={applyMutation.isPending}
+              onPress={handleSubmit}
+            />
+          )}
+          {currentIndex > 0 && (
+            <Button
+              title="Back"
+              variant="outline"
+              onPress={() => setStep(steps[currentIndex - 1])}
+            />
+          )}
+        </View>
       </View>
     </View>
   );

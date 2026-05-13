@@ -128,13 +128,14 @@ export default function JobFeedScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Search */}
-        <View style={{ marginTop: 20 }}>
+        {/* Search — zIndex above location so its dropdown overlays the field below */}
+        <View style={{ marginTop: 20, zIndex: 200, position: "relative" }}>
           <SearchBar
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search jobs, skills, companies..."
             onFilterPress={() => filterSheetRef.current?.expand()}
+            onSelectSuggestion={(label) => setSearchQuery(label)}
           />
         </View>
 

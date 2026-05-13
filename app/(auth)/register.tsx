@@ -93,7 +93,9 @@ export default function RegisterScreen() {
       >
         {/* Back button */}
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace("/(auth)/welcome")
+          }
           className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-background"
         >
           <Ionicons name="arrow-back" size={20} color="#1A2230" />

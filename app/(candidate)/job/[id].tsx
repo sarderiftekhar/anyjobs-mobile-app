@@ -56,74 +56,74 @@ export default function JobDetailScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Brand-tinted hero header — back/save/share + company + title */}
-      <View
-        className="bg-primary-light px-4 pb-12"
-        style={{ paddingTop: insets.top + 8 }}
-      >
-        {/* Action row */}
-        <View className="flex-row items-center justify-between">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
-          >
-            <Ionicons name="arrow-back" size={20} color="#1A2230" />
-          </TouchableOpacity>
-          <View className="flex-row gap-2">
-            <TouchableOpacity
-              onPress={handleSave}
-              className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
-            >
-              <Ionicons
-                name={job.is_saved ? "heart" : "heart-outline"}
-                size={20}
-                color={job.is_saved ? "#EF4444" : "#1A2230"}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleShare}
-              className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
-            >
-              <Ionicons name="share-outline" size={20} color="#1A2230" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Company logo + name */}
-        <View className="mt-5 flex-row items-center">
-          <View
-            className="mr-3 h-14 w-14 items-center justify-center rounded-2xl bg-white"
-            style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 }}
-          >
-            <Text className="text-base font-bold text-primary">
-              {job.company.name.slice(0, 2).toUpperCase()}
-            </Text>
-          </View>
-          <View className="flex-1">
-            <Text className="text-base font-semibold text-ink" numberOfLines={1}>
-              {job.company.name}
-            </Text>
-            {job.company.industry && (
-              <Text className="text-xs text-ink-soft" numberOfLines={1}>
-                {job.company.industry}
-              </Text>
-            )}
-          </View>
-        </View>
-
-        {/* Title */}
-        <Text className="mt-4 text-2xl font-bold text-ink leading-7">{job.title}</Text>
-
-        {/* Featured / Urgent */}
-        {(job.is_featured || job.is_urgent) && (
-          <View className="mt-2 flex-row gap-2">
-            {job.is_featured && <Badge text="Featured" variant="warning" />}
-            {job.is_urgent && <Badge text="Urgent Hiring" variant="danger" />}
-          </View>
-        )}
-      </View>
-
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        {/* Brand-tinted hero header — back/save/share + company + title */}
+        <View
+          className="bg-primary-light px-4 pb-12"
+          style={{ paddingTop: insets.top + 8 }}
+        >
+          {/* Action row */}
+          <View className="flex-row items-center justify-between">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
+            >
+              <Ionicons name="arrow-back" size={20} color="#1A2230" />
+            </TouchableOpacity>
+            <View className="flex-row gap-2">
+              <TouchableOpacity
+                onPress={handleSave}
+                className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
+              >
+                <Ionicons
+                  name={job.is_saved ? "heart" : "heart-outline"}
+                  size={20}
+                  color={job.is_saved ? "#EF4444" : "#1A2230"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleShare}
+                className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
+              >
+                <Ionicons name="share-outline" size={20} color="#1A2230" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Company logo + name */}
+          <View className="mt-5 flex-row items-center">
+            <View
+              className="mr-3 h-14 w-14 items-center justify-center rounded-2xl bg-white"
+              style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 }}
+            >
+              <Text className="text-base font-bold text-primary">
+                {job.company.name.slice(0, 2).toUpperCase()}
+              </Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-semibold text-ink" numberOfLines={1}>
+                {job.company.name}
+              </Text>
+              {job.company.industry && (
+                <Text className="text-xs text-ink-soft" numberOfLines={1}>
+                  {job.company.industry}
+                </Text>
+              )}
+            </View>
+          </View>
+
+          {/* Title */}
+          <Text className="mt-4 text-2xl font-bold text-ink leading-7">{job.title}</Text>
+
+          {/* Featured / Urgent */}
+          {(job.is_featured || job.is_urgent) && (
+            <View className="mt-2 flex-row gap-2">
+              {job.is_featured && <Badge text="Featured" variant="warning" />}
+              {job.is_urgent && <Badge text="Urgent Hiring" variant="danger" />}
+            </View>
+          )}
+        </View>
+
         {/* Meta card — overlaps hero edge */}
         <View
           className="-mt-7 mx-4 rounded-2xl border border-border bg-surface p-4"
@@ -248,9 +248,10 @@ export default function JobDetailScreen() {
 
       {/* Sticky apply bar */}
       <View
-        className="border-t border-border bg-white px-4 py-3"
-        style={{ paddingBottom: insets.bottom + 8 }}
+        className="border-t border-border bg-white px-4 pt-4"
+        style={{ paddingBottom: insets.bottom + 48 }}
       >
+       <View style={{ alignSelf: "center", width: "100%", maxWidth: 480 }}>
         {job.has_applied ? (
           <View className="flex-row items-center justify-center rounded-full bg-success/10 py-3.5">
             <Ionicons name="checkmark-circle" size={20} color="#22C55E" />
@@ -265,6 +266,7 @@ export default function JobDetailScreen() {
             onPress={() => router.push(`/(candidate)/apply/${job.id}`)}
           />
         )}
+       </View>
       </View>
     </View>
   );

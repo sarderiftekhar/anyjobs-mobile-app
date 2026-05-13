@@ -47,6 +47,9 @@ export interface Job {
 export interface JobFilters {
   q?: string;
   location?: string;
+  latitude?: number;
+  longitude?: number;
+  location_radius?: number;
   job_types?: JobType[];
   work_arrangements?: WorkArrangement[];
   salary_min?: number;

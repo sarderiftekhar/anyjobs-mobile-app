@@ -28,9 +28,10 @@ function AuthRedirect() {
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === "(auth)";
+    const inPublicGroup = segments[0] === "(public)";
 
-    if (!isAuthenticated && !inAuthGroup) {
-      // Not logged in and not on auth screen -> go to welcome
+    if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
+      // Not logged in and not on auth/public screen -> go to welcome
       router.replace("/(auth)/welcome");
     } else if (isAuthenticated && inAuthGroup) {
       // Logged in but on auth screen -> go to appropriate tab

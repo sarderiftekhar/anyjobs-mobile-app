@@ -51,7 +51,10 @@ export function LocationInput({
     setIsLoading(true);
     try {
       const response = await publicApiClient.get("/location/autocomplete", {
-        params: { input: text },
+        // `(cities)` matches city/region/country queries — matches the website
+        // search page. Default backend type is `address`, which returns nothing
+        // for short city/country inputs.
+        params: { input: text, types: "(cities)" },
       });
       const data = response.data?.data ?? [];
       setSuggestions(data);
