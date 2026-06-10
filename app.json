@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "AnyJobs",
-    "slug": "anyjobs-mobile-app",
+    "slug": "anyjobs",
+    "owner": "sarderiftekhar",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -43,6 +44,11 @@
     ],
     "notification": {
       "color": "#0064EC"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0b02ebb7-6338-4aa9-bf0a-4ee93177d50f"
+      }
     }
   }
 }
