@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   withSequence,
   Easing,
+  type SharedValue,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../theme/colors";
@@ -126,7 +127,7 @@ function Satellite({
   icon,
   delay,
 }: {
-  float: Animated.SharedValue<number>;
+  float: SharedValue<number>;
   radius: number;
   angle: number;
   drift: { dx: number; dy: number };
