@@ -23,11 +23,7 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.any-jobs.com/api"
       },
-      "ios": {
-        "bundleIdentifier": "com.anyjobs.mobile"
-      },
       "android": {
-        "package": "com.anyjobs.mobile",
         "buildType": "apk"
       }
     }
