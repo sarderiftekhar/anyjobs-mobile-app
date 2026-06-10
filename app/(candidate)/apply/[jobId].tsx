@@ -18,6 +18,9 @@ import { useCvs, useUploadCv } from "../../../src/hooks/useCvs";
 import { useAuthStore } from "../../../src/stores/authStore";
 import { Button, Card, LoadingSpinner } from "../../../src/components/ui";
 import apiClient from "../../../src/api/client";
+import { applicationsApi } from "../../../src/api/applications";
+
+type PickedDoc = { uri: string; name: string; type: string; size?: number };
 
 const formatFileSize = (bytes: number) => {
   if (!bytes) return "";
@@ -53,6 +56,7 @@ export default function ApplyScreen() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<PickedDoc[]>([]);
 
   // Auto-select the primary CV when CVs load
   useEffect(() => {
@@ -120,18 +124,52 @@ export default function ApplyScreen() {
   const steps: Step[] = ["cv", "cover-letter", "review"];
   const currentIndex = steps.indexOf(step);
 
+  const handlePickDocuments = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/jpeg", "image/png"],
+        multiple: true,
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled) return;
+      const picked = (result.assets ?? [])
+        .filter((a) => !a.size || a.size <= 10 * 1024 * 1024)
+        .map((a) => ({ uri: a.uri, name: a.name, type: a.mimeType ?? "application/octet-stream", size: a.size ?? undefined }));
+      setDocuments((d) => [...d, ...picked].slice(0, 5));
+    } catch {
+      Alert.alert("Couldn't add files", "Please try again.");
+    }
+  };
+
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async () => {
     setSubmitError(null);
     try {
-      await applyMutation.mutateAsync({
-        job_id: parsedJobId,
-        cv_id: selectedCvId,
-        cover_letter: coverLetter || undefined,
-      });
+      if (documents.length > 0) {
+        // Multipart path — include supporting documents.
+        setSubmitting(true);
+        const fd = new FormData();
+        fd.append("job_id", String(parsedJobId));
+        if (selectedCvId) fd.append("cv_id", String(selectedCvId));
+        if (coverLetter) fd.append("cover_letter", coverLetter);
+        documents.forEach((d) =>
+          fd.append("documents[]", { uri: d.uri, name: d.name, type: d.type } as any),
+        );
+        await applicationsApi.applyWithFiles(fd);
+      } else {
+        await applyMutation.mutateAsync({
+          job_id: parsedJobId,
+          cv_id: selectedCvId,
+          cover_letter: coverLetter || undefined,
+        });
+      }
       setSubmitted(true);
     } catch (err: any) {
       const msg = err?.response?.data?.message || "Failed to submit application. Please try again.";
       setSubmitError(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -418,6 +456,28 @@ export default function ApplyScreen() {
                 </Text>
               </Card>
             )}
+
+            {/* Supporting documents */}
+            <Card className="mt-3">
+              <Text className="text-xs font-semibold uppercase text-ink-muted">
+                Supporting documents (optional)
+              </Text>
+              {documents.map((d, i) => (
+                <View key={`${d.name}-${i}`} className="mt-2 flex-row items-center">
+                  <Ionicons name="attach-outline" size={18} color="#0064EC" />
+                  <Text className="ml-2 flex-1 text-sm text-ink" numberOfLines={1}>{displayFilename(d.name)}</Text>
+                  <TouchableOpacity onPress={() => setDocuments((arr) => arr.filter((_, idx) => idx !== i))}>
+                    <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+              <TouchableOpacity className="mt-3 flex-row items-center self-start" onPress={handlePickDocuments}>
+                <Ionicons name="add-circle-outline" size={18} color="#0064EC" />
+                <Text className="ml-1.5 text-sm font-semibold text-primary">
+                  {documents.length ? "Add more" : "Add portfolio / documents"}
+                </Text>
+              </TouchableOpacity>
+            </Card>
           </View>
         )}
       </ScrollView>
@@ -451,7 +511,7 @@ export default function ApplyScreen() {
             <Button
               title="Submit Application"
               disabled={!selectedCvId}
-              loading={applyMutation.isPending}
+              loading={applyMutation.isPending || submitting}
               onPress={handleSubmit}
             />
           )}

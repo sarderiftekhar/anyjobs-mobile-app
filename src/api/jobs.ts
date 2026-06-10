@@ -89,4 +89,16 @@ export const jobsApi = {
 
   unsave: (jobId: number) =>
     apiClient.delete<ApiResponse>(`/jobs/${jobId}/unsave`),
+
+  report: (jobId: number, reason: string, details?: string) =>
+    apiClient.post<ApiResponse>(`/jobs/${jobId}/report`, { reason, details }),
+
+  bulkRemoveSaved: (jobIds: number[]) =>
+    apiClient.post<ApiResponse<{ removed: number }>>("/jobs/saved/bulk-remove", { job_ids: jobIds }),
+
+  bulkApplySaved: (jobIds: number[], cvId?: number) =>
+    apiClient.post<ApiResponse<{ applied: number; skipped: number }>>("/jobs/saved/bulk-apply", {
+      job_ids: jobIds,
+      cv_id: cvId,
+    }),
 };

@@ -61,8 +61,27 @@ export default function SettingsScreen() {
         Notifications
       </Text>
       <Card className="mx-4">
-        <SettingsRow icon="notifications-outline" title="Push Notifications" />
-        <SettingsRow icon="mail-outline" title="Email Alerts" />
+        <SettingsRow
+          icon="notifications-outline"
+          title="Notification Preferences"
+          onPress={() => router.push("/(candidate)/settings/notifications")}
+        />
+      </Card>
+
+      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">
+        Privacy & Preferences
+      </Text>
+      <Card className="mx-4">
+        <SettingsRow
+          icon="shield-checkmark-outline"
+          title="Privacy"
+          onPress={() => router.push("/(candidate)/profile/edit/privacy")}
+        />
+        <SettingsRow
+          icon="options-outline"
+          title="Job Preferences"
+          onPress={() => router.push("/(candidate)/profile/edit/preferences")}
+        />
       </Card>
 
       <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">

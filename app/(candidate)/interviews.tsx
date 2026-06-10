@@ -7,6 +7,8 @@ import {
   RefreshControl,
   Linking,
   Alert,
+  Modal,
+  TextInput,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,10 +37,12 @@ function InterviewCard({
   interview,
   onConfirm,
   onCancel,
+  onReschedule,
 }: {
   interview: Interview;
   onConfirm?: (id: number) => void;
   onCancel?: (id: number) => void;
+  onReschedule?: (id: number) => void;
 }) {
   const scheduled = interview.scheduled_at ? new Date(interview.scheduled_at) : null;
   const past = scheduled ? isPast(scheduled) : false;
@@ -120,6 +124,15 @@ function InterviewCard({
               onPress={() => onConfirm(interview.id)}
             />
           )}
+          {onReschedule && (
+            <Button
+              title="Reschedule"
+              size="sm"
+              variant="ghost"
+              className="flex-1"
+              onPress={() => onReschedule(interview.id)}
+            />
+          )}
           {onCancel && (
             <Button
               title="Cancel"
@@ -154,6 +167,30 @@ export default function InterviewsScreen() {
     mutationFn: (id: number) => candidateExtrasApi.interviews.cancel(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
   });
+
+  const rescheduleMutation = useMutation({
+    mutationFn: ({ id, when }: { id: number; when: string }) =>
+      candidateExtrasApi.interviews.reschedule(id, when),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
+  });
+
+  const [rescheduleId, setRescheduleId] = useState<number | null>(null);
+  const [whenText, setWhenText] = useState("");
+
+  const submitReschedule = async () => {
+    const parsed = new Date(whenText.replace(" ", "T"));
+    if (Number.isNaN(parsed.getTime()) || parsed.getTime() <= Date.now()) {
+      Alert.alert("Invalid date", "Enter a future date as YYYY-MM-DD HH:mm.");
+      return;
+    }
+    try {
+      await rescheduleMutation.mutateAsync({ id: rescheduleId!, when: parsed.toISOString() });
+      setRescheduleId(null);
+      setWhenText("");
+    } catch (e: any) {
+      Alert.alert("Couldn't reschedule", e?.response?.data?.message ?? "Please try again.");
+    }
+  };
 
   const list = useMemo(() => {
     if (!data) return [];
@@ -227,6 +264,10 @@ export default function InterviewsScreen() {
               interview={item}
               onConfirm={(id) => confirmMutation.mutate(id)}
               onCancel={handleCancel}
+              onReschedule={(id) => {
+                setRescheduleId(id);
+                setWhenText("");
+              }}
             />
           )}
           refreshControl={
@@ -238,6 +279,32 @@ export default function InterviewsScreen() {
           }
         />
       )}
+
+      {/* Reschedule modal */}
+      <Modal visible={rescheduleId !== null} transparent animationType="fade" onRequestClose={() => setRescheduleId(null)}>
+        <View className="flex-1 items-center justify-center bg-black/40 px-6">
+          <View className="w-full rounded-2xl bg-surface p-5">
+            <Text className="text-lg font-bold text-ink">Propose a new time</Text>
+            <Text className="mt-1 text-sm text-ink-muted">Enter your preferred date and time.</Text>
+            <TextInput
+              className="mt-4 rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-ink"
+              placeholder="YYYY-MM-DD HH:mm"
+              placeholderTextColor="#6B7F94"
+              value={whenText}
+              onChangeText={setWhenText}
+              autoCapitalize="none"
+            />
+            <View className="mt-4 flex-row">
+              <View className="mr-2 flex-1">
+                <Button title="Cancel" variant="outline" onPress={() => setRescheduleId(null)} />
+              </View>
+              <View className="ml-2 flex-1">
+                <Button title="Submit" loading={rescheduleMutation.isPending} onPress={submitReschedule} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

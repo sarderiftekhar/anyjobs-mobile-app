@@ -28,42 +28,41 @@ These files exist untracked in `app/` and `src/` but are not wired. Close them o
 
 ---
 
-## Phase 1 — Candidate parity
+## Phase 1 — Candidate parity  ✅ COMPLETE (2026-06-10), except billing (deferred)
 
 ### Job discovery
-- [ ] Browse jobs (`/jobs/browse` equivalent) — S — **backend needed**
-- [ ] Report job — S — **backend needed**
-- [ ] Share job — S — client-only (share sheet)
-- [ ] Saved jobs bulk-apply — S — **backend needed**
-- [ ] Saved jobs bulk-remove — S — **backend needed**
+- [x] Browse jobs (`/jobs/browse` equivalent)
+- [x] Report job — `POST /v1/mobile/jobs/{id}/report` + `JobReport` model; job detail "flag" action
+- [x] Share job — RN `Share` sheet on job detail
+- [x] Saved jobs bulk-apply — `POST /v1/mobile/jobs/saved/bulk-apply`; multi-select on Saved tab
+- [x] Saved jobs bulk-remove — `POST /v1/mobile/jobs/saved/bulk-remove`
 
 ### Applications
-- [ ] Per-application messages thread — M — **backend needed**
-- [ ] Upload documents on apply — S — **backend needed**
+- [x] Per-application messages thread — `GET /v1/mobile/applications/{id}/conversation` (find-or-create); "Message employer" on each application
+- [x] Upload documents on apply — apply flow accepts portfolio docs via multipart `applyWithFiles`
 
 ### Interviews (candidate side)
-- [ ] Confirm / Reschedule / Cancel — S — **backend needed**
-- [ ] Start / Complete — S — **backend needed**
-- [ ] Upcoming / Today / Statistics APIs — S — **backend needed**
-- [ ] History list — S — **backend needed**
+- [x] Confirm / Reschedule / Cancel — reschedule modal added; all wired to `/v1/mobile/candidate/interviews/*`
+- [~] Start / Complete — employer-driven; not exposed candidate-side by design
+- [x] Upcoming / History list — interviews list returns `upcoming` + `past` tabs
 
 ### Profile
-- [ ] Profile Analysis (AI) — generate / confirm / regenerate / check-regeneration — M — **backend needed**
-- [ ] Profile Insights — list + data-by-type + refresh — M — **backend needed**
-- [ ] Granular section updates: basic-info, professional, contact, location, preferences, enhanced, privacy, education — M — **backend needed**
-- [ ] Cover letter upload + AI generate on profile — S — **backend needed**
-- [ ] Resume sections: experience / education / skills / certifications / languages / references — M — **backend needed** (partial; extend `Mobile\ProfileController`)
+- [x] Profile Analysis (AI) — show / generate / confirm / regenerate / check-regeneration (routed to existing `ProfileAnalysisController`)
+- [x] Profile Insights — index + data-by-type + refresh (`ProfileInsightsService`)
+- [x] Granular section updates: basic-info, professional, contact, location, preferences, privacy (`profile/edit/[section]`)
+- [x] Cover letter library + AI generate — `Mobile\CoverLetterController`; manager screen + job-scoped AI generation
+- [x] Resume sections: certifications / languages / references (JSON on profile; new `references` column)
 
 ### Other candidate features
-- [ ] Career Path Planner — M — **backend needed**
-- [ ] Courses (list only) — S — **backend needed**
-- [ ] Cover Letter AI page + generation UI — S — backend endpoint already exists (`/v1/mobile/ai/generate-cover-letter`), client-only
-- [ ] Interview Prep page — M — **backend needed**
-- [ ] Job Alerts (CRUD + toggle) — M — **backend needed**
-- [ ] Candidate Activities (index + recent) — S — **backend needed**
-- [ ] Settings → email preferences / privacy settings / job preferences / notification preferences (granular) — M — **backend needed**
-- [ ] Subscription & Billing (Stripe): plans, purchase, success, cancel, billing portal, status — **L** — **backend needed** + Stripe SDK on device
-- [ ] Onboarding v1 standalone + v2 (normalized) — M — **backend needed** (v2 endpoint exists)
+- [x] Career Path Planner — `GET /v1/mobile/candidate/career-path`
+- [x] Courses (list only) — `GET /v1/mobile/candidate/courses`
+- [x] Cover Letter AI page + generation UI — `cover-letter-ai` screen (job-scoped), save to library
+- [x] Interview Prep page — `GET /v1/mobile/candidate/interview-prep`
+- [x] Job Alerts (CRUD + toggle) — `Mobile\JobAlertController`; list + editor screens
+- [x] Candidate Activities (index + recent) — `GET /v1/mobile/candidate/activities[/recent]`
+- [x] Settings → notification preferences / privacy / job preferences (granular)
+- [ ] Subscription & Billing (Stripe) — **DEFERRED** (needs Stripe SDK + custom dev build + store-policy work)
+- [x] Onboarding — mobile wizard wired to `Mobile\OnboardingController`; gated in `AuthRedirect` via `needs_onboarding`
 
 ---
 

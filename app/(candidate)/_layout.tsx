@@ -19,6 +19,14 @@ export default function CandidateLayout() {
       <Stack.Screen name="chat/[conversationId]" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="settings" />
+      <Stack.Screen
+        name="onboarding"
+        options={{ animation: "fade", gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="cover-letter-ai"
+        options={{ animation: "slide_from_bottom", presentation: "modal" }}
+      />
     </Stack>
   );
 }

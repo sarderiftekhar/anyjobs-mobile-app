@@ -24,6 +24,31 @@ import { Avatar, Card, Badge, Button } from "../../../src/components/ui";
 import type { Experience, Education } from "../../../src/types/user";
 import { format } from "date-fns";
 
+function LinkRow({
+  icon,
+  label,
+  onPress,
+  last,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  onPress: () => void;
+  last?: boolean;
+}) {
+  return (
+    <TouchableOpacity
+      className={`flex-row items-center justify-between py-3.5 ${last ? "" : "border-b border-gray-100"}`}
+      onPress={onPress}
+    >
+      <View className="flex-row items-center">
+        <Ionicons name={icon} size={20} color="#6B7F94" />
+        <Text className="ml-3 text-base text-ink">{label}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
+    </TouchableOpacity>
+  );
+}
+
 function ExperienceModal({
   visible,
   onClose,
@@ -376,13 +401,44 @@ export default function ProfileScreen() {
       <Card className="mx-4 mt-3" delay={300}>
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">About</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(candidate)/profile/edit/professional")}>
             <Ionicons name="create-outline" size={20} color="#0064EC" />
           </TouchableOpacity>
         </View>
         <Text className="mt-2 text-sm text-ink-muted">
           {user?.profile?.bio ?? "Tell employers about yourself, your career goals, and what makes you unique."}
         </Text>
+      </Card>
+
+      {/* Manage profile */}
+      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">
+        Manage profile
+      </Text>
+      <Card className="mx-4" delay={340} animated={false}>
+        <LinkRow icon="person-outline" label="Basic info" onPress={() => router.push("/(candidate)/profile/edit/basic-info")} />
+        <LinkRow icon="briefcase-outline" label="Professional details" onPress={() => router.push("/(candidate)/profile/edit/professional")} />
+        <LinkRow icon="location-outline" label="Location" onPress={() => router.push("/(candidate)/profile/edit/location")} />
+        <LinkRow icon="call-outline" label="Contact info" onPress={() => router.push("/(candidate)/profile/edit/contact")} />
+        <LinkRow icon="options-outline" label="Job preferences" onPress={() => router.push("/(candidate)/profile/edit/preferences")} />
+        <LinkRow icon="ribbon-outline" label="Certifications" onPress={() => router.push("/(candidate)/profile/certifications")} />
+        <LinkRow icon="language-outline" label="Languages" onPress={() => router.push("/(candidate)/profile/languages")} />
+        <LinkRow icon="people-outline" label="References" onPress={() => router.push("/(candidate)/profile/references")} />
+        <LinkRow icon="document-text-outline" label="Cover letters" onPress={() => router.push("/(candidate)/profile/cover-letters")} last />
+      </Card>
+
+      {/* Career tools */}
+      <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">
+        Career tools
+      </Text>
+      <Card className="mx-4" delay={380} animated={false}>
+        <LinkRow icon="bar-chart-outline" label="Profile insights" onPress={() => router.push("/(candidate)/profile/insights")} />
+        <LinkRow icon="sparkles-outline" label="AI profile analysis" onPress={() => router.push("/(candidate)/profile/analysis")} />
+        <LinkRow icon="notifications-outline" label="Job alerts" onPress={() => router.push("/(candidate)/job-alerts")} />
+        <LinkRow icon="trending-up-outline" label="Career path" onPress={() => router.push("/(candidate)/career-path")} />
+        <LinkRow icon="school-outline" label="Courses" onPress={() => router.push("/(candidate)/courses")} />
+        <LinkRow icon="clipboard-outline" label="Interview prep" onPress={() => router.push("/(candidate)/interview-prep")} />
+        <LinkRow icon="calendar-outline" label="Interviews" onPress={() => router.push("/(candidate)/interviews")} />
+        <LinkRow icon="pulse-outline" label="Activity" onPress={() => router.push("/(candidate)/activities")} last />
       </Card>
 
       {/* Sign out */}

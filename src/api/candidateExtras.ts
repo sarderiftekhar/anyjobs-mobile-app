@@ -152,6 +152,13 @@ export const candidateExtrasApi = {
       apiClient
         .post<ApiResponse>(`/candidate/interviews/${id}/cancel`, { reason })
         .then((r) => r.data),
+    reschedule: (id: number, scheduledAt: string, notes?: string) =>
+      apiClient
+        .post<ApiResponse>(`/candidate/interviews/${id}/reschedule`, {
+          scheduled_at: scheduledAt,
+          notes,
+        })
+        .then((r) => r.data),
   },
 
   // =============== Recommendations ===============

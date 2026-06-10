@@ -27,21 +27,30 @@ function AuthRedirect() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === "(auth)";
-    const inPublicGroup = segments[0] === "(public)";
+    const seg = segments as string[];
+    const inAuthGroup = seg[0] === "(auth)";
+    const inPublicGroup = seg[0] === "(public)";
+    const inOnboarding = seg[0] === "(candidate)" && seg[1] === "onboarding";
+    const isCandidate = user?.user_type !== "employer";
+    const needsOnboarding = isCandidate && !!user?.needs_onboarding;
 
     if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
       // Not logged in and not on auth/public screen -> go to welcome
       router.replace("/(auth)/welcome");
     } else if (isAuthenticated && inAuthGroup) {
-      // Logged in but on auth screen -> go to appropriate tab
+      // Logged in but on auth screen -> go to appropriate destination
       if (user?.user_type === "employer") {
         router.replace("/(employer)/(tabs)");
+      } else if (needsOnboarding) {
+        router.replace("/(candidate)/onboarding");
       } else {
         router.replace("/(candidate)/(tabs)");
       }
+    } else if (isAuthenticated && needsOnboarding && !inOnboarding && !inAuthGroup && !inPublicGroup) {
+      // First-time candidate anywhere in the app -> finish onboarding first
+      router.replace("/(candidate)/onboarding");
     }
-  }, [isAuthenticated, isLoading, segments]);
+  }, [isAuthenticated, isLoading, segments, user?.needs_onboarding, user?.user_type]);
 
   return <Slot />;
 }

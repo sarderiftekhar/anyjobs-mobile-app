@@ -1,6 +1,70 @@
 import apiClient from "./client";
-import type { User, Experience, Education, CvUpload } from "../types/user";
+import type {
+  User,
+  Experience,
+  Education,
+  CvUpload,
+  LanguageEntry,
+  CertificationEntry,
+  ReferenceEntry,
+} from "../types/user";
 import type { ApiResponse } from "../types/api";
+
+export interface BasicInfoPayload {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  website?: string;
+  date_of_birth?: string;
+  gender?: string;
+}
+
+export interface ProfessionalPayload {
+  professional_title?: string;
+  professional_summary?: string;
+  years_experience?: number;
+  current_company?: string;
+  current_position?: string;
+  industry?: string;
+  employment_status?: string;
+  current_salary?: number;
+  salary_currency?: string;
+}
+
+export interface LocationPayload {
+  country?: string;
+  state_province?: string;
+  city?: string;
+  postal_code?: string;
+  address?: string;
+  willing_to_relocate?: boolean;
+}
+
+export interface PreferencesPayload {
+  preferred_job_types?: string[];
+  preferred_work_arrangements?: string[];
+  preferred_locations?: string[];
+  expected_salary_min?: number | null;
+  expected_salary_max?: number | null;
+  expected_salary_currency?: string;
+  open_to_work?: boolean;
+  open_to_remote?: boolean;
+  available_from?: string | null;
+}
+
+export interface PrivacyPayload {
+  profile_public?: boolean;
+  show_contact_info?: boolean;
+  show_current_employer?: boolean;
+  show_salary_info?: boolean;
+  allow_recruiter_contact?: boolean;
+}
+
+export interface NotificationPrefsPayload {
+  email_notifications?: boolean;
+  sms_notifications?: boolean;
+  notification_preferences?: string[];
+}
 
 export interface UpdateProfilePayload {
   first_name?: string;
@@ -81,4 +145,36 @@ export const profileApi = {
 
   deleteCv: (id: number) =>
     apiClient.delete<ApiResponse>(`/profile/cv/${id}`),
+
+  // ---- Granular sections (each returns the refreshed user) ----
+  updateBasicInfo: (data: BasicInfoPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/basic-info", data),
+
+  updateProfessional: (data: ProfessionalPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/professional", data),
+
+  updateContact: (data: { phone?: string; mobile?: string; website?: string }) =>
+    apiClient.put<ApiResponse<User>>("/profile/contact", data),
+
+  updateLocation: (data: LocationPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/location", data),
+
+  updatePreferences: (data: PreferencesPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/preferences", data),
+
+  updatePrivacy: (data: PrivacyPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/privacy", data),
+
+  updateNotificationPreferences: (data: NotificationPrefsPayload) =>
+    apiClient.put<ApiResponse<User>>("/profile/notification-preferences", data),
+
+  // ---- Resume JSON sections ----
+  updateCertifications: (certifications: CertificationEntry[]) =>
+    apiClient.put<ApiResponse<User>>("/profile/certifications", { certifications }),
+
+  updateLanguages: (languages: LanguageEntry[]) =>
+    apiClient.put<ApiResponse<User>>("/profile/languages", { languages }),
+
+  updateReferences: (references: ReferenceEntry[]) =>
+    apiClient.put<ApiResponse<User>>("/profile/references", { references }),
 };

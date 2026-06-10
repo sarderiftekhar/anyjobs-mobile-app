@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, TouchableOpacity, Share } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Share, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useJobDetail, useSaveJob, useUnsaveJob } from "../../../src/hooks/useJobs";
+import { jobsApi } from "../../../src/api/jobs";
 import { Card, Badge, Button, LoadingSpinner } from "../../../src/components/ui";
 import { MatchScoreCard } from "../../../src/components/ai/MatchScoreCard";
 import { formatDistanceToNow } from "date-fns";
@@ -27,6 +28,25 @@ export default function JobDetailScreen() {
     await Share.share({
       message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://anyjobs.com/jobs/${job.id}`,
     });
+  };
+
+  const submitReport = async (reason: string) => {
+    if (!job) return;
+    try {
+      await jobsApi.report(job.id, reason);
+      Alert.alert("Reported", "Thanks — we'll review this job.");
+    } catch {
+      Alert.alert("Error", "Couldn't submit the report. Please try again.");
+    }
+  };
+
+  const handleReport = () => {
+    Alert.alert("Report job", "Why are you reporting this job?", [
+      { text: "Spam", onPress: () => submitReport("spam") },
+      { text: "Scam or fraud", onPress: () => submitReport("scam") },
+      { text: "Misleading", onPress: () => submitReport("misleading") },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
 
   if (isLoading) {
@@ -86,6 +106,12 @@ export default function JobDetailScreen() {
                 className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
               >
                 <Ionicons name="share-outline" size={20} color="#1A2230" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleReport}
+                className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
+              >
+                <Ionicons name="flag-outline" size={20} color="#1A2230" />
               </TouchableOpacity>
             </View>
           </View>
@@ -260,11 +286,27 @@ export default function JobDetailScreen() {
             </Text>
           </View>
         ) : (
-          <Button
-            title="Apply Now"
-            size="lg"
-            onPress={() => router.push(`/(candidate)/apply/${job.id}`)}
-          />
+          <>
+            <Button
+              title="Apply Now"
+              size="lg"
+              onPress={() => router.push(`/(candidate)/apply/${job.id}`)}
+            />
+            <TouchableOpacity
+              className="mt-2 flex-row items-center justify-center py-1"
+              onPress={() =>
+                router.push({
+                  pathname: "/(candidate)/cover-letter-ai",
+                  params: { jobId: String(job.id), jobTitle: job.title },
+                })
+              }
+            >
+              <Ionicons name="sparkles-outline" size={15} color="#0064EC" />
+              <Text className="ml-1.5 text-sm font-semibold text-primary">
+                Generate cover letter with AI
+              </Text>
+            </TouchableOpacity>
+          </>
         )}
        </View>
       </View>

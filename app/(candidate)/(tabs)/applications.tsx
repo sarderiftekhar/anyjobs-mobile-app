@@ -6,13 +6,43 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from "react-native";
+import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useApplications } from "../../../src/hooks/useApplications";
 import { ApplicationCard } from "../../../src/components/application";
 import { EmptyState, LoadingSpinner } from "../../../src/components/ui";
-import type { ApplicationStatus } from "../../../src/types/application";
+import { applicationsApi } from "../../../src/api/applications";
+
+function MessageButton({ id }: { id: number }) {
+  const [loading, setLoading] = useState(false);
+  const open = async () => {
+    setLoading(true);
+    try {
+      const conv = await applicationsApi.conversation(id);
+      router.push(`/(candidate)/chat/${conv.conversation_id}`);
+    } catch {
+      Alert.alert("Unavailable", "Messaging isn't available for this application yet.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <TouchableOpacity
+      onPress={open}
+      className="mb-4 -mt-1 flex-row items-center self-start rounded-full bg-primary/10 px-3 py-1.5"
+    >
+      {loading ? (
+        <ActivityIndicator size="small" color="#0064EC" />
+      ) : (
+        <Ionicons name="chatbubble-ellipses-outline" size={14} color="#0064EC" />
+      )}
+      <Text className="ml-1.5 text-xs font-semibold text-primary">Message employer</Text>
+    </TouchableOpacity>
+  );
+}
 
 const STATUS_TABS: { key: string; label: string }[] = [
   { key: "all", label: "All" },
@@ -105,7 +135,10 @@ export default function ApplicationsScreen() {
         <FlatList
           data={applications}
           renderItem={({ item, index }) => (
-            <ApplicationCard application={item} index={index} />
+            <View>
+              <ApplicationCard application={item} index={index} />
+              <MessageButton id={item.id} />
+            </View>
           )}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}

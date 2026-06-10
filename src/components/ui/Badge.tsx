@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-type BadgeVariant = "primary" | "success" | "warning" | "danger" | "info" | "neutral";
+type BadgeVariant = "primary" | "success" | "warning" | "danger" | "info" | "neutral" | "gray";
 
 interface BadgeProps {
   text: string;
@@ -15,6 +15,8 @@ const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
   danger: { bg: "bg-danger/10", text: "text-danger" },
   info: { bg: "bg-info/10", text: "text-info" },
   neutral: { bg: "bg-background", text: "text-ink-soft" },
+  // "gray" is a legacy alias for the neutral style used across several screens.
+  gray: { bg: "bg-background", text: "text-ink-soft" },
 };
 
 export function Badge({ text, variant = "primary", size = "sm" }: BadgeProps) {
