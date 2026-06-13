@@ -1,5 +1,8 @@
 export { Button } from "./Button";
 export { Input } from "./Input";
+export { Select } from "./Select";
+export type { SelectOption } from "./Select";
+export { ChipInput } from "./ChipInput";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Avatar } from "./Avatar";

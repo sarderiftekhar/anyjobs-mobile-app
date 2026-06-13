@@ -37,24 +37,57 @@ export interface EmployerJob extends Job {
 }
 
 export interface CreateJobPayload {
+  // Basic information
   title: string;
+  category?: string; // industry name
   description: string;
-  location: string;
-  country_id?: number;
-  state_id?: number;
-  city_id?: number;
-  job_type: string[];
+
+  // Job context
+  experience_level?: string;
+  job_type?: string;
   work_arrangement: string;
   salary_min?: number;
   salary_max?: number;
   salary_currency?: string;
-  salary_period?: string;
-  experience_level?: string;
-  skills?: string[];
-  requirements?: string[];
-  responsibilities?: string[];
-  benefits?: string[];
+  salary_type?: string;
+  salary_negotiable?: boolean;
+
+  // Company details
+  company_name?: string;
+  company_website?: string;
+  company_email?: string;
+  company_phone?: string;
+  company_description?: string;
+  company_values?: string;
+
+  // Job description extras (text on the backend)
+  requirements?: string;
+  benefits?: string;
+
+  // Skills & qualifications (arrays -> json on the backend)
+  skills_required?: string[];
+  skills_preferred?: string[];
+  certifications?: string[];
+  education_level?: string;
+
+  // Location (pragmatic string fields)
+  location: string;
+  country?: string;
+  state_province?: string;
+  city?: string;
+  address?: string;
+  postal_code?: string;
+
+  // Application process
+  application_method?: string;
+  application_url?: string;
+  application_email?: string;
+  application_instructions?: string;
   application_deadline?: string;
+  max_applications?: number;
+  auto_close_when_filled?: boolean;
+
+  // Publish
   is_featured?: boolean;
   is_urgent?: boolean;
   status?: "draft" | "active";
