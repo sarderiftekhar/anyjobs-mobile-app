@@ -40,7 +40,13 @@
           "defaultChannel": "default"
         }
       ],
-      "expo-document-picker"
+      "expo-document-picker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "AnyJobs needs access to your photos so you can upload your company logo, banner and gallery images."
+        }
+      ]
     ],
     "notification": {
       "color": "#0064EC"

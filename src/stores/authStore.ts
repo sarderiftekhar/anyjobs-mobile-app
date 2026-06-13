@@ -17,6 +17,7 @@ interface AuthState {
   login: (data: LoginPayload) => Promise<void>;
   register: (data: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   loadStoredAuth: () => Promise<void>;
   refreshUser: () => Promise<void>;
   clearError: () => void;
@@ -104,6 +105,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch {
       // Ignore errors during logout
     }
+    await storage.remove(config.TOKEN_KEY);
+    await storage.remove(config.USER_KEY);
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
+    });
+  },
+
+  deleteAccount: async () => {
+    // Remove push token while still authenticated, then ask the backend to
+    // delete the account. Only clear local auth if the deletion succeeds — on
+    // failure we keep the user signed in and surface the error so they can retry.
+    await unregisterPushToken().catch(() => {});
+    try {
+      await authApi.deleteAccount();
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        "We couldn't delete your account. Please try again.";
+      throw new Error(message);
+    }
+
     await storage.remove(config.TOKEN_KEY);
     await storage.remove(config.USER_KEY);
     set({

@@ -10,6 +10,7 @@ import {
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { Button, Card, LoadingSpinner, EmptyState } from "../../../src/components/ui";
 import {
   useCompany,
@@ -22,15 +23,38 @@ import {
 } from "../../../src/hooks/useCompany";
 import type { CompanyGalleryImage } from "../../../src/types/company";
 
-// NOTE: expo-image-picker is NOT installed in this project. Image upload flows
-// are stubbed with an Alert informing the developer. Once the dep is added,
-// wire up ImagePicker.launchImageLibraryAsync and pass the resulting URI as a
-// FormData entry named `image` (logo/banner) or `images[]` (gallery).
-function pickAndUploadStub(label: string) {
-  Alert.alert(
-    "Image picker not wired",
-    `${label} upload requires expo-image-picker, which is not in package.json yet. Add the dep, then wire to the existing uploadLogo/uploadBanner/uploadGalleryImage mutations.`
-  );
+// Launch the OS photo library and return the chosen asset (or null if the user
+// cancels / denies permission).
+async function pickImageAsset(): Promise<ImagePicker.ImagePickerAsset | null> {
+  const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!perm.granted) {
+    Alert.alert(
+      "Photo access needed",
+      "Allow photo library access in Settings to upload images."
+    );
+    return null;
+  }
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ["images"],
+    allowsEditing: true,
+    quality: 0.8,
+  });
+  if (result.canceled || !result.assets?.length) return null;
+  return result.assets[0];
+}
+
+// Build a multipart payload from a picked asset. Backend field names:
+// logo -> "logo", banner -> "banner", gallery -> "image".
+function assetToFormData(
+  asset: ImagePicker.ImagePickerAsset,
+  field: "logo" | "banner" | "image"
+): FormData {
+  const name = asset.fileName ?? asset.uri.split("/").pop() ?? `${field}.jpg`;
+  const type = asset.mimeType ?? "image/jpeg";
+  const form = new FormData();
+  // RN FormData accepts the { uri, name, type } file shape.
+  form.append(field, { uri: asset.uri, name, type } as any);
+  return form;
 }
 
 export default function CompanyGalleryScreen() {
@@ -52,6 +76,22 @@ export default function CompanyGalleryScreen() {
     () => localOrder ?? gallery ?? [],
     [localOrder, gallery]
   );
+
+  const handleUpload = async (target: "logo" | "banner" | "gallery") => {
+    const asset = await pickImageAsset();
+    if (!asset) return;
+    try {
+      if (target === "logo") {
+        await uploadLogo.mutateAsync(assetToFormData(asset, "logo"));
+      } else if (target === "banner") {
+        await uploadBanner.mutateAsync(assetToFormData(asset, "banner"));
+      } else {
+        await uploadImage.mutateAsync(assetToFormData(asset, "image"));
+      }
+    } catch {
+      Alert.alert("Upload failed", "Could not upload the image. Please try again.");
+    }
+  };
 
   const move = (index: number, dir: -1 | 1) => {
     const next = [...items];
@@ -121,7 +161,7 @@ export default function CompanyGalleryScreen() {
               title="Change logo"
               variant="outline"
               size="sm"
-              onPress={() => pickAndUploadStub("Logo")}
+              onPress={() => handleUpload("logo")}
               loading={uploadLogo.isPending}
             />
           </View>
@@ -149,7 +189,7 @@ export default function CompanyGalleryScreen() {
           title="Change banner"
           variant="outline"
           size="sm"
-          onPress={() => pickAndUploadStub("Banner")}
+          onPress={() => handleUpload("banner")}
           loading={uploadBanner.isPending}
         />
       </Card>
@@ -159,7 +199,10 @@ export default function CompanyGalleryScreen() {
         <Text className="text-base font-semibold text-ink">
           Gallery
         </Text>
-        <TouchableOpacity onPress={() => pickAndUploadStub("Gallery image")}>
+        <TouchableOpacity
+          onPress={() => handleUpload("gallery")}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Ionicons name="add-circle" size={28} color="#0064EC" />
         </TouchableOpacity>
       </View>

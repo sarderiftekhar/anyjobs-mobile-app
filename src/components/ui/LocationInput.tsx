@@ -60,7 +60,9 @@ export function LocationInput({
       setSuggestions(data);
       if (data.length > 0) setShowSuggestions(true);
     } catch (err) {
-      console.log("[LocationInput] autocomplete error:", err);
+      if (__DEV__) {
+        console.log("[LocationInput] autocomplete error:", err);
+      }
       setSuggestions([]);
     } finally {
       setIsLoading(false);

@@ -33,6 +33,10 @@ export const authApi = {
 
   logout: () => apiClient.post<ApiResponse>("/auth/logout"),
 
+  // Permanently delete the authenticated user's account and all associated data.
+  // Required by App Store Guideline 5.1.1(v) for apps with account registration.
+  deleteAccount: () => apiClient.delete<ApiResponse>("/auth/account"),
+
   getUser: () => apiClient.get<ApiResponse<User>>("/auth/user"),
 
   forgotPassword: (email: string) =>

@@ -6,6 +6,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useAuthStore } from "../src/stores/authStore";
+import { useConsentStore } from "../src/stores/consentStore";
+import { ErrorBoundary } from "../src/components/ErrorBoundary";
+import { AiConsentModal } from "../src/components/ai/AiConsentModal";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -55,8 +58,24 @@ function AuthRedirect() {
   return <Slot />;
 }
 
+/**
+ * Shows the one-time AI consent sheet once the user is authenticated and we've
+ * loaded their stored consent flag. Gates AI features behind explicit consent
+ * (App Store Guideline 5.1.2).
+ */
+function AiConsentGate() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const aiConsented = useConsentStore((s) => s.aiConsented);
+  const acceptAiConsent = useConsentStore((s) => s.acceptAiConsent);
+
+  const show = isAuthenticated && aiConsented === false;
+
+  return <AiConsentModal visible={show} onAccept={acceptAiConsent} />;
+}
+
 export default function RootLayout() {
   const loadStoredAuth = useAuthStore((s) => s.loadStoredAuth);
+  const loadConsent = useConsentStore((s) => s.loadConsent);
 
   const [fontsLoaded] = useFonts({
     "Satoshi-Variable": require("../assets/fonts/Satoshi-Variable.ttf"),
@@ -64,6 +83,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     loadStoredAuth();
+    loadConsent();
   }, []);
 
   useEffect(() => {
@@ -75,12 +95,15 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <AuthRedirect />
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <AuthRedirect />
+            <AiConsentGate />
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
