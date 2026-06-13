@@ -116,7 +116,6 @@ export function AIGenerateModal({
           {!result && (
             <Button
               title="Generate"
-              size="lg"
               loading={loading}
               className="mt-5"
               onPress={handleGenerate}
@@ -189,31 +188,25 @@ export function AIGenerateModal({
           )}
         </ScrollView>
 
-        <View
-          className="border-t border-border px-4 pt-3"
-          style={{ paddingBottom: insets.bottom + 24 }}
-        >
-          {result ? (
-            // Two actions side by side (flex via style reaches the Button wrapper)
+        {/* Footer only holds the post-result actions; the Generate button
+            lives in the content, directly under the prompt. */}
+        {result && (
+          <View
+            className="border-t border-border px-4 pt-3"
+            style={{ paddingBottom: insets.bottom + 24 }}
+          >
             <View className="flex-row gap-3">
               <Button
                 title="Regenerate"
                 variant="outline"
                 style={{ flex: 1 }}
+                loading={loading}
                 onPress={handleGenerate}
               />
               <Button title="Use this" style={{ flex: 1 }} onPress={handleAccept} />
             </View>
-          ) : (
-            // Single full-width button in a column stretches to proper size
-            <Button
-              title="Generate"
-              size="lg"
-              loading={loading}
-              onPress={handleGenerate}
-            />
-          )}
-        </View>
+          </View>
+        )}
       </View>
     </Modal>
   );
