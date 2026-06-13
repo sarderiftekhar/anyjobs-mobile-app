@@ -33,9 +33,38 @@ const STEP_TITLES: Record<Step, string> = {
   publish: "Publish Job",
 };
 
+// Validation constants/helpers mirroring the web StoreJobRequest rules.
+const MAX_SALARY = 9999999.99;
+const DESC_MIN = 50;
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const isUrl = (v: string) => /^https?:\/\/.+\..+/i.test(v.trim());
+const isPhone = (v: string) => /^[\d\s\-()\.\+]+$/.test(v.trim());
+const toNum = (v: unknown) =>
+  v === undefined || v === null || `${v}` === "" ? NaN : Number(v);
+
+/** Salary errors — recomputed live so min > max is caught immediately. */
+function salaryErrors(form: Partial<CreateJobPayload>): { salary_min?: string; salary_max?: string } {
+  const e: { salary_min?: string; salary_max?: string } = {};
+  const hasMin = form.salary_min !== undefined && `${form.salary_min}` !== "";
+  const hasMax = form.salary_max !== undefined && `${form.salary_max}` !== "";
+  const min = toNum(form.salary_min);
+  const max = toNum(form.salary_max);
+  if (hasMin) {
+    if (isNaN(min) || min < 0) e.salary_min = "Enter a valid minimum salary.";
+    else if (min > MAX_SALARY) e.salary_min = "Salary cannot exceed 9,999,999.99.";
+  }
+  if (hasMax) {
+    if (isNaN(max) || max < 0) e.salary_max = "Enter a valid maximum salary.";
+    else if (max > MAX_SALARY) e.salary_max = "Salary cannot exceed 9,999,999.99.";
+    else if (hasMin && !isNaN(min) && max < min)
+      e.salary_max = "Maximum salary must be ≥ minimum salary.";
+  }
+  return e;
+}
+
 // Small labeled text field used throughout the form.
 function Field({
-  label, value, onChangeText, placeholder, keyboardType, multiline, autoCapitalize,
+  label, value, onChangeText, placeholder, keyboardType, multiline, autoCapitalize, error,
 }: {
   label: string;
   value?: string;
@@ -44,12 +73,13 @@ function Field({
   keyboardType?: "default" | "numeric" | "email-address" | "url" | "phone-pad";
   multiline?: boolean;
   autoCapitalize?: "none" | "sentences" | "words";
+  error?: string;
 }) {
   return (
     <View className="mb-4">
       <Text className="mb-1.5 text-sm font-medium text-ink">{label}</Text>
       <TextInput
-        className={`rounded-xl border border-border bg-surface px-4 text-base text-ink ${multiline ? "min-h-[120px] py-3" : "py-3.5 min-h-[52px]"}`}
+        className={`rounded-xl border bg-surface px-4 text-base text-ink ${error ? "border-danger" : "border-border"} ${multiline ? "min-h-[120px] py-3" : "py-3.5 min-h-[52px]"}`}
         placeholder={placeholder}
         placeholderTextColor="#6B7F94"
         value={value}
@@ -59,31 +89,35 @@ function Field({
         textAlignVertical={multiline ? "top" : "center"}
         autoCapitalize={autoCapitalize}
       />
+      {error ? <Text className="mt-1.5 text-xs text-danger">{error}</Text> : null}
     </View>
   );
 }
 
 // Toggle row checkbox.
 function CheckRow({
-  label, hint, value, onToggle,
+  label, hint, value, onToggle, error,
 }: {
-  label: string; hint?: string; value?: boolean; onToggle: () => void;
+  label: string; hint?: string; value?: boolean; onToggle: () => void; error?: string;
 }) {
   return (
-    <TouchableOpacity
-      className="mb-3 flex-row items-center justify-between rounded-xl border border-border p-4"
-      onPress={onToggle}
-    >
-      <View className="flex-1 pr-3">
-        <Text className="text-sm font-medium text-ink">{label}</Text>
-        {hint && <Text className="mt-0.5 text-xs text-ink-muted">{hint}</Text>}
-      </View>
-      <Ionicons
-        name={value ? "checkbox" : "square-outline"}
-        size={24}
-        color={value ? "#0064EC" : "#6B7F94"}
-      />
-    </TouchableOpacity>
+    <View className="mb-3">
+      <TouchableOpacity
+        className={`flex-row items-center justify-between rounded-xl border p-4 ${error ? "border-danger" : "border-border"}`}
+        onPress={onToggle}
+      >
+        <View className="flex-1 pr-3">
+          <Text className="text-sm font-medium text-ink">{label}</Text>
+          {hint && <Text className="mt-0.5 text-xs text-ink-muted">{hint}</Text>}
+        </View>
+        <Ionicons
+          name={value ? "checkbox" : "square-outline"}
+          size={24}
+          color={value ? "#0064EC" : "#6B7F94"}
+        />
+      </TouchableOpacity>
+      {error ? <Text className="mt-1 text-xs text-danger">{error}</Text> : null}
+    </View>
   );
 }
 
@@ -94,6 +128,7 @@ export default function CreateJobScreen() {
   const [step, setStep] = useState<Step>("basic");
   const [aiOpen, setAiOpen] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const currentIndex = STEPS.indexOf(step);
   const progress = Math.round(((currentIndex + 1) / STEPS.length) * 100);
 
@@ -121,8 +156,15 @@ export default function CreateJobScreen() {
     status: "active",
   });
 
-  const updateForm = (updates: Partial<CreateJobPayload>) =>
+  // Update the form and clear any inline error on the touched field(s).
+  const updateForm = (updates: Partial<CreateJobPayload>) => {
     setForm((prev) => ({ ...prev, ...updates }));
+    setErrors((prev) => {
+      const next = { ...prev };
+      for (const k of Object.keys(updates)) delete next[k];
+      return next;
+    });
+  };
 
   // Auto-fill company + location details from the employer's company profile,
   // once, and only into fields the user hasn't already filled.
@@ -156,63 +198,131 @@ export default function CreateJobScreen() {
     });
   }, [company]);
 
-  // Per-step required-field validation. Returns an error string or null.
-  const validateStep = (s: Step): string | null => {
+  // Compute all validation errors for a step's fields (required + format),
+  // mirroring the web StoreJobRequest rules.
+  const validateStep = (s: Step): Record<string, string> => {
+    const e: Record<string, string> = {};
+    const f = form;
+
     if (s === "basic") {
-      if (!form.title?.trim()) return "Job title is required.";
-      if (!form.category?.trim()) return "Please select an industry.";
+      if (!f.title?.trim()) e.title = "Job title is required.";
+      else if (f.title.length > 255) e.title = "Job title cannot exceed 255 characters.";
+      if (!f.category?.trim()) e.category = "Please select an industry.";
     }
+
     if (s === "context") {
-      if (!form.experience_level) return "Experience level is required.";
-      if (!form.job_type) return "Please select a job type.";
-      if (!form.work_arrangement) return "Work arrangement is required.";
+      if (!f.experience_level) e.experience_level = "Experience level is required.";
+      if (!f.job_type) e.job_type = "Please select a job type.";
+      if (!f.work_arrangement) e.work_arrangement = "Work arrangement is required.";
+      if (f.salary_min === undefined || `${f.salary_min}` === "")
+        e.salary_min = "Minimum salary is required.";
+      if (!f.salary_currency) e.salary_currency = "Currency is required.";
+      if (!f.salary_type) e.salary_type = "Salary type is required.";
+      Object.assign(e, salaryErrors(f));
     }
+
+    if (s === "company") {
+      if (!f.company_name?.trim()) e.company_name = "Company name is required.";
+      else if (f.company_name.length > 255) e.company_name = "Company name cannot exceed 255 characters.";
+      if (f.company_website && (!isUrl(f.company_website) || f.company_website.length > 255))
+        e.company_website = "Enter a valid URL (https://...).";
+      if (f.company_email && !isEmail(f.company_email))
+        e.company_email = "Enter a valid email address.";
+      if (f.company_phone && (!isPhone(f.company_phone) || f.company_phone.length > 20))
+        e.company_phone = "Phone may only contain digits, spaces, - ( ) . +";
+      if (f.company_values && f.company_values.length > 2000)
+        e.company_values = "Company values cannot exceed 2000 characters.";
+    }
+
     if (s === "description") {
-      if (!form.description || form.description.trim().length < 50)
-        return "Description must be at least 50 characters.";
+      const len = f.description?.trim().length ?? 0;
+      if (len < DESC_MIN) e.description = `Description must be at least ${DESC_MIN} characters.`;
+      else if (len > 5000) e.description = "Description cannot exceed 5000 characters.";
+      if (f.requirements && f.requirements.length > 2000)
+        e.requirements = "Requirements cannot exceed 2000 characters.";
     }
+
     if (s === "skills") {
-      if (!form.skills_required?.length) return "Add at least one required skill.";
+      if (!f.skills_required?.length) e.skills_required = "Add at least one required skill.";
+      else if (f.skills_required.some((sk) => sk.length > 100))
+        e.skills_required = "Each skill must be 100 characters or fewer.";
+      if (f.skills_preferred?.some((sk) => sk.length > 100))
+        e.skills_preferred = "Each skill must be 100 characters or fewer.";
+      if (f.certifications?.some((c) => c.length > 100))
+        e.certifications = "Each certification must be 100 characters or fewer.";
+      if (f.education_level && /[0-9]/.test(f.education_level))
+        e.education_level = "Education level may not contain numbers.";
     }
+
     if (s === "location") {
-      const onsite = form.work_arrangement === "On Site" || form.work_arrangement === "Hybrid";
-      if (onsite && !form.location?.trim()) return "Location is required for on-site/hybrid roles.";
+      const onsite = f.work_arrangement === "On Site" || f.work_arrangement === "Hybrid";
+      if (onsite && !f.country?.trim())
+        e.country = "Country is required for on-site/hybrid roles.";
+      if (f.postal_code && f.postal_code.length > 20)
+        e.postal_code = "Postal code cannot exceed 20 characters.";
+      if (f.address && f.address.length > 500)
+        e.address = "Address cannot exceed 500 characters.";
     }
+
     if (s === "application") {
-      if (form.application_method === "external" && !form.application_url?.trim())
-        return "Application URL is required for external applications.";
-      if (form.application_method === "email" && !form.application_email?.trim())
-        return "Application email is required.";
+      if (!f.application_method) e.application_method = "Application method is required.";
+      if (f.application_method === "external") {
+        if (!f.application_url?.trim()) e.application_url = "Application URL is required.";
+        else if (!isUrl(f.application_url)) e.application_url = "Enter a valid URL (https://...).";
+      }
+      if (f.application_method === "email") {
+        if (!f.application_email?.trim()) e.application_email = "Application email is required.";
+        else if (!isEmail(f.application_email)) e.application_email = "Enter a valid email address.";
+      }
+      if (!f.application_deadline?.trim()) {
+        e.application_deadline = "Application deadline is required.";
+      } else {
+        const d = new Date(f.application_deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (isNaN(d.getTime())) e.application_deadline = "Enter a valid date (YYYY-MM-DD).";
+        else if (d <= today) e.application_deadline = "Deadline must be in the future.";
+      }
+      if (f.max_applications !== undefined && `${f.max_applications}` !== "") {
+        const m = toNum(f.max_applications);
+        if (isNaN(m) || m < 1 || m > 10000)
+          e.max_applications = "Must be between 1 and 10,000.";
+      }
     }
-    return null;
+
+    return e;
   };
 
   const goNext = () => {
-    const err = validateStep(step);
-    if (err) {
-      Alert.alert("Missing information", err);
+    const e = validateStep(step);
+    setErrors(e);
+    const keys = Object.keys(e);
+    if (keys.length) {
+      Alert.alert("Please fix the following", e[keys[0]]);
       return;
     }
     setStep(STEPS[currentIndex + 1]);
   };
 
   const handlePublish = async (status: "active" | "draft") => {
-    // location is required by the backend; fall back to the city/country text.
     const location =
       form.location?.trim() ||
       [form.city, form.state_province, form.country].filter(Boolean).join(", ");
 
     if (status === "active") {
-      // Validate every step before publishing.
+      // Validate every step; jump to the first one with an error.
       for (const s of STEPS) {
-        const err = validateStep(s);
-        if (err) {
-          Alert.alert("Missing information", err);
+        const e = validateStep(s);
+        if (Object.keys(e).length) {
+          setErrors(e);
+          setStep(s);
+          Alert.alert("Please fix the following", e[Object.keys(e)[0]]);
           return;
         }
       }
       if (!location) {
-        Alert.alert("Missing information", "Please provide a location.");
+        setStep("location");
+        Alert.alert("Please fix the following", "Please provide a location.");
         return;
       }
       if (!termsAgreed) {
@@ -232,6 +342,9 @@ export default function CreateJobScreen() {
       Alert.alert("Error", "Failed to create job. Please try again.");
     }
   };
+
+  // Live salary errors so min > max shows immediately on the Context step.
+  const liveSalary = salaryErrors(form);
 
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
@@ -269,12 +382,14 @@ export default function CreateJobScreen() {
               value={form.category || undefined}
               options={INDUSTRY_OPTIONS}
               searchable
+              error={errors.category}
               onChange={(v) => updateForm({ category: v })}
             />
             <Field
               label="Job Title *"
               placeholder="e.g. Senior React Developer"
               value={form.title}
+              error={errors.title}
               onChangeText={(t) => updateForm({ title: t })}
             />
           </>
@@ -287,6 +402,7 @@ export default function CreateJobScreen() {
               label="Experience Level *"
               value={form.experience_level || undefined}
               options={EXPERIENCE_LEVELS}
+              error={errors.experience_level}
               onChange={(v) => updateForm({ experience_level: v })}
             />
             <Select
@@ -294,22 +410,25 @@ export default function CreateJobScreen() {
               placeholder="Select job type"
               value={form.job_type}
               options={JOB_TYPES}
+              error={errors.job_type}
               onChange={(v) => updateForm({ job_type: v })}
             />
             <Select
               label="Work Arrangement *"
               value={form.work_arrangement}
               options={WORK_ARRANGEMENTS}
+              error={errors.work_arrangement}
               onChange={(v) => updateForm({ work_arrangement: v })}
             />
             <View className="flex-row gap-3">
               <View className="flex-1">
                 <Field
-                  label="Min Salary"
+                  label="Min Salary *"
                   placeholder="30000"
                   keyboardType="numeric"
                   value={form.salary_min?.toString() ?? ""}
-                  onChangeText={(t) => updateForm({ salary_min: parseInt(t) || undefined })}
+                  error={errors.salary_min ?? liveSalary.salary_min}
+                  onChangeText={(t) => updateForm({ salary_min: t === "" ? undefined : (parseInt(t) || 0) })}
                 />
               </View>
               <View className="flex-1">
@@ -318,7 +437,8 @@ export default function CreateJobScreen() {
                   placeholder="60000"
                   keyboardType="numeric"
                   value={form.salary_max?.toString() ?? ""}
-                  onChangeText={(t) => updateForm({ salary_max: parseInt(t) || undefined })}
+                  error={errors.salary_max ?? liveSalary.salary_max}
+                  onChangeText={(t) => updateForm({ salary_max: t === "" ? undefined : (parseInt(t) || 0) })}
                 />
               </View>
             </View>
@@ -329,6 +449,7 @@ export default function CreateJobScreen() {
                   value={form.salary_currency}
                   options={CURRENCIES}
                   searchable
+                  error={errors.salary_currency}
                   onChange={(v) => updateForm({ salary_currency: v })}
                 />
               </View>
@@ -337,6 +458,7 @@ export default function CreateJobScreen() {
                   label="Salary Type"
                   value={form.salary_type}
                   options={SALARY_TYPES}
+                  error={errors.salary_type}
                   onChange={(v) => updateForm({ salary_type: v })}
                 />
               </View>
@@ -361,9 +483,10 @@ export default function CreateJobScreen() {
               </View>
             )}
             <Field
-              label="Company Name"
+              label="Company Name *"
               placeholder="Your company name"
               value={form.company_name}
+              error={errors.company_name}
               onChangeText={(t) => updateForm({ company_name: t })}
             />
             <Field
@@ -372,6 +495,7 @@ export default function CreateJobScreen() {
               keyboardType="url"
               autoCapitalize="none"
               value={form.company_website}
+              error={errors.company_website}
               onChangeText={(t) => updateForm({ company_website: t })}
             />
             <Field
@@ -380,6 +504,7 @@ export default function CreateJobScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               value={form.company_email}
+              error={errors.company_email}
               onChangeText={(t) => updateForm({ company_email: t })}
             />
             <Field
@@ -387,6 +512,7 @@ export default function CreateJobScreen() {
               placeholder="+44 ..."
               keyboardType="phone-pad"
               value={form.company_phone}
+              error={errors.company_phone}
               onChangeText={(t) => updateForm({ company_phone: t })}
             />
             <Field
@@ -401,6 +527,7 @@ export default function CreateJobScreen() {
               placeholder="What does your company stand for?"
               multiline
               value={form.company_values}
+              error={errors.company_values}
               onChangeText={(t) => updateForm({ company_values: t })}
             />
           </>
@@ -414,6 +541,7 @@ export default function CreateJobScreen() {
               placeholder="Describe the role, team, and responsibilities..."
               multiline
               value={form.description}
+              error={errors.description}
               onChangeText={(t) => updateForm({ description: t })}
             />
             <Text className="-mt-2 mb-3 text-xs text-ink-muted">
@@ -428,6 +556,7 @@ export default function CreateJobScreen() {
               placeholder="Key requirements for the role..."
               multiline
               value={form.requirements}
+              error={errors.requirements}
               onChangeText={(t) => updateForm({ requirements: t })}
             />
             <Field
@@ -468,18 +597,21 @@ export default function CreateJobScreen() {
               label="Required Skills *"
               placeholder="Add a skill"
               value={form.skills_required ?? []}
+              error={errors.skills_required}
               onChange={(v) => updateForm({ skills_required: v })}
             />
             <ChipInput
               label="Preferred Skills"
               placeholder="Add a skill"
               value={form.skills_preferred ?? []}
+              error={errors.skills_preferred}
               onChange={(v) => updateForm({ skills_preferred: v })}
             />
             <ChipInput
               label="Certifications"
               placeholder="Add a certification"
               value={form.certifications ?? []}
+              error={errors.certifications}
               onChange={(v) => updateForm({ certifications: v })}
             />
             <Select
@@ -487,6 +619,7 @@ export default function CreateJobScreen() {
               placeholder="Select education level"
               value={form.education_level || undefined}
               options={EDUCATION_LEVELS}
+              error={errors.education_level}
               onChange={(v) => updateForm({ education_level: v })}
             />
           </>
@@ -499,12 +632,14 @@ export default function CreateJobScreen() {
               label="Complete Address"
               placeholder="123 Main Street"
               value={form.address}
+              error={errors.address}
               onChangeText={(t) => updateForm({ address: t })}
             />
             <Field
               label={form.work_arrangement === "Remote" ? "Country" : "Country *"}
               placeholder="e.g. United Kingdom"
               value={form.country}
+              error={errors.country}
               onChangeText={(t) => updateForm({ country: t })}
             />
             <Field
@@ -524,6 +659,7 @@ export default function CreateJobScreen() {
               placeholder="e.g. SW1A 1AA"
               autoCapitalize="words"
               value={form.postal_code}
+              error={errors.postal_code}
               onChangeText={(t) => updateForm({ postal_code: t })}
             />
             <Field
@@ -542,6 +678,7 @@ export default function CreateJobScreen() {
               label="Application Method *"
               value={form.application_method}
               options={APPLICATION_METHODS}
+              error={errors.application_method}
               onChange={(v) => updateForm({ application_method: v })}
             />
             {form.application_method === "external" && (
@@ -551,6 +688,7 @@ export default function CreateJobScreen() {
                 keyboardType="url"
                 autoCapitalize="none"
                 value={form.application_url}
+                error={errors.application_url}
                 onChangeText={(t) => updateForm({ application_url: t })}
               />
             )}
@@ -561,13 +699,15 @@ export default function CreateJobScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={form.application_email}
+                error={errors.application_email}
                 onChangeText={(t) => updateForm({ application_email: t })}
               />
             )}
             <Field
-              label="Application Deadline"
+              label="Application Deadline *"
               placeholder="YYYY-MM-DD"
               value={form.application_deadline}
+              error={errors.application_deadline}
               onChangeText={(t) => updateForm({ application_deadline: t || undefined })}
             />
             <Field
@@ -575,7 +715,8 @@ export default function CreateJobScreen() {
               placeholder="Leave empty for unlimited"
               keyboardType="numeric"
               value={form.max_applications?.toString() ?? ""}
-              onChangeText={(t) => updateForm({ max_applications: parseInt(t) || undefined })}
+              error={errors.max_applications}
+              onChangeText={(t) => updateForm({ max_applications: t === "" ? undefined : (parseInt(t) || 0) })}
             />
             <CheckRow
               label="Auto-close when maximum reached"
@@ -633,7 +774,7 @@ export default function CreateJobScreen() {
               onToggle={() => updateForm({ is_urgent: !form.is_urgent })}
             />
             <CheckRow
-              label="I agree to the Terms of Service"
+              label="I agree to the Terms of Service *"
               hint="Your job must comply with all applicable laws"
               value={termsAgreed}
               onToggle={() => setTermsAgreed(!termsAgreed)}
