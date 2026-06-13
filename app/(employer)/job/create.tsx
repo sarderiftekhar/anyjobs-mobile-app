@@ -355,7 +355,12 @@ export default function CreateJobScreen() {
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="flex-row items-center justify-between border-b border-border px-4 py-3">
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace("/(employer)/(tabs)/jobs")
+          }
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Ionicons name="close" size={24} color="#1A2230" />
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-ink">Post a Job</Text>
