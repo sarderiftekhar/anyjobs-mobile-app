@@ -14,10 +14,10 @@ export default function EmployerDashboard() {
   const { data: unreadCount } = useUnreadNotificationCount();
 
   const metrics = [
-    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#0064EC" },
-    { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#3B82F6" },
-    { label: "New Today", value: dashboard?.new_today ?? 0, icon: "trending-up-outline" as const, color: "#22C55E" },
-    { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#EAB308" },
+    { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#0064EC", route: "/(employer)/(tabs)/jobs" as const },
+    { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#3B82F6", route: "/(employer)/(tabs)/applicants" as const },
+    { label: "New Today", value: dashboard?.new_today ?? 0, icon: "trending-up-outline" as const, color: "#22C55E", route: "/(employer)/(tabs)/applicants" as const },
+    { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#EAB308", route: "/(employer)/interviews" as const },
   ];
 
   return (
@@ -72,7 +72,9 @@ export default function EmployerDashboard() {
               key={m.label}
               className={`w-1/2 ${i % 2 === 0 ? "pr-1" : "pl-1"} ${i < 2 ? "mb-2" : ""}`}
             >
-              <View
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push(m.route)}
                 className="rounded-2xl border border-border bg-surface p-4"
                 style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
               >
@@ -87,7 +89,7 @@ export default function EmployerDashboard() {
                 </View>
                 <Text className="mt-3 text-3xl font-bold text-ink">{m.value}</Text>
                 <Text className="text-xs font-medium text-ink-muted">{m.label}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           ))}
         </View>
@@ -109,6 +111,7 @@ export default function EmployerDashboard() {
             size="sm"
             className="flex-1"
             icon={<Ionicons name="search-outline" size={16} color="#0064EC" />}
+            onPress={() => router.push("/(employer)/talent")}
           />
           <Button
             title="Analytics"
@@ -116,6 +119,7 @@ export default function EmployerDashboard() {
             size="sm"
             className="flex-1"
             icon={<Ionicons name="bar-chart-outline" size={16} color="#0064EC" />}
+            onPress={() => router.push("/(employer)/analytics")}
           />
         </View>
       </View>
