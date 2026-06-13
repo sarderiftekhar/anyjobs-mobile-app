@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Platform,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useCreateJob, useCompanyProfile } from "../../../src/hooks/useEmployer";
+import { useCreateJob, useUpdateJob, useEmployerJobDetail, useCompanyProfile } from "../../../src/hooks/useEmployer";
 import { Button, Badge, Select, ChipInput, DatePicker } from "../../../src/components/ui";
 import { AIGenerateModal } from "../../../src/components/ai/AIGenerateModal";
 import {
@@ -124,8 +124,14 @@ function CheckRow({
 
 export default function CreateJobScreen() {
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ id?: string }>();
+  const jobId = params.id ? Number(params.id) : undefined;
+  const isEdit = !!jobId;
   const createJob = useCreateJob();
+  const updateJob = useUpdateJob();
+  const { data: jobData } = useEmployerJobDetail(jobId ?? 0);
   const { data: company } = useCompanyProfile();
+  const saving = createJob.isPending || updateJob.isPending;
   const [step, setStep] = useState<Step>("basic");
   const [aiOpen, setAiOpen] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
@@ -172,6 +178,7 @@ export default function CreateJobScreen() {
   // once, and only into fields the user hasn't already filled.
   const prefilled = useRef(false);
   useEffect(() => {
+    if (isEdit) return; // when editing, the job's own values take precedence
     if (!company || prefilled.current) return;
     prefilled.current = true;
     setForm((prev) => {
@@ -202,7 +209,26 @@ export default function CreateJobScreen() {
       if (derivedCurrency) next.salary_currency = derivedCurrency;
       return next;
     });
-  }, [company]);
+  }, [company, isEdit]);
+
+  // Edit mode: prefill the whole form from the existing job, once.
+  const jobPrefilled = useRef(false);
+  useEffect(() => {
+    if (!isEdit || !jobData || jobPrefilled.current) return;
+    jobPrefilled.current = true;
+    const j = jobData as unknown as Record<string, unknown>;
+    setForm((prev) => {
+      const next = { ...prev };
+      // Copy every non-null field that exists on the form payload.
+      for (const [k, v] of Object.entries(j)) {
+        if (v !== null && v !== undefined && k !== "id") {
+          (next as Record<string, unknown>)[k] = v;
+        }
+      }
+      return next;
+    });
+    setTermsAgreed(true); // an existing job already accepted terms
+  }, [isEdit, jobData]);
 
   // Compute all validation errors for a step's fields (required + format),
   // mirroring the web StoreJobRequest rules.
@@ -350,17 +376,24 @@ export default function CreateJobScreen() {
     }
 
     try {
-      await createJob.mutateAsync({ ...form, location, status } as CreateJobPayload);
+      const payload = { ...form, location, status } as CreateJobPayload;
+      if (isEdit && jobId) {
+        await updateJob.mutateAsync({ id: jobId, data: payload });
+      } else {
+        await createJob.mutateAsync(payload);
+      }
       // Navigate directly — don't depend on an Alert button callback (those
       // never fire on web, which made Publish appear to "do nothing").
+      const title = isEdit ? "Job Updated!" : status === "active" ? "Job Published!" : "Draft Saved!";
+      const body = isEdit
+        ? "Your changes have been saved."
+        : status === "active"
+          ? "Your job posting is now live."
+          : "Your draft has been saved.";
       if (Platform.OS === "web") {
         finish();
       } else {
-        Alert.alert(
-          status === "active" ? "Job Published!" : "Draft Saved!",
-          status === "active" ? "Your job posting is now live." : "Your draft has been saved.",
-          [{ text: "OK", onPress: finish }]
-        );
+        Alert.alert(title, body, [{ text: "OK", onPress: finish }]);
       }
     } catch {
       flag("Error", "Failed to create job. Please try again.");
@@ -382,7 +415,7 @@ export default function CreateJobScreen() {
         >
           <Ionicons name="close" size={24} color="#1A2230" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-ink">Post a Job</Text>
+        <Text className="text-lg font-semibold text-ink">{isEdit ? "Edit Job" : "Post a Job"}</Text>
         <TouchableOpacity onPress={() => handlePublish("draft")}>
           <Text className="text-sm font-medium text-primary">Save Draft</Text>
         </TouchableOpacity>
@@ -835,7 +868,7 @@ export default function CreateJobScreen() {
             {currentIndex < STEPS.length - 1 ? (
               <Button title="Next" style={{ flex: 1 }} onPress={goNext} />
             ) : (
-              <Button title="Publish Job" style={{ flex: 1 }} loading={createJob.isPending} onPress={() => handlePublish("active")} />
+              <Button title={isEdit ? "Update Job" : "Publish Job"} style={{ flex: 1 }} loading={saving} onPress={() => handlePublish("active")} />
             )}
           </View>
         ) : (

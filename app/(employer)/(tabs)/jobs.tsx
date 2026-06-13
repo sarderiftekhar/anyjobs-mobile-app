@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import {
-  View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert,
+  View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,9 +30,17 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
   };
 
   const handleDelete = () => {
+    const doDelete = () => deleteJob.mutate(job.id);
+    // Alert is a no-op on react-native-web, so use the browser confirm there.
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm(`Delete "${job.title}"? This cannot be undone.`)) {
+        doDelete();
+      }
+      return;
+    }
     Alert.alert("Delete Job", `Delete "${job.title}"?`, [
       { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: () => deleteJob.mutate(job.id) },
+      { text: "Delete", style: "destructive", onPress: doDelete },
     ]);
   };
 
@@ -69,18 +77,28 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
       </View>
 
       {/* Actions */}
-      <View className="mt-3 flex-row gap-2">
-        <Button title="Edit" variant="outline" size="sm" className="flex-1" onPress={() => {}} />
+      <View className="mt-3 flex-row items-center gap-2">
+        <Button
+          title="Edit"
+          variant="outline"
+          size="sm"
+          radius="lg"
+          style={{ flex: 1 }}
+          onPress={() => router.push(`/(employer)/job/create?id=${job.id}`)}
+        />
         {job.status === "draft" && (
-          <Button title="Publish" size="sm" className="flex-1" onPress={() => handleStatusAction("active")} />
+          <Button title="Publish" size="sm" radius="lg" style={{ flex: 1 }} loading={updateStatus.isPending} onPress={() => handleStatusAction("active")} />
         )}
         {job.status === "active" && (
-          <Button title="Pause" variant="secondary" size="sm" className="flex-1" onPress={() => handleStatusAction("paused")} />
+          <Button title="Pause" variant="secondary" size="sm" radius="lg" style={{ flex: 1 }} loading={updateStatus.isPending} onPress={() => handleStatusAction("paused")} />
         )}
         {job.status === "paused" && (
-          <Button title="Resume" size="sm" className="flex-1" onPress={() => handleStatusAction("active")} />
+          <Button title="Resume" size="sm" radius="lg" style={{ flex: 1 }} loading={updateStatus.isPending} onPress={() => handleStatusAction("active")} />
         )}
-        <TouchableOpacity className="items-center justify-center px-2" onPress={handleDelete}>
+        <TouchableOpacity
+          className="h-9 w-9 items-center justify-center rounded-lg border border-border"
+          onPress={handleDelete}
+        >
           <Ionicons name="trash-outline" size={18} color="#EF4444" />
         </TouchableOpacity>
       </View>

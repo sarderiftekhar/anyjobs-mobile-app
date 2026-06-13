@@ -13,13 +13,23 @@ import { shadows } from "../../theme/shadows";
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
+type ButtonRadius = "full" | "xl" | "lg";
+
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
   icon?: React.ReactNode;
+  /** Corner radius. "full" (default) is a pill; "xl"/"lg" are rounded rectangles. */
+  radius?: ButtonRadius;
 }
+
+const radiusStyles: Record<ButtonRadius, string> = {
+  full: "rounded-full",
+  xl: "rounded-xl",
+  lg: "rounded-lg",
+};
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-primary",
@@ -58,6 +68,7 @@ export function Button({
   disabled,
   className,
   style,
+  radius = "full",
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
@@ -88,7 +99,7 @@ export function Button({
       style={[{ transform: [{ scale: scaleAnim }] }, showBrandShadow && shadows.brand, style]}
     >
       <TouchableOpacity
-        className={`flex-row items-center justify-center rounded-full ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
+        className={`flex-row items-center justify-center ${radiusStyles[radius]} ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
         disabled={isDisabled}
         activeOpacity={0.85}
         onPressIn={handlePressIn}
