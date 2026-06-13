@@ -3,6 +3,7 @@ export { Input } from "./Input";
 export { Select } from "./Select";
 export type { SelectOption } from "./Select";
 export { ChipInput } from "./ChipInput";
+export { DatePicker } from "./DatePicker";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Avatar } from "./Avatar";

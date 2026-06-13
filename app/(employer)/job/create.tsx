@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateJob, useCompanyProfile } from "../../../src/hooks/useEmployer";
-import { Button, Badge, Select, ChipInput } from "../../../src/components/ui";
+import { Button, Badge, Select, ChipInput, DatePicker } from "../../../src/components/ui";
 import { AIGenerateModal } from "../../../src/components/ai/AIGenerateModal";
 import {
   INDUSTRY_OPTIONS, CURRENCIES, EXPERIENCE_LEVELS, JOB_TYPES,
@@ -713,12 +713,12 @@ export default function CreateJobScreen() {
                 onChangeText={(t) => updateForm({ application_email: t })}
               />
             )}
-            <Field
+            <DatePicker
               label="Application Deadline *"
-              placeholder="YYYY-MM-DD"
+              placeholder="Select a date"
               value={form.application_deadline}
               error={errors.application_deadline}
-              onChangeText={(t) => updateForm({ application_deadline: t || undefined })}
+              onChange={(d) => updateForm({ application_deadline: d || undefined })}
             />
             <Field
               label="Maximum Applications"
