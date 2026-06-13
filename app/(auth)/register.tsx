@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -38,6 +38,11 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
   const { register, isLoading, error, clearError } = useAuthStore();
+
+  // Clear any stale error (e.g. a failed login) when this screen mounts
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   const {
     control,

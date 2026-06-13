@@ -47,12 +47,6 @@ export default function CreateJobScreen() {
   const updateForm = (updates: Partial<CreateJobPayload>) =>
     setForm((prev) => ({ ...prev, ...updates }));
 
-  const toggleArrayItem = (key: keyof CreateJobPayload, value: string) => {
-    const arr = (form[key] as string[]) ?? [];
-    const updated = arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
-    updateForm({ [key]: updated });
-  };
-
   const handlePublish = async (status: "active" | "draft") => {
     try {
       await createJob.mutateAsync({ ...form, status } as CreateJobPayload);
@@ -128,7 +122,7 @@ export default function CreateJobScreen() {
                 <TouchableOpacity
                   key={jt}
                   className={`rounded-full border px-4 py-2 ${(form.job_type ?? []).includes(jt) ? "border-primary bg-primary" : "border-border"}`}
-                  onPress={() => toggleArrayItem("job_type", jt)}
+                  onPress={() => updateForm({ job_type: (form.job_type ?? []).includes(jt) ? [] : [jt] })}
                 >
                   <Text className={`text-sm font-medium capitalize ${(form.job_type ?? []).includes(jt) ? "text-white" : "text-ink-muted"}`}>
                     {jt.replace("-", " ")}
@@ -302,14 +296,26 @@ export default function CreateJobScreen() {
       </ScrollView>
 
       {/* Bottom nav */}
-      <View className="flex-row gap-3 border-t border-border bg-white px-4 py-3" style={{ paddingBottom: insets.bottom + 8 }}>
+      <View
+        className="flex-row items-center justify-center gap-3 border-t border-border bg-white px-4 pt-3"
+        style={{ paddingBottom: insets.bottom + 28 }}
+      >
         {currentIndex > 0 && (
           <Button title="Back" variant="outline" className="flex-1" onPress={() => setStep(STEPS[currentIndex - 1])} />
         )}
         {currentIndex < STEPS.length - 1 ? (
-          <Button title="Continue" className="flex-1" onPress={() => setStep(STEPS[currentIndex + 1])} />
+          <Button
+            title="Continue"
+            className={currentIndex > 0 ? "flex-1" : "w-1/2"}
+            onPress={() => setStep(STEPS[currentIndex + 1])}
+          />
         ) : (
-          <Button title="Publish Job" className="flex-1" loading={createJob.isPending} onPress={() => handlePublish("active")} />
+          <Button
+            title="Publish Job"
+            className={currentIndex > 0 ? "flex-1" : "w-1/2"}
+            loading={createJob.isPending}
+            onPress={() => handlePublish("active")}
+          />
         )}
       </View>
     </View>

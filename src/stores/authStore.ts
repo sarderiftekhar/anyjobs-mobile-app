@@ -33,7 +33,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (data) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authApi.login(data);
+      // Trim whitespace — mobile keyboards/autofill often append a trailing
+      // space to the email or password, which fails server-side credential
+      // matching even though the visible text looks correct.
+      const payload = {
+        ...data,
+        email: data.email.trim(),
+        password: data.password.trim(),
+      };
+      const response = await authApi.login(payload);
       const { user, token } = response.data.data!;
 
       await storage.set(config.TOKEN_KEY, token);
@@ -61,7 +69,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (data) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await authApi.register(data);
+      // Trim email to avoid trailing-space mismatches (see login above).
+      const payload = { ...data, email: data.email.trim() };
+      const response = await authApi.register(payload);
       const { user, token } = response.data.data!;
 
       await storage.set(config.TOKEN_KEY, token);

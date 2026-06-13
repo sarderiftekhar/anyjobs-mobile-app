@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -29,6 +29,11 @@ export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const { login, isLoading, error, clearError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Clear any stale error (e.g. a failed register) when this screen mounts
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
 
   const {
     control,
