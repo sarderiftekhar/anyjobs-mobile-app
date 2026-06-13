@@ -66,32 +66,31 @@ export default function EmployerDashboard() {
           </Card>
         </View>
       ) : (
-        <View className="-mt-7 mx-4 flex-row flex-wrap">
-          {metrics.map((m, i) => (
-            <View
-              key={m.label}
-              className={`w-1/2 ${i % 2 === 0 ? "pr-1" : "pl-1"} ${i < 2 ? "mb-2" : ""}`}
-            >
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => router.push(m.route)}
-                className="rounded-2xl border border-border bg-surface p-4"
-                style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
-              >
-                <View className="flex-row items-center justify-between">
-                  <View
-                    className="h-10 w-10 items-center justify-center rounded-full"
-                    style={{ backgroundColor: m.color + "20" }}
-                  >
-                    <Ionicons name={m.icon} size={20} color={m.color} />
+        <View className="-mt-7 mx-4">
+          <View className="-mx-1.5 flex-row flex-wrap">
+            {metrics.map((m) => (
+              <View key={m.label} className="w-1/2 p-1.5">
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => router.push(m.route)}
+                  className="rounded-2xl border border-border bg-surface px-3.5 py-3"
+                  style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View
+                      className="h-9 w-9 items-center justify-center rounded-full"
+                      style={{ backgroundColor: m.color + "20" }}
+                    >
+                      <Ionicons name={m.icon} size={18} color={m.color} />
+                    </View>
+                    <Ionicons name="chevron-forward" size={15} color="#6B7F94" />
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color="#6B7F94" />
-                </View>
-                <Text className="mt-3 text-3xl font-bold text-ink">{m.value}</Text>
-                <Text className="text-xs font-medium text-ink-muted">{m.label}</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+                  <Text className="mt-2 text-2xl font-bold text-ink">{m.value}</Text>
+                  <Text className="text-xs font-medium text-ink-muted">{m.label}</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
         </View>
       )}
 
@@ -104,12 +103,12 @@ export default function EmployerDashboard() {
           icon={<Ionicons name="add" size={20} color="#FFFFFF" />}
           onPress={() => router.push("/(employer)/job/create")}
         />
-        <View className="mt-2 flex-row gap-2">
+        <View className="mt-3 flex-row gap-3">
           <Button
             title="Browse Talent"
             variant="outline"
             size="sm"
-            className="flex-1"
+            style={{ flex: 1 }}
             icon={<Ionicons name="search-outline" size={16} color="#0064EC" />}
             onPress={() => router.push("/(employer)/talent")}
           />
@@ -117,7 +116,7 @@ export default function EmployerDashboard() {
             title="Analytics"
             variant="outline"
             size="sm"
-            className="flex-1"
+            style={{ flex: 1 }}
             icon={<Ionicons name="bar-chart-outline" size={16} color="#0064EC" />}
             onPress={() => router.push("/(employer)/analytics")}
           />
