@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  View, Text, ScrollView, TouchableOpacity, TextInput, Alert,
+  View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -130,6 +130,7 @@ export default function CreateJobScreen() {
   const [aiOpen, setAiOpen] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const currentIndex = STEPS.indexOf(step);
   const progress = Math.round(((currentIndex + 1) / STEPS.length) * 100);
 
@@ -298,18 +299,30 @@ export default function CreateJobScreen() {
     return e;
   };
 
+  // Alert.alert is a no-op on react-native-web, so surface messages both ways:
+  // native alert + an inline banner that also works on web.
+  const flag = (title: string, message: string) => {
+    setSubmitError(message);
+    if (Platform.OS !== "web") Alert.alert(title, message);
+  };
+
+  const finish = () =>
+    router.canGoBack() ? router.back() : router.replace("/(employer)/(tabs)/jobs");
+
   const goNext = () => {
+    setSubmitError(null);
     const e = validateStep(step);
     setErrors(e);
     const keys = Object.keys(e);
     if (keys.length) {
-      Alert.alert("Please fix the following", e[keys[0]]);
+      flag("Please fix the following", e[keys[0]]);
       return;
     }
     setStep(STEPS[currentIndex + 1]);
   };
 
   const handlePublish = async (status: "active" | "draft") => {
+    setSubmitError(null);
     const location =
       form.location?.trim() ||
       [form.city, form.state_province, form.country].filter(Boolean).join(", ");
@@ -321,30 +334,36 @@ export default function CreateJobScreen() {
         if (Object.keys(e).length) {
           setErrors(e);
           setStep(s);
-          Alert.alert("Please fix the following", e[Object.keys(e)[0]]);
+          flag("Please fix the following", e[Object.keys(e)[0]]);
           return;
         }
       }
       if (!location) {
         setStep("location");
-        Alert.alert("Please fix the following", "Please provide a location.");
+        flag("Please fix the following", "Please provide a location.");
         return;
       }
       if (!termsAgreed) {
-        Alert.alert("Terms required", "Please agree to the Terms of Service to publish.");
+        flag("Terms required", "Please agree to the Terms of Service to publish.");
         return;
       }
     }
 
     try {
       await createJob.mutateAsync({ ...form, location, status } as CreateJobPayload);
-      Alert.alert(
-        status === "active" ? "Job Published!" : "Draft Saved!",
-        status === "active" ? "Your job posting is now live." : "Your draft has been saved.",
-        [{ text: "OK", onPress: () => router.back() }]
-      );
+      // Navigate directly — don't depend on an Alert button callback (those
+      // never fire on web, which made Publish appear to "do nothing").
+      if (Platform.OS === "web") {
+        finish();
+      } else {
+        Alert.alert(
+          status === "active" ? "Job Published!" : "Draft Saved!",
+          status === "active" ? "Your job posting is now live." : "Your draft has been saved.",
+          [{ text: "OK", onPress: finish }]
+        );
+      }
     } catch {
-      Alert.alert("Error", "Failed to create job. Please try again.");
+      flag("Error", "Failed to create job. Please try again.");
     }
   };
 
@@ -382,6 +401,13 @@ export default function CreateJobScreen() {
       </Text>
 
       <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24, paddingTop: 16 }} keyboardShouldPersistTaps="handled">
+        {submitError && (
+          <View className="mb-4 flex-row items-center rounded-xl bg-danger/10 px-3.5 py-3">
+            <Ionicons name="alert-circle" size={18} color="#EF4444" />
+            <Text className="ml-2 flex-1 text-sm text-danger">{submitError}</Text>
+          </View>
+        )}
+
         {/* STEP 1: Basic Information */}
         {step === "basic" && (
           <>
