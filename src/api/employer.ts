@@ -122,12 +122,21 @@ export interface CompanyProfile {
   industry?: string;
   size?: string;
   website?: string;
+  email?: string;
+  phone?: string;
   logo_url?: string;
   banner_url?: string;
   location?: string;
   founded_year?: number;
   benefits?: string[];
   values?: string[];
+  address?: {
+    street?: string;
+    postal_code?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
 }
 
 // ---- API ----

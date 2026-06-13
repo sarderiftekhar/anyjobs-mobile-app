@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput, Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useCreateJob } from "../../../src/hooks/useEmployer";
+import { useCreateJob, useCompanyProfile } from "../../../src/hooks/useEmployer";
 import { Button, Badge, Select, ChipInput } from "../../../src/components/ui";
 import { AIGenerateModal } from "../../../src/components/ai/AIGenerateModal";
 import {
@@ -90,6 +90,7 @@ function CheckRow({
 export default function CreateJobScreen() {
   const insets = useSafeAreaInsets();
   const createJob = useCreateJob();
+  const { data: company } = useCompanyProfile();
   const [step, setStep] = useState<Step>("basic");
   const [aiOpen, setAiOpen] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
@@ -122,6 +123,38 @@ export default function CreateJobScreen() {
 
   const updateForm = (updates: Partial<CreateJobPayload>) =>
     setForm((prev) => ({ ...prev, ...updates }));
+
+  // Auto-fill company + location details from the employer's company profile,
+  // once, and only into fields the user hasn't already filled.
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (!company || prefilled.current) return;
+    prefilled.current = true;
+    setForm((prev) => {
+      const next = { ...prev };
+      if (company.name && !next.company_name) next.company_name = company.name;
+      if (company.website && !next.company_website) next.company_website = company.website;
+      if (company.email && !next.company_email) next.company_email = company.email;
+      if (company.phone && !next.company_phone) next.company_phone = company.phone;
+      if (company.description && !next.company_description) next.company_description = company.description;
+      if (company.values?.length && !next.company_values)
+        next.company_values = company.values.map((v) => `• ${v}`).join("\n");
+      if (company.benefits?.length && !next.benefits)
+        next.benefits = company.benefits.map((v) => `• ${v}`).join("\n");
+      if (company.industry && !next.category && INDUSTRY_OPTIONS.some((o) => o.value === company.industry))
+        next.category = company.industry;
+      const addr = company.address;
+      if (addr) {
+        if (addr.street && !next.address) next.address = addr.street;
+        if (addr.country && !next.country) next.country = addr.country;
+        if (addr.state && !next.state_province) next.state_province = addr.state;
+        if (addr.city && !next.city) next.city = addr.city;
+        if (addr.postal_code && !next.postal_code) next.postal_code = addr.postal_code;
+      }
+      if (company.location && !next.location) next.location = company.location;
+      return next;
+    });
+  }, [company]);
 
   // Per-step required-field validation. Returns an error string or null.
   const validateStep = (s: Step): string | null => {
@@ -319,6 +352,14 @@ export default function CreateJobScreen() {
         {/* STEP 3: Company Details */}
         {step === "company" && (
           <>
+            {company && (
+              <View className="mb-4 flex-row items-center rounded-xl bg-primary-light px-3.5 py-3">
+                <Ionicons name="information-circle" size={18} color="#0064EC" />
+                <Text className="ml-2 flex-1 text-xs text-primary">
+                  Auto-filled from your company profile. Edit any field for this posting.
+                </Text>
+              </View>
+            )}
             <Field
               label="Company Name"
               placeholder="Your company name"
