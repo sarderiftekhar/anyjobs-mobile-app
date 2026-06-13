@@ -11,6 +11,7 @@ import { AIGenerateModal } from "../../../src/components/ai/AIGenerateModal";
 import {
   INDUSTRY_OPTIONS, CURRENCIES, EXPERIENCE_LEVELS, JOB_TYPES,
   WORK_ARRANGEMENTS, SALARY_TYPES, EDUCATION_LEVELS, APPLICATION_METHODS,
+  currencyForCountry,
 } from "../../../src/constants/jobOptions";
 import type { CreateJobPayload } from "../../../src/api/employer";
 
@@ -194,6 +195,10 @@ export default function CreateJobScreen() {
         if (addr.postal_code && !next.postal_code) next.postal_code = addr.postal_code;
       }
       if (company.location && !next.location) next.location = company.location;
+      // Default the currency from the company's country (web behaviour),
+      // overriding the placeholder default. Employer can still change it.
+      const derivedCurrency = currencyForCountry(addr?.country);
+      if (derivedCurrency) next.salary_currency = derivedCurrency;
       return next;
     });
   }, [company]);

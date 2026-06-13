@@ -264,3 +264,34 @@ export const INDUSTRY_OPTIONS: Option[] = INDUSTRIES.map((name) => ({
   value: name,
   label: name,
 }));
+
+/**
+ * Map a company country (name or ISO code) to a default currency ISO,
+ * limited to the currencies offered in CURRENCIES above. Returns null when
+ * unknown so callers can keep their existing default.
+ */
+const COUNTRY_TO_CURRENCY: Record<string, string> = {
+  // United Kingdom
+  "united kingdom": "GBP", "uk": "GBP", "gb": "GBP", "great britain": "GBP", "england": "GBP",
+  // United States
+  "united states": "USD", "united states of america": "USD", "usa": "USD", "us": "USD",
+  // Eurozone
+  germany: "EUR", de: "EUR", france: "EUR", fr: "EUR", spain: "EUR", es: "EUR",
+  italy: "EUR", it: "EUR", netherlands: "EUR", nl: "EUR", ireland: "EUR", ie: "EUR",
+  portugal: "EUR", pt: "EUR", belgium: "EUR", be: "EUR", austria: "EUR", at: "EUR",
+  greece: "EUR", finland: "EUR", "eurozone": "EUR",
+  // Rest
+  bangladesh: "BDT", bd: "BDT", india: "INR", in: "INR", canada: "CAD", ca: "CAD",
+  australia: "AUD", au: "AUD", "united arab emirates": "AED", uae: "AED", ae: "AED",
+  "saudi arabia": "SAR", sa: "SAR", singapore: "SGD", sg: "SGD", malaysia: "MYR", my: "MYR",
+  pakistan: "PKR", pk: "PKR", nepal: "NPR", np: "NPR", "sri lanka": "LKR", lk: "LKR",
+  japan: "JPY", jp: "JPY", china: "CNY", cn: "CNY", "hong kong": "HKD", hk: "HKD",
+  "south africa": "ZAR", za: "ZAR", nigeria: "NGN", ng: "NGN", brazil: "BRL", br: "BRL",
+  switzerland: "CHF", ch: "CHF", sweden: "SEK", se: "SEK", "new zealand": "NZD", nz: "NZD",
+  "south korea": "KRW", "korea": "KRW", kr: "KRW",
+};
+
+export function currencyForCountry(country?: string | null): string | null {
+  if (!country) return null;
+  return COUNTRY_TO_CURRENCY[country.trim().toLowerCase()] ?? null;
+}
