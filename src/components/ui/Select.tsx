@@ -47,6 +47,9 @@ export function Select({
 
   const showSearch = searchable ?? options.length > 8;
   const selected = options.find((o) => o.value === value);
+  const hasValue = value !== undefined && value !== "";
+  // Show the option's label, or the raw value if it isn't in the list, else placeholder.
+  const displayText = selected?.label ?? (hasValue ? value : placeholder);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return options;
@@ -80,10 +83,10 @@ export function Select({
           />
         )}
         <Text
-          className={`flex-1 text-base ${selected ? "text-ink" : "text-ink-muted"}`}
+          className={`flex-1 text-base ${hasValue ? "text-ink" : "text-ink-muted"}`}
           numberOfLines={1}
         >
-          {selected?.label ?? placeholder}
+          {displayText}
         </Text>
         <Ionicons name="chevron-down" size={18} color={colors.ink.muted} />
       </TouchableOpacity>
