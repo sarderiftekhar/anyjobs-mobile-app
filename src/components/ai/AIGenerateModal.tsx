@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Badge } from "../ui";
 import { aiApi } from "../../api/ai";
 import type { GenerateJobDescriptionResult } from "../../types/ai";
@@ -32,6 +33,7 @@ export function AIGenerateModal({
   seedLocation?: string;
   seedWorkArrangement?: string;
 }) {
+  const insets = useSafeAreaInsets();
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GenerateJobDescriptionResult | null>(null);
@@ -109,6 +111,18 @@ export function AIGenerateModal({
             benefits. You can edit everything before publishing.
           </Text>
 
+          {/* Generate button sits directly under the prompt (not pinned to the
+              bottom) so it's reachable without scrolling a tall sheet. */}
+          {!result && (
+            <Button
+              title="Generate"
+              size="lg"
+              loading={loading}
+              className="mt-5"
+              onPress={handleGenerate}
+            />
+          )}
+
           {error && (
             <View className="mt-4 rounded-md bg-red-50 p-3">
               <Text className="text-sm text-danger">{error}</Text>
@@ -175,25 +189,26 @@ export function AIGenerateModal({
           )}
         </ScrollView>
 
-        <View className="flex-row gap-3 border-t border-border px-4 py-3">
+        <View
+          className="border-t border-border px-4 pt-3"
+          style={{ paddingBottom: insets.bottom + 24 }}
+        >
           {result ? (
-            <>
+            // Two actions side by side (flex via style reaches the Button wrapper)
+            <View className="flex-row gap-3">
               <Button
                 title="Regenerate"
                 variant="outline"
-                className="flex-1"
+                style={{ flex: 1 }}
                 onPress={handleGenerate}
               />
-              <Button
-                title="Use this"
-                className="flex-1"
-                onPress={handleAccept}
-              />
-            </>
+              <Button title="Use this" style={{ flex: 1 }} onPress={handleAccept} />
+            </View>
           ) : (
+            // Single full-width button in a column stretches to proper size
             <Button
               title="Generate"
-              className="flex-1"
+              size="lg"
               loading={loading}
               onPress={handleGenerate}
             />
