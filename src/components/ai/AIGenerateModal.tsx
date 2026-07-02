@@ -12,6 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Badge } from "../ui";
 import { aiApi } from "../../api/ai";
+import { useConsentStore } from "../../stores/consentStore";
+import { AiConsentModal } from "./AiConsentModal";
 import type { GenerateJobDescriptionResult } from "../../types/ai";
 
 /**
@@ -38,6 +40,8 @@ export function AIGenerateModal({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GenerateJobDescriptionResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const aiConsented = useConsentStore((s) => s.aiConsented);
+  const acceptAiConsent = useConsentStore((s) => s.acceptAiConsent);
 
   const reset = () => {
     setPrompt("");
@@ -78,6 +82,14 @@ export function AIGenerateModal({
     reset();
     onClose();
   };
+
+  // Ask for AI data-processing consent before exposing the generate UI
+  // (App Store Guideline 5.1.2). Declining just closes the sheet.
+  if (visible && aiConsented !== true) {
+    return (
+      <AiConsentModal visible onAccept={acceptAiConsent} onDecline={handleClose} />
+    );
+  }
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">

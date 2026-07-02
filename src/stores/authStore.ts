@@ -3,6 +3,7 @@ import { storage } from "../lib/storage";
 import { config } from "../constants/config";
 import { authApi } from "../api/auth";
 import { registerPushToken, unregisterPushToken } from "../lib/pushNotifications";
+import { signOutOfGoogle } from "../lib/googleSignIn";
 import type { User } from "../types/user";
 import type { LoginPayload, RegisterPayload } from "../api/auth";
 
@@ -16,6 +17,10 @@ interface AuthState {
   // Actions
   login: (data: LoginPayload) => Promise<void>;
   register: (data: RegisterPayload) => Promise<void>;
+  googleLogin: (
+    idToken: string,
+    userType?: "candidate" | "employer",
+  ) => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   loadStoredAuth: () => Promise<void>;
@@ -97,7 +102,39 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  googleLogin: async (idToken, userType) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await authApi.googleAuth({
+        id_token: idToken,
+        user_type: userType,
+      });
+      const { user, token } = response.data.data!;
+
+      await storage.set(config.TOKEN_KEY, token);
+      await storage.set(config.USER_KEY, JSON.stringify(user));
+
+      set({
+        user,
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+
+      registerPushToken().catch(() => {});
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        "Google sign-in failed. Please try again.";
+      set({ isLoading: false, error: message });
+      throw new Error(message);
+    }
+  },
+
   logout: async () => {
+    // Clear the Google session so the account picker shows on next sign-in
+    await signOutOfGoogle();
     // Remove push token server-side before clearing auth so the request is authorized
     await unregisterPushToken().catch(() => {});
     try {

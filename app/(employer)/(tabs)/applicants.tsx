@@ -21,7 +21,16 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
   const updateStatus = useUpdateApplicantStatus();
 
   const handleAction = (status: string) => {
-    updateStatus.mutate({ id: applicant.id, status });
+    updateStatus.mutate(
+      { id: applicant.id, status },
+      {
+        onError: (err: any) =>
+          Alert.alert(
+            "Couldn't update applicant",
+            err?.response?.data?.message ?? "Please try again.",
+          ),
+      },
+    );
   };
 
   return (

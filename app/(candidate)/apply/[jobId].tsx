@@ -16,7 +16,7 @@ import { useJobDetail } from "../../../src/hooks/useJobs";
 import { useApplyToJob } from "../../../src/hooks/useApplications";
 import { useCvs, useUploadCv } from "../../../src/hooks/useCvs";
 import { useAuthStore } from "../../../src/stores/authStore";
-import { Button, Card, LoadingSpinner } from "../../../src/components/ui";
+import { Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import apiClient from "../../../src/api/client";
 import { applicationsApi } from "../../../src/api/applications";
 
@@ -42,7 +42,7 @@ type Step = "cv" | "cover-letter" | "review";
 export default function ApplyScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const insets = useSafeAreaInsets();
-  const parsedJobId = parseInt(jobId!, 10);
+  const parsedJobId = jobId ? parseInt(jobId, 10) : NaN;
   const user = useAuthStore((s) => s.user);
 
   const { data: job, isLoading: jobLoading } = useJobDetail(parsedJobId);
@@ -172,6 +172,22 @@ export default function ApplyScreen() {
       setSubmitting(false);
     }
   };
+
+  // Bad/missing jobId (e.g. malformed deep link) would otherwise leave the
+  // screen stuck with no job and no error.
+  if (!Number.isFinite(parsedJobId)) {
+    return (
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <EmptyState
+          icon="alert-circle-outline"
+          title="Job not found"
+          description="This link is invalid or has expired."
+          actionTitle="Browse jobs"
+          onAction={() => router.replace("/(candidate)/(tabs)")}
+        />
+      </View>
+    );
+  }
 
   if (jobLoading) {
     return (

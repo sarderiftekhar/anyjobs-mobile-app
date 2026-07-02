@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "../../src/stores/authStore";
 import { Button, Input } from "../../src/components/ui";
+import { config } from "../../src/constants/config";
+import { openExternalUrl } from "../../src/lib/openExternal";
+import {
+  signInWithGoogle,
+  isGoogleSignInAvailable,
+} from "../../src/lib/googleSignIn";
 
 const registerSchema = z
   .object({
@@ -37,7 +43,8 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const { register, googleLogin, isLoading, error, clearError } = useAuthStore();
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // Clear any stale error (e.g. a failed login) when this screen mounts
   useEffect(() => {
@@ -78,6 +85,36 @@ export default function RegisterScreen() {
       });
     } catch {
       // Error shown from store
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    // Google sign-up still creates an account — the same terms consent
+    // applies as for the email form.
+    if (!watch("terms")) {
+      Alert.alert(
+        "Terms required",
+        "Please accept the Terms of Service & Privacy Policy first.",
+      );
+      return;
+    }
+    clearError();
+    setGoogleLoading(true);
+    try {
+      const idToken = await signInWithGoogle();
+      if (idToken) {
+        // Navigation happens automatically via root layout auth check
+        await googleLogin(idToken, userType);
+      }
+    } catch (err: any) {
+      if (!useAuthStore.getState().error) {
+        Alert.alert(
+          "Google sign-up failed",
+          err?.message ?? "Please try again.",
+        );
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -258,8 +295,21 @@ export default function RegisterScreen() {
                 />
                 <Text className="ml-2 flex-1 text-sm text-ink-soft">
                   I agree to the{" "}
-                  <Text className="font-semibold text-primary">Terms of Service</Text> &{" "}
-                  <Text className="font-semibold text-primary">Privacy Policy</Text>
+                  <Text
+                    className="font-semibold text-primary"
+                    onPress={() => openExternalUrl(config.TERMS_URL)}
+                    suppressHighlighting
+                  >
+                    Terms of Service
+                  </Text>{" "}
+                  &{" "}
+                  <Text
+                    className="font-semibold text-primary"
+                    onPress={() => openExternalUrl(config.PRIVACY_POLICY_URL)}
+                    suppressHighlighting
+                  >
+                    Privacy Policy
+                  </Text>
                 </Text>
               </TouchableOpacity>
             )}
@@ -278,21 +328,25 @@ export default function RegisterScreen() {
           />
         </View>
 
-        {/* Divider */}
-        <View className="my-6 flex-row items-center">
-          <View className="flex-1 border-b border-border" />
-          <Text className="mx-4 text-sm text-ink-muted">or</Text>
-          <View className="flex-1 border-b border-border" />
-        </View>
+        {/* Google — hidden when the native module isn't in this build */}
+        {isGoogleSignInAvailable && (
+          <>
+            <View className="my-6 flex-row items-center">
+              <View className="flex-1 border-b border-border" />
+              <Text className="mx-4 text-sm text-ink-muted">or</Text>
+              <View className="flex-1 border-b border-border" />
+            </View>
 
-        {/* Google */}
-        <Button
-          title="Sign up with Google"
-          variant="outline"
-          size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
-          onPress={() => Alert.alert("Coming Soon", "Google sign-up will be available soon.")}
-        />
+            <Button
+              title="Sign up with Google"
+              variant="outline"
+              size="lg"
+              loading={googleLoading}
+              icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
+              onPress={handleGoogleSignUp}
+            />
+          </>
+        )}
 
         {/* Login link */}
         <View className="mt-8 flex-row items-center justify-center">

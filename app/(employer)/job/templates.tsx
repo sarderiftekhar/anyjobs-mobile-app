@@ -13,6 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Card, Badge, Button } from "../../../src/components/ui";
 import { aiApi } from "../../../src/api/ai";
+import { useConsentStore } from "../../../src/stores/consentStore";
+import { AiConsentModal } from "../../../src/components/ai/AiConsentModal";
 import type { JobTemplate } from "../../../src/types/ai";
 
 // Built-in fallback templates — shown if backend has no templates endpoint yet.
@@ -76,6 +78,9 @@ export default function JobTemplatesScreen() {
   const [loading, setLoading] = useState(true);
   const [genPrompt, setGenPrompt] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [showConsent, setShowConsent] = useState(false);
+  const aiConsented = useConsentStore((s) => s.aiConsented);
+  const acceptAiConsent = useConsentStore((s) => s.acceptAiConsent);
 
   const load = async () => {
     setLoading(true);
@@ -97,6 +102,12 @@ export default function JobTemplatesScreen() {
 
   const handleGenerate = async () => {
     if (!genPrompt.trim()) return;
+    // AI data-processing consent must precede the first AI call
+    // (App Store Guideline 5.1.2).
+    if (aiConsented !== true) {
+      setShowConsent(true);
+      return;
+    }
     setGenerating(true);
     try {
       const res = await aiApi.generateTemplate({ prompt: genPrompt.trim() });
@@ -202,6 +213,15 @@ export default function JobTemplatesScreen() {
           </View>
         )}
       </ScrollView>
+
+      <AiConsentModal
+        visible={showConsent}
+        onAccept={() => {
+          acceptAiConsent();
+          setShowConsent(false);
+        }}
+        onDecline={() => setShowConsent(false)}
+      />
     </View>
   );
 }

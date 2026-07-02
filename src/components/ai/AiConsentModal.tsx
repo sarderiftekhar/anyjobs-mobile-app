@@ -9,6 +9,12 @@ import { openExternalUrl } from "../../lib/openExternal";
 interface AiConsentModalProps {
   visible: boolean;
   onAccept: () => void;
+  /**
+   * Called when the user declines ("Not now" button / Android back). The app
+   * stays usable without AI — declining must always be possible somewhere in
+   * the flow (App Store Guideline 5.1.2: consent can't be forced).
+   */
+  onDecline?: () => void;
 }
 
 /**
@@ -16,7 +22,11 @@ interface AiConsentModalProps {
  * (App Store Guideline 5.1.2). Explicitly names the AI provider and discloses
  * that user-supplied content is sent to an external vendor for processing.
  */
-export function AiConsentModal({ visible, onAccept }: AiConsentModalProps) {
+export function AiConsentModal({
+  visible,
+  onAccept,
+  onDecline,
+}: AiConsentModalProps) {
   const insets = useSafeAreaInsets();
   const [accepting, setAccepting] = useState(false);
 
@@ -26,7 +36,12 @@ export function AiConsentModal({ visible, onAccept }: AiConsentModalProps) {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      onRequestClose={onDecline}
+    >
       <View className="flex-1 justify-end bg-black/40">
         <View
           className="rounded-t-3xl bg-white"
@@ -80,6 +95,18 @@ export function AiConsentModal({ visible, onAccept }: AiConsentModalProps) {
                 loading={accepting}
               />
             </View>
+
+            {onDecline && (
+              <TouchableOpacity
+                className="mt-3 items-center py-2.5"
+                onPress={onDecline}
+                hitSlop={{ top: 4, bottom: 4, left: 16, right: 16 }}
+              >
+                <Text className="text-sm font-semibold text-ink-muted">
+                  Not now
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <Text className="mt-3 text-center text-xs text-ink-muted">
               By continuing you agree to share the data described above with our

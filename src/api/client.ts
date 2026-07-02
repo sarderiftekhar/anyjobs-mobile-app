@@ -47,6 +47,26 @@ apiClient.interceptors.response.use(
       // Token expired or invalid — clear stored auth
       await storage.remove(config.TOKEN_KEY);
       await storage.remove(config.USER_KEY);
+
+      // Also reset the in-memory auth state so AuthRedirect sends the user
+      // back to the welcome screen. Without this the UI stays half
+      // authenticated (isAuthenticated=true, token gone) and every screen
+      // just spins on failing requests until an app restart.
+      // Lazy require: authStore -> authApi -> client would be an import cycle.
+      try {
+        const { useAuthStore } = require("../stores/authStore");
+        if (useAuthStore.getState().isAuthenticated) {
+          useAuthStore.setState({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+        }
+      } catch {
+        // Store unavailable (e.g. module init order) — storage is already
+        // cleared, so the next cold start lands on the welcome screen.
+      }
     }
 
     if (__DEV__) {

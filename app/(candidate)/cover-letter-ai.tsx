@@ -6,10 +6,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button, Input, EmptyState } from "../../src/components/ui";
 import { ScreenHeader, ChipSelect } from "../../src/components/form";
 import { useGenerateCoverLetter, useCreateCoverLetter } from "../../src/hooks/useCoverLetters";
+import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
 
 const TONES = ["professional", "friendly", "formal", "enthusiastic"];
 
-export default function CoverLetterAIScreen() {
+export default function CoverLetterAIScreenGuarded() {
+  return (
+    <AiConsentGuard>
+      <CoverLetterAIScreen />
+    </AiConsentGuard>
+  );
+}
+
+function CoverLetterAIScreen() {
   const insets = useSafeAreaInsets();
   const { jobId, jobTitle } = useLocalSearchParams<{ jobId?: string; jobTitle?: string }>();
   const numericJobId = jobId ? Number(jobId) : null;

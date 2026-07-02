@@ -17,6 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "../../src/stores/authStore";
 import { Button, Input } from "../../src/components/ui";
+import {
+  signInWithGoogle,
+  isGoogleSignInAvailable,
+} from "../../src/lib/googleSignIn";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -27,8 +31,9 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, googleLogin, isLoading, error, clearError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // Clear any stale error (e.g. a failed register) when this screen mounts
   useEffect(() => {
@@ -51,6 +56,29 @@ export default function LoginScreen() {
       // Navigation happens automatically via root layout auth check
     } catch (err: any) {
       // Error is already set in the store
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    clearError();
+    setGoogleLoading(true);
+    try {
+      const idToken = await signInWithGoogle();
+      if (idToken) {
+        // Navigation happens automatically via root layout auth check
+        await googleLogin(idToken);
+      }
+    } catch (err: any) {
+      // API failures surface via the store's error banner; native sign-in
+      // failures (Play Services, misconfig) need their own alert.
+      if (!useAuthStore.getState().error) {
+        Alert.alert(
+          "Google sign-in failed",
+          err?.message ?? "Please try again.",
+        );
+      }
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -149,23 +177,27 @@ export default function LoginScreen() {
           />
         </View>
 
-        {/* Divider */}
-        <View className="my-6 flex-row items-center">
-          <View className="flex-1 border-b border-border" />
-          <Text className="mx-4 text-sm text-ink-muted">
-            or continue with
-          </Text>
-          <View className="flex-1 border-b border-border" />
-        </View>
+        {/* Google — hidden when the native module isn't in this build */}
+        {isGoogleSignInAvailable && (
+          <>
+            <View className="my-6 flex-row items-center">
+              <View className="flex-1 border-b border-border" />
+              <Text className="mx-4 text-sm text-ink-muted">
+                or continue with
+              </Text>
+              <View className="flex-1 border-b border-border" />
+            </View>
 
-        {/* Google */}
-        <Button
-          title="Sign in with Google"
-          variant="outline"
-          size="lg"
-          icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
-          onPress={() => Alert.alert("Coming Soon", "Google sign-in will be available soon.")}
-        />
+            <Button
+              title="Sign in with Google"
+              variant="outline"
+              size="lg"
+              loading={googleLoading}
+              icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
+              onPress={handleGoogleSignIn}
+            />
+          </>
+        )}
 
         {/* Register link */}
         <View className="mt-8 flex-row items-center justify-center">

@@ -1,6 +1,23 @@
-import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { Stack, useRouter } from "expo-router";
+import { useAuthStore } from "../../src/stores/authStore";
 
 export default function CandidateLayout() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
+
+  // Role guard — mirror of the employer/admin layouts.
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) {
+      router.replace("/(auth)/welcome");
+    } else if (user?.user_type === "employer") {
+      router.replace("/(employer)/(tabs)");
+    } else if (user?.user_type === "admin") {
+      router.replace("/(admin)/(tabs)");
+    }
+  }, [user?.user_type, isAuthenticated, isLoading]);
+
   return (
     <Stack
       screenOptions={{

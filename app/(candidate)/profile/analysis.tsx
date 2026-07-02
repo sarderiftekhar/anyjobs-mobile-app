@@ -8,6 +8,7 @@ import {
   useConfirmAnalysis,
   useRegenerateAnalysis,
 } from "../../../src/hooks/useInsights";
+import { AiConsentGuard } from "../../../src/components/ai/AiConsentGuard";
 
 function Section({ title, items }: { title: string; items?: any[] }) {
   if (!items || items.length === 0) return null;
@@ -24,7 +25,15 @@ function Section({ title, items }: { title: string; items?: any[] }) {
   );
 }
 
-export default function ProfileAnalysisScreen() {
+export default function ProfileAnalysisScreenGuarded() {
+  return (
+    <AiConsentGuard>
+      <ProfileAnalysisScreen />
+    </AiConsentGuard>
+  );
+}
+
+function ProfileAnalysisScreen() {
   const insets = useSafeAreaInsets();
   const { data: analysis, isLoading } = useProfileAnalysis();
   const generate = useGenerateAnalysis();

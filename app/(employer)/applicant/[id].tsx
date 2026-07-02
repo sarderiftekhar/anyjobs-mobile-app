@@ -3,12 +3,12 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useApplicantDetail, useUpdateApplicantStatus } from "../../../src/hooks/useEmployer";
-import { Avatar, Badge, Button, Card, LoadingSpinner } from "../../../src/components/ui";
+import { Avatar, Badge, Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 
 export default function ApplicantDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const applicantId = parseInt(id!, 10);
+  const applicantId = id ? parseInt(id, 10) : NaN;
 
   const { data: applicant, isLoading } = useApplicantDetail(applicantId);
   const updateStatus = useUpdateApplicantStatus();
@@ -22,6 +22,22 @@ export default function ApplicantDetailScreen() {
       },
     ]);
   };
+
+  // Bad/missing id (e.g. malformed deep link) would otherwise disable the
+  // query and leave the screen on a spinner forever.
+  if (!Number.isFinite(applicantId)) {
+    return (
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+        <EmptyState
+          icon="alert-circle-outline"
+          title="Applicant not found"
+          description="This link is invalid or has expired."
+          actionTitle="Go back"
+          onAction={() => router.back()}
+        />
+      </View>
+    );
+  }
 
   if (isLoading || !applicant) {
     return (

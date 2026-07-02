@@ -5,8 +5,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card, EmptyState, LoadingSpinner } from "../../src/components/ui";
 import { ScreenHeader } from "../../src/components/form";
 import { useInterviewPrep } from "../../src/hooks/useCareer";
+import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
 
-export default function InterviewPrepScreen() {
+export default function InterviewPrepScreenGuarded() {
+  return (
+    <AiConsentGuard>
+      <InterviewPrepScreen />
+    </AiConsentGuard>
+  );
+}
+
+function InterviewPrepScreen() {
   const insets = useSafeAreaInsets();
   const { data, isLoading, isError } = useInterviewPrep();
   const [checked, setChecked] = useState<Record<number, boolean>>({});

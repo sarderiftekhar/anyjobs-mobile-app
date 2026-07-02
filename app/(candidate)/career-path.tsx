@@ -4,8 +4,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card, Badge, EmptyState, LoadingSpinner } from "../../src/components/ui";
 import { ScreenHeader } from "../../src/components/form";
 import { useCareerPath } from "../../src/hooks/useCareer";
+import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
 
-export default function CareerPathScreen() {
+export default function CareerPathScreenGuarded() {
+  return (
+    <AiConsentGuard>
+      <CareerPathScreen />
+    </AiConsentGuard>
+  );
+}
+
+function CareerPathScreen() {
   const insets = useSafeAreaInsets();
   const { data, isLoading, isError } = useCareerPath();
 

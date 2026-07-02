@@ -17,6 +17,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, OrbitHalo } from "../../src/components/ui";
 import { colors } from "../../src/theme/colors";
+import { config } from "../../src/constants/config";
+import { openExternalUrl } from "../../src/lib/openExternal";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -123,8 +125,22 @@ export default function WelcomeScreen() {
           />
           <Text className="mt-3.5 text-center text-[11px] text-ink-muted">
             By continuing, you agree to our{" "}
-            <Text className="font-semibold text-primary">Terms</Text> and{" "}
-            <Text className="font-semibold text-primary">Privacy Policy</Text>.
+            <Text
+              className="font-semibold text-primary"
+              onPress={() => openExternalUrl(config.TERMS_URL)}
+              suppressHighlighting
+            >
+              Terms
+            </Text>{" "}
+            and{" "}
+            <Text
+              className="font-semibold text-primary"
+              onPress={() => openExternalUrl(config.PRIVACY_POLICY_URL)}
+              suppressHighlighting
+            >
+              Privacy Policy
+            </Text>
+            .
           </Text>
         </View>
       </Animated.View>

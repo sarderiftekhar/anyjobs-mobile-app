@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import {
-  View, Text, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform,
+  View, Text, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -64,6 +64,15 @@ export function ChatScreenComponent({ conversationId }: ChatScreenProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
       queryClient.invalidateQueries({ queryKey: ["messages", "conversations"] });
+    },
+    onError: (_err, messageText) => {
+      // The input is cleared optimistically on send — put the draft back so a
+      // failed send isn't silently lost (unless the user already typed more).
+      setText((current) => (current.trim() ? current : messageText));
+      Alert.alert(
+        "Message not sent",
+        "Please check your connection and try again.",
+      );
     },
   });
 

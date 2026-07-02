@@ -3,13 +3,13 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { Input, Button, LoadingSpinner } from "../../../src/components/ui";
+import { Input, Button, LoadingSpinner, EmptyState } from "../../../src/components/ui";
 import { useCompany, useUpdateCompany } from "../../../src/hooks/useCompany";
 import type { UpdateCompanyPayload } from "../../../src/types/company";
 
 export default function CompanyEditScreen() {
   const insets = useSafeAreaInsets();
-  const { data: company, isLoading } = useCompany();
+  const { data: company, isLoading, isError, refetch } = useCompany();
   const update = useUpdateCompany();
 
   const [form, setForm] = useState<UpdateCompanyPayload>({});
@@ -63,6 +63,16 @@ export default function CompanyEditScreen() {
 
       {isLoading ? (
         <LoadingSpinner />
+      ) : isError ? (
+        // Without this, a failed load left a blank form the user could
+        // "save", wiping their company profile with empty values.
+        <EmptyState
+          icon="alert-circle-outline"
+          title="Couldn't load company"
+          description="Check your connection and try again."
+          actionTitle="Retry"
+          onAction={() => refetch()}
+        />
       ) : (
         <View className="px-4">
           <Input
