@@ -256,15 +256,34 @@ export default function InterviewsScreen() {
   });
 
   const cancelMutation = useMutation({
-    mutationFn: (id: number) => candidateExtrasApi.interviews.cancel(id),
+    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
+      candidateExtrasApi.interviews.cancel(id, reason),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
   });
 
   const rescheduleMutation = useMutation({
-    mutationFn: ({ id, when }: { id: number; when: string }) =>
-      candidateExtrasApi.interviews.reschedule(id, when),
+    mutationFn: ({ id, when, reason }: { id: number; when: string; reason?: string }) =>
+      candidateExtrasApi.interviews.reschedule(id, when, reason),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
   });
+
+  // The employer sees the reason (required on the web too).
+  const [cancelId, setCancelId] = useState<number | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+
+  const submitCancel = async () => {
+    if (!cancelReason.trim()) {
+      Alert.alert("Add a reason", "Let the employer know why you're cancelling.");
+      return;
+    }
+    try {
+      const res = await cancelMutation.mutateAsync({ id: cancelId!, reason: cancelReason.trim() });
+      setCancelId(null);
+      Alert.alert("Interview cancelled", res.message ?? "The employer has been told.");
+    } catch (e: any) {
+      Alert.alert("Couldn't cancel", e?.response?.data?.message ?? "Please try again.");
+    }
+  };
 
   const chooseSlotMutation = useMutation({
     mutationFn: ({ id, slotId }: { id: number; slotId: number }) =>
@@ -291,6 +310,7 @@ export default function InterviewsScreen() {
 
   const [rescheduleId, setRescheduleId] = useState<number | null>(null);
   const [whenText, setWhenText] = useState("");
+  const [rescheduleReason, setRescheduleReason] = useState("");
 
   const submitReschedule = async () => {
     const parsed = new Date(whenText.replace(" ", "T"));
@@ -299,9 +319,14 @@ export default function InterviewsScreen() {
       return;
     }
     try {
-      await rescheduleMutation.mutateAsync({ id: rescheduleId!, when: parsed.toISOString() });
+      const res = await rescheduleMutation.mutateAsync({
+        id: rescheduleId!,
+        when: parsed.toISOString(),
+        reason: rescheduleReason.trim() || undefined,
+      });
       setRescheduleId(null);
       setWhenText("");
+      Alert.alert("Interview rescheduled", res.message ?? "The employer has been sent the new time.");
     } catch (e: any) {
       Alert.alert("Couldn't reschedule", e?.response?.data?.message ?? "Please try again.");
     }
@@ -314,14 +339,8 @@ export default function InterviewsScreen() {
   const awaiting = tab === "upcoming" ? data?.awaiting ?? [] : [];
 
   const handleCancel = (id: number) => {
-    Alert.alert("Cancel Interview", "Are you sure you want to cancel?", [
-      { text: "Keep", style: "cancel" },
-      {
-        text: "Cancel Interview",
-        style: "destructive",
-        onPress: () => cancelMutation.mutate(id),
-      },
-    ]);
+    setCancelId(id);
+    setCancelReason("");
   };
 
   return (
@@ -392,6 +411,7 @@ export default function InterviewsScreen() {
               onReschedule={(id) => {
                 setRescheduleId(id);
                 setWhenText("");
+                setRescheduleReason("");
               }}
             />
           )}
@@ -412,6 +432,36 @@ export default function InterviewsScreen() {
         choosing={chooseSlotMutation.isPending}
       />
 
+      {/* Cancel modal */}
+      <Modal visible={cancelId !== null} transparent animationType="fade" onRequestClose={() => setCancelId(null)}>
+        <View className="flex-1 items-center justify-center bg-black/40 px-6">
+          <View className="w-full rounded-2xl bg-surface p-5">
+            <Text className="text-lg font-bold text-ink">Cancel interview</Text>
+            <Text className="mt-1 text-sm text-ink-muted">
+              The employer will see your reason and the calendar invite will be withdrawn.
+            </Text>
+            <TextInput
+              className="mt-4 min-h-[90px] rounded-xl border border-border bg-surface px-4 py-3 text-base text-ink"
+              placeholder="Why are you cancelling?"
+              placeholderTextColor="#6B7F94"
+              value={cancelReason}
+              onChangeText={setCancelReason}
+              multiline
+              textAlignVertical="top"
+              maxLength={500}
+            />
+            <View className="mt-4 flex-row">
+              <View className="mr-2 flex-1">
+                <Button title="Keep it" variant="outline" onPress={() => setCancelId(null)} />
+              </View>
+              <View className="ml-2 flex-1">
+                <Button title="Cancel interview" variant="danger" loading={cancelMutation.isPending} onPress={submitCancel} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {/* Reschedule modal */}
       <Modal visible={rescheduleId !== null} transparent animationType="fade" onRequestClose={() => setRescheduleId(null)}>
         <View className="flex-1 items-center justify-center bg-black/40 px-6">
@@ -425,6 +475,14 @@ export default function InterviewsScreen() {
               value={whenText}
               onChangeText={setWhenText}
               autoCapitalize="none"
+            />
+            <TextInput
+              className="mt-3 rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-ink"
+              placeholder="Reason (optional)"
+              placeholderTextColor="#6B7F94"
+              value={rescheduleReason}
+              onChangeText={setRescheduleReason}
+              maxLength={500}
             />
             <View className="mt-4 flex-row">
               <View className="mr-2 flex-1">
