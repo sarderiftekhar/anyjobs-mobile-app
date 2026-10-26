@@ -20,6 +20,7 @@ and tick every box below to clear automated pre-rejection and pass human review 
 
 ## 4. AI Rules & Transparency (Guideline 5.1.2)
 - [ ] **Mandatory AI consent screen** — before the user's first AI action, show an onboarding popup that names the AI provider and gets consent. Example: *"ContinentJobs uses Anthropic Claude AI to analyze your input. By continuing, you agree to securely share your data with our AI processing partner."*
+  - As built (2026-10-26): the screen names **Google Gemini via OpenRouter** (drafting) and **TypeSafe** (match scoring), which is what the backend actually calls (`config/ai.php`, `LaravelOpenRouterService`, `CandidateJobFitService`). If the backend changes vendor, update `AI_GENERATION_PROVIDER` / `AI_MATCHING_PROVIDER` in `src/constants/config.ts` and bump `AI_CONSENT_KEY` so users are asked again. Match scoring runs on every application, so the apply screen's consent tick discloses it too. The website privacy policy must name the same vendors.
 - [ ] **Privacy policy inside the app menu** — a clickable link/button in native Settings or Profile (not just Apple's dashboard).
 - [ ] **Explicit AI data disclaimer** — privacy policy states in plain language that user-uploaded files are transmitted to an external AI vendor for live classification.
 - [ ] **Native "Delete Account" button** — if accounts are required, a clear in-app **Delete Account** button. Email-to-support deletion is not allowed.

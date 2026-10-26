@@ -18,6 +18,7 @@ import { useCvs, useUploadCv } from "../../../src/hooks/useCvs";
 import { useAuthStore } from "../../../src/stores/authStore";
 import { Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import { ChipSelect } from "../../../src/components/form";
+import { config } from "../../../src/constants/config";
 import apiClient from "../../../src/api/client";
 import { applicationsApi } from "../../../src/api/applications";
 import {
@@ -697,7 +698,8 @@ export default function ApplyScreen() {
               />
               <Text className="ml-3 flex-1 text-sm leading-5 text-ink">
                 I agree that {job?.company.name ?? "the employer"} and ContinentJobs may process the
-                information in this application to assess it.{" "}
+                information in this application to assess it, including an automated match score
+                from our AI partner {config.AI_MATCHING_PROVIDER}.{" "}
                 <Text className="text-red-600">*</Text>
               </Text>
             </TouchableOpacity>

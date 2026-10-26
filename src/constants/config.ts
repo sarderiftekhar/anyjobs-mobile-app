@@ -26,10 +26,14 @@ export const config = {
   TOKEN_KEY: "continentjobs_auth_token",
   USER_KEY: "continentjobs_user",
   // Persisted flag: user has accepted AI processing (App Store Guideline 5.1.2).
-  AI_CONSENT_KEY: "continentjobs_ai_consent_v1",
+  // v2: v1 consent named the wrong vendor, so everyone is asked again.
+  AI_CONSENT_KEY: "continentjobs_ai_consent_v2",
 
-  // Name of the AI vendor we disclose to users in the consent screen.
-  AI_PROVIDER: "Anthropic (Claude)",
+  // AI vendors disclosed in the consent screen. Keep in step with the backend:
+  // generation goes through OpenRouter (config/ai.php, LaravelOpenRouterService)
+  // and application matching through TypeSafe (CandidateJobFitService).
+  AI_GENERATION_PROVIDER: "Google Gemini, accessed through OpenRouter",
+  AI_MATCHING_PROVIDER: "TypeSafe",
 
   // Legal / support destinations surfaced inside the app's Settings menu.
   PRIVACY_POLICY_URL: `${WEB_URL}/privacy-policy`,
