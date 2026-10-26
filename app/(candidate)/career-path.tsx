@@ -5,6 +5,7 @@ import { Card, Badge, EmptyState, LoadingSpinner } from "../../src/components/ui
 import { ScreenHeader } from "../../src/components/form";
 import { useCareerPath } from "../../src/hooks/useCareer";
 import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
+import { isUpgradeRequired, planLimitMessage } from "../../src/lib/apiErrors";
 
 export default function CareerPathScreenGuarded() {
   return (
@@ -16,7 +17,7 @@ export default function CareerPathScreenGuarded() {
 
 function CareerPathScreen() {
   const insets = useSafeAreaInsets();
-  const { data, isLoading, isError } = useCareerPath();
+  const { data, isLoading, isError, error } = useCareerPath();
 
   return (
     <View className="flex-1 bg-background">
@@ -26,6 +27,8 @@ function CareerPathScreen() {
 
       {isLoading ? (
         <LoadingSpinner fullScreen message="Mapping your path..." />
+      ) : isUpgradeRequired(error) ? (
+        <EmptyState icon="lock-closed-outline" title="Not included in your plan" description={planLimitMessage(error)} />
       ) : isError || !data ? (
         <EmptyState icon="trending-up-outline" title="Career path unavailable" description="Add your role and experience to your profile to see suggestions." />
       ) : (

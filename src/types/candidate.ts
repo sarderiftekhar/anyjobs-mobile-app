@@ -9,7 +9,15 @@ export type InterviewStatus =
   | "rescheduled"
   | "completed"
   | "cancelled"
-  | "no-show";
+  | "no-show"
+  | "awaiting_candidate";
+
+/** A time the employer offered for a self-scheduled interview. */
+export interface InterviewSlot {
+  id: number;
+  starts_at: string;
+  ends_at: string;
+}
 
 export interface Interview {
   id: number;
@@ -24,6 +32,9 @@ export interface Interview {
   meeting_url?: string;
   notes?: string;
   application_id?: number;
+  timezone?: string;
+  /** Offered times while status is "awaiting_candidate"; empty otherwise. */
+  slots: InterviewSlot[];
 }
 
 export interface RecommendedJob {

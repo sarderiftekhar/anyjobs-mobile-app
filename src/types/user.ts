@@ -141,6 +141,8 @@ export interface User {
   email_verified: boolean;
   subscription_tier: string;
   has_google: boolean;
+  /** False for Google-only accounts (nothing to re-enter on delete). */
+  has_password?: boolean;
   onboarding_completed?: boolean;
   needs_onboarding?: boolean;
   created_at: string;

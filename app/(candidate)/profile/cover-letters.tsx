@@ -12,6 +12,7 @@ import {
   useSetDefaultCoverLetter,
 } from "../../../src/hooks/useCoverLetters";
 import type { CoverLetter } from "../../../src/types/user";
+import { alertIfUpgradeRequired } from "../../../src/lib/apiErrors";
 
 export default function CoverLettersScreen() {
   const insets = useSafeAreaInsets();
@@ -49,6 +50,7 @@ export default function CoverLettersScreen() {
       }
       setEditing(null);
     } catch (e: any) {
+      if (alertIfUpgradeRequired(e)) return;
       Alert.alert("Couldn't save", e?.response?.data?.message ?? "Please try again.");
     }
   };

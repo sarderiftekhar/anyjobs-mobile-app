@@ -9,6 +9,7 @@ import {
   useRegenerateAnalysis,
 } from "../../../src/hooks/useInsights";
 import { AiConsentGuard } from "../../../src/components/ai/AiConsentGuard";
+import { alertIfUpgradeRequired } from "../../../src/lib/apiErrors";
 
 function Section({ title, items }: { title: string; items?: any[] }) {
   if (!items || items.length === 0) return null;
@@ -47,6 +48,7 @@ function ProfileAnalysisScreen() {
         Alert.alert("Not yet", res.message ?? "Complete more of your profile first.");
       }
     } catch (e: any) {
+      if (alertIfUpgradeRequired(e)) return;
       Alert.alert("Couldn't generate", e?.response?.data?.message ?? "Please try again.");
     }
   };

@@ -25,6 +25,17 @@ and tick every box below to clear automated pre-rejection and pass human review 
 - [ ] **Native "Delete Account" button** — if accounts are required, a clear in-app **Delete Account** button. Email-to-support deletion is not allowed.
 
 ## 5. Payment Rules (Guideline 3.1.1)
+
+**Decision (2026-10-26): no purchases in the app for the first release.** Candidate and employer
+plans are sold on the website only. Plans live on the server, so a web subscriber gets their paid
+features in the app automatically. Everyone else sees a neutral "Not included in your plan"
+message (`src/lib/apiErrors.ts`) that never names a plan, says "upgrade", or links to a checkout.
+Keep it that way: any button, link or wording that sends users to buy on the website is a
+rejection under 3.1.1. `src/api/billing.ts` / `useBilling.ts` (Stripe checkout) must stay unused.
+
+Remaining risk: Guideline 3.1.3(b) expects plans bought elsewhere to also be buyable in-app. If
+review raises it, the fallback is Apple/Google in-app purchases plus the two items below.
+
 - [ ] **Native Apple IAP (no Stripe on mobile)** — premium digital content / subscriptions use Apple's native payment system, not web credit-card links or Stripe forms. RevenueCat makes this easier.
 - [ ] **"Restore Purchases" link** — visible button on the paywall/subscription screen so users recover paid status after reinstall/device change.
 

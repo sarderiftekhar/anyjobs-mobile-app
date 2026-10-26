@@ -8,6 +8,7 @@ import { Card, Button } from "../../src/components/ui";
 import { config } from "../../src/constants/config";
 import { authApi } from "../../src/api/auth";
 import { openExternalUrl, openSupportEmail } from "../../src/lib/openExternal";
+import { DeleteAccountModal } from "../../src/components/account/DeleteAccountModal";
 
 function SettingsRow({
   icon,
@@ -48,9 +49,8 @@ function SettingsRow({
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const logout = useAuthStore((s) => s.logout);
-  const deleteAccount = useAuthStore((s) => s.deleteAccount);
   const user = useAuthStore((s) => s.user);
-  const [deleting, setDeleting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleChangePassword = () => {
     const email = user?.email;
@@ -77,34 +77,6 @@ export default function SettingsScreen() {
                 "Couldn't send link",
                 "Please try again in a moment.",
               );
-            }
-          },
-        },
-      ],
-    );
-  };
-
-  const confirmDelete = () => {
-    Alert.alert(
-      "Delete Account",
-      "This permanently deletes your account, profile, applications and saved jobs. This cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            setDeleting(true);
-            try {
-              await deleteAccount();
-              // Auth state is cleared; the root redirect sends the user to welcome.
-            } catch (err: any) {
-              Alert.alert(
-                "Couldn't delete account",
-                err?.message ?? "Please try again later.",
-              );
-            } finally {
-              setDeleting(false);
             }
           },
         },
@@ -208,17 +180,20 @@ export default function SettingsScreen() {
       <TouchableOpacity
         className="mt-4 items-center py-2"
         style={{ minHeight: 44 }}
-        onPress={confirmDelete}
-        disabled={deleting}
+        onPress={() => setDeleteOpen(true)}
       >
-        <Text className="text-sm font-semibold text-red-600">
-          {deleting ? "Deleting…" : "Delete Account"}
-        </Text>
+        <Text className="text-sm font-semibold text-red-600">Delete Account</Text>
       </TouchableOpacity>
 
       <Text className="mt-4 text-center text-xs text-ink-muted">
         App Version {config.APP_VERSION}
       </Text>
+
+      <DeleteAccountModal
+        visible={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        description="This permanently deletes your account, profile, applications and saved jobs. This cannot be undone."
+      />
     </ScrollView>
   );
 }

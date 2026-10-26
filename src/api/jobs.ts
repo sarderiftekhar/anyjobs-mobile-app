@@ -96,9 +96,21 @@ export const jobsApi = {
   bulkRemoveSaved: (jobIds: number[]) =>
     apiClient.post<ApiResponse<{ removed: number }>>("/jobs/saved/bulk-remove", { job_ids: jobIds }),
 
+  // Jobs with screening questions are skipped and listed in `needs_answers`.
   bulkApplySaved: (jobIds: number[], cvId?: number) =>
-    apiClient.post<ApiResponse<{ applied: number; skipped: number }>>("/jobs/saved/bulk-apply", {
+    apiClient.post<
+      ApiResponse<{
+        applied: number;
+        skipped: number;
+        needs_answers?: { job_id: number; title: string }[];
+      }>
+    >("/jobs/saved/bulk-apply", {
       job_ids: jobIds,
       cv_id: cvId,
     }),
+
+  // Counts an apply-button tap in the employer's job analytics, as the web
+  // job page does. Fire-and-forget.
+  recordApplyClick: (jobId: number) =>
+    publicApiClient.post(`/jobs/${jobId}/apply-click`).catch(() => {}),
 };

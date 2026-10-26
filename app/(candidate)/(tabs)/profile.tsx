@@ -7,8 +7,10 @@ import {
   TextInput,
   Alert,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +21,8 @@ import {
   useDeleteExperience,
   useAddEducation,
   useDeleteEducation,
+  useUpdateAvatar,
+  useDeleteAvatar,
 } from "../../../src/hooks/useProfile";
 import { Avatar, Card, Badge, Button } from "../../../src/components/ui";
 import type { Experience, Education } from "../../../src/types/user";
@@ -185,6 +189,59 @@ export default function ProfileScreen() {
   const deleteEducation = useDeleteEducation();
 
   const [showExpModal, setShowExpModal] = useState(false);
+  const updateAvatar = useUpdateAvatar();
+  const deleteAvatar = useDeleteAvatar();
+  const avatarBusy = updateAvatar.isPending || deleteAvatar.isPending;
+
+  const pickAvatar = async () => {
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert("Photo access needed", "Allow photo library access in Settings to add a profile photo.");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    const asset = result.canceled ? null : result.assets?.[0];
+    if (!asset) return;
+    if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) {
+      Alert.alert("Photo too large", "Please choose a photo under 5 MB.");
+      return;
+    }
+    const form = new FormData();
+    form.append("avatar", {
+      uri: asset.uri,
+      name: asset.fileName ?? asset.uri.split("/").pop() ?? "avatar.jpg",
+      type: asset.mimeType ?? "image/jpeg",
+    } as any);
+    try {
+      await updateAvatar.mutateAsync(form);
+    } catch (e: any) {
+      Alert.alert("Upload failed", e?.response?.data?.message ?? "Please try again.");
+    }
+  };
+
+  const handleAvatarPress = () => {
+    if (!user?.profile?.avatar_url) {
+      pickAvatar();
+      return;
+    }
+    Alert.alert("Profile photo", undefined, [
+      { text: "Choose a new photo", onPress: pickAvatar },
+      {
+        text: "Remove photo",
+        style: "destructive",
+        onPress: () =>
+          deleteAvatar.mutate(undefined, {
+            onError: () => Alert.alert("Couldn't remove photo", "Please try again."),
+          }),
+      },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
 
   const handleAddExperience = async (data: any) => {
     try {
@@ -244,7 +301,23 @@ export default function ProfileScreen() {
             className="rounded-full bg-white p-1.5"
             style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
           >
-            <Avatar name={user?.name} size="xl" uri={user?.profile?.avatar_url} />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={handleAvatarPress}
+              disabled={avatarBusy}
+              accessibilityLabel="Change profile photo"
+            >
+              <Avatar name={user?.name} size="xl" uri={user?.profile?.avatar_url} />
+              <View
+                className="absolute bottom-0 right-0 h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-primary"
+              >
+                {avatarBusy ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Ionicons name="camera" size={15} color="#fff" />
+                )}
+              </View>
+            </TouchableOpacity>
           </View>
           <Text className="mt-3 text-xl font-bold text-ink">{user?.name}</Text>
           <Text className="mt-0.5 text-sm text-ink-soft">
@@ -420,6 +493,7 @@ export default function ProfileScreen() {
         <LinkRow icon="location-outline" label="Location" onPress={() => router.push("/(candidate)/profile/edit/location")} />
         <LinkRow icon="call-outline" label="Contact info" onPress={() => router.push("/(candidate)/profile/edit/contact")} />
         <LinkRow icon="options-outline" label="Job preferences" onPress={() => router.push("/(candidate)/profile/edit/preferences")} />
+        <LinkRow icon="globe-outline" label="Where you can work" onPress={() => router.push("/(candidate)/profile/work-authorisation")} />
         <LinkRow icon="ribbon-outline" label="Certifications" onPress={() => router.push("/(candidate)/profile/certifications")} />
         <LinkRow icon="language-outline" label="Languages" onPress={() => router.push("/(candidate)/profile/languages")} />
         <LinkRow icon="people-outline" label="References" onPress={() => router.push("/(candidate)/profile/references")} />

@@ -91,6 +91,8 @@ function normaliseInterview(raw: any): Interview {
     meeting_url: raw.meeting_url ?? raw.meeting_link,
     notes: raw.notes,
     application_id: raw.application_id ?? raw.application?.id,
+    timezone: raw.timezone,
+    slots: Array.isArray(raw.slots) ? raw.slots : [],
   };
 }
 
@@ -131,10 +133,12 @@ export const candidateExtrasApi = {
   // =============== Interviews ===============
   // Backed by /v1/mobile/candidate/interviews/*
   interviews: {
-    list: async (): Promise<{ upcoming: Interview[]; past: Interview[] }> => {
+    list: async (): Promise<{ awaiting: Interview[]; upcoming: Interview[]; past: Interview[] }> => {
       const res = await apiClient.get<any>("/candidate/interviews");
       const body = res.data ?? {};
       return {
+        // Invitations to pick a time (older APIs don't send this list).
+        awaiting: (Array.isArray(body.awaiting) ? body.awaiting : []).map(normaliseInterview),
         upcoming: (Array.isArray(body.upcoming) ? body.upcoming : []).map(normaliseInterview),
         past: (Array.isArray(body.past) ? body.past : []).map(normaliseInterview),
       };
@@ -158,6 +162,11 @@ export const candidateExtrasApi = {
           scheduled_at: scheduledAt,
           notes,
         })
+        .then((r) => r.data),
+    /** Book one of the offered times; 409 if it was taken meanwhile. */
+    chooseSlot: (id: number, slotId: number) =>
+      apiClient
+        .post<ApiResponse>(`/candidate/interviews/${id}/slots/${slotId}/choose`)
         .then((r) => r.data),
   },
 

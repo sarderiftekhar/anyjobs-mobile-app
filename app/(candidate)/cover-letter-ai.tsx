@@ -7,6 +7,7 @@ import { Button, Input, EmptyState } from "../../src/components/ui";
 import { ScreenHeader, ChipSelect } from "../../src/components/form";
 import { useGenerateCoverLetter, useCreateCoverLetter } from "../../src/hooks/useCoverLetters";
 import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
+import { alertIfUpgradeRequired } from "../../src/lib/apiErrors";
 
 const TONES = ["professional", "friendly", "formal", "enthusiastic"];
 
@@ -34,6 +35,7 @@ function CoverLetterAIScreen() {
       const text = await generate.mutateAsync({ jobId: numericJobId, tone });
       setContent(text);
     } catch (e: any) {
+      if (alertIfUpgradeRequired(e)) return;
       Alert.alert(
         "Generation unavailable",
         e?.response?.data?.message ?? "AI is temporarily unavailable. Please write it manually.",
@@ -52,6 +54,7 @@ function CoverLetterAIScreen() {
         { text: "OK", onPress: () => router.back() },
       ]);
     } catch (e: any) {
+      if (alertIfUpgradeRequired(e)) return;
       Alert.alert("Couldn't save", e?.response?.data?.message ?? "Please try again.");
     }
   };

@@ -17,8 +17,16 @@ import { useApplyToJob } from "../../../src/hooks/useApplications";
 import { useCvs, useUploadCv } from "../../../src/hooks/useCvs";
 import { useAuthStore } from "../../../src/stores/authStore";
 import { Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
+import { ChipSelect } from "../../../src/components/form";
 import apiClient from "../../../src/api/client";
 import { applicationsApi } from "../../../src/api/applications";
+import {
+  ScreeningQuestionField,
+  isAnswered,
+} from "../../../src/components/application/ScreeningQuestionField";
+import { alertIfUpgradeRequired, validationErrors } from "../../../src/lib/apiErrors";
+import { applyButtonTitle, openOutsideApply } from "../../../src/lib/applyRoute";
+import type { ScreeningAnswer } from "../../../src/types/job";
 
 type PickedDoc = { uri: string; name: string; type: string; size?: number };
 
@@ -37,7 +45,23 @@ const displayFilename = (name: string) => {
   }
 };
 
-type Step = "cv" | "cover-letter" | "review";
+type Step = "cv" | "questions" | "cover-letter" | "review";
+
+// Same values as the web apply form's "Additional information".
+const NOTICE_PERIODS = [
+  { value: "immediate", label: "Immediate" },
+  { value: "1_week", label: "1 week" },
+  { value: "2_weeks", label: "2 weeks" },
+  { value: "1_month", label: "1 month" },
+  { value: "2_months", label: "2 months" },
+  { value: "3_months", label: "3 months" },
+];
+const REMOTE_PREFERENCES = [
+  { value: "remote_only", label: "Remote only" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "on_site", label: "On-site" },
+  { value: "no_preference", label: "No preference" },
+];
 
 export default function ApplyScreen() {
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
@@ -57,6 +81,36 @@ export default function ApplyScreen() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [documents, setDocuments] = useState<PickedDoc[]>([]);
+  const [answers, setAnswers] = useState<Record<string, ScreeningAnswer>>({});
+  const [answerErrors, setAnswerErrors] = useState<Record<string, string>>({});
+  const [noticePeriod, setNoticePeriod] = useState("");
+  const [remotePreference, setRemotePreference] = useState("");
+  const [consent, setConsent] = useState(false);
+  const additionalComplete = !!noticePeriod && !!remotePreference && consent;
+
+  const questions = job?.screening_questions ?? [];
+
+  const setAnswer = (id: string, value: ScreeningAnswer) => {
+    setAnswers((a) => ({ ...a, [id]: value }));
+    if (answerErrors[id]) setAnswerErrors(({ [id]: _, ...rest }) => rest);
+  };
+
+  /** Client-side check of required questions; the server re-validates. */
+  const checkAnswers = () => {
+    const errors: Record<string, string> = {};
+    for (const q of questions) {
+      if (q.required && !isAnswered(answers[q.id])) {
+        errors[q.id] = "Please answer this question.";
+      }
+    }
+    setAnswerErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Every question is sent, blank when unanswered: the backend treats a
+  // request without `answers` as an older app that can't show questions.
+  const answersPayload = () =>
+    Object.fromEntries(questions.map((q) => [q.id, answers[q.id] ?? ""]));
 
   // Auto-select the primary CV when CVs load
   useEffect(() => {
@@ -114,6 +168,7 @@ export default function ApplyScreen() {
         Alert.alert("No Result", "AI couldn't generate a cover letter. Please write one manually.");
       }
     } catch (err: any) {
+      if (alertIfUpgradeRequired(err)) return;
       const msg = err.response?.data?.message || "AI generation failed. Please try again or write manually.";
       Alert.alert("AI Unavailable", msg);
     } finally {
@@ -121,8 +176,15 @@ export default function ApplyScreen() {
     }
   };
 
-  const steps: Step[] = ["cv", "cover-letter", "review"];
+  const steps: Step[] = questions.length
+    ? ["cv", "questions", "cover-letter", "review"]
+    : ["cv", "cover-letter", "review"];
   const currentIndex = steps.indexOf(step);
+
+  const goNext = () => {
+    if (step === "questions" && !checkAnswers()) return;
+    setStep(steps[currentIndex + 1]);
+  };
 
   const handlePickDocuments = async () => {
     try {
@@ -145,6 +207,10 @@ export default function ApplyScreen() {
 
   const handleSubmit = async () => {
     setSubmitError(null);
+    if (questions.length && !checkAnswers()) {
+      setStep("questions");
+      return;
+    }
     try {
       if (documents.length > 0) {
         // Multipart path — include supporting documents.
@@ -153,6 +219,18 @@ export default function ApplyScreen() {
         fd.append("job_id", String(parsedJobId));
         if (selectedCvId) fd.append("cv_id", String(selectedCvId));
         if (coverLetter) fd.append("cover_letter", coverLetter);
+        fd.append("notice_period", noticePeriod);
+        fd.append("remote_work_preference", remotePreference);
+        fd.append("data_processing_consent", "1");
+        if (questions.length) {
+          for (const [id, value] of Object.entries(answersPayload())) {
+            if (Array.isArray(value) && value.length) {
+              value.forEach((v) => fd.append(`answers[${id}][]`, v));
+            } else {
+              fd.append(`answers[${id}]`, Array.isArray(value) ? "" : value);
+            }
+          }
+        }
         documents.forEach((d) =>
           fd.append("documents[]", { uri: d.uri, name: d.name, type: d.type } as any),
         );
@@ -162,10 +240,25 @@ export default function ApplyScreen() {
           job_id: parsedJobId,
           cv_id: selectedCvId,
           cover_letter: coverLetter || undefined,
+          answers: questions.length ? answersPayload() : undefined,
+          notice_period: noticePeriod,
+          remote_work_preference: remotePreference,
+          data_processing_consent: true,
         });
       }
       setSubmitted(true);
     } catch (err: any) {
+      // Screening errors come back keyed `answers.<question id>`.
+      const fieldErrors = validationErrors(err);
+      const forAnswers = Object.fromEntries(
+        Object.entries(fieldErrors)
+          .filter(([key]) => key.startsWith("answers."))
+          .map(([key, msg]) => [key.slice("answers.".length), msg]),
+      );
+      if (Object.keys(forAnswers).length) {
+        setAnswerErrors(forAnswers);
+        setStep("questions");
+      }
       const msg = err?.response?.data?.message || "Failed to submit application. Please try again.";
       setSubmitError(msg);
     } finally {
@@ -224,6 +317,41 @@ export default function ApplyScreen() {
           onPress={() => router.replace("/(candidate)/(tabs)/applications")}
         >
           <Text style={{ color: "#0064EC", fontSize: 14, fontWeight: "600" }}>View My Applications</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // The employer takes applications by email or on their own site (e.g. an
+  // old deep link straight to this form): send the candidate there instead.
+  if (job?.apply_route && job.apply_route.kind !== "in_app" && !submitted) {
+    const route = job.apply_route;
+    return (
+      <View style={{ flex: 1, backgroundColor: "#fff", paddingTop: insets.top, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 }}>
+        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "#EFF6FF", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+          <Ionicons name={route.kind === "email" ? "mail" : "open-outline"} size={40} color="#0064EC" />
+        </View>
+        <Text style={{ fontSize: 22, fontWeight: "700", color: "#1A2230", textAlign: "center" }}>
+          Apply with the employer
+        </Text>
+        <Text style={{ fontSize: 15, color: "#6B7F94", textAlign: "center", marginTop: 8, lineHeight: 22 }}>
+          {route.kind === "instructions"
+            ? route.instructions || "Follow the application instructions in the job description."
+            : `${job.company.name} takes applications for this job ${route.kind === "email" ? "by email" : "on their own website"}.`}
+        </Text>
+        {route.kind !== "instructions" && (
+          <View style={{ width: "100%", maxWidth: 320, marginTop: 28 }}>
+            <Button title={applyButtonTitle(job)} onPress={() => openOutsideApply(job)} />
+          </View>
+        )}
+        <TouchableOpacity
+          style={{ marginTop: 16, minHeight: 44, justifyContent: "center" }}
+          onPress={() => {
+            if (router.canGoBack()) router.back();
+            else router.replace("/(candidate)/(tabs)");
+          }}
+        >
+          <Text style={{ color: "#0064EC", fontSize: 14, fontWeight: "600" }}>Back to job</Text>
         </TouchableOpacity>
       </View>
     );
@@ -384,6 +512,27 @@ export default function ApplyScreen() {
           </View>
         )}
 
+        {/* Step: Employer's screening questions */}
+        {step === "questions" && (
+          <View className="pt-6">
+            <Text className="text-lg font-semibold text-ink">
+              Application Questions
+            </Text>
+            <Text className="mt-1 text-sm text-ink-muted">
+              {job?.company.name} asks every applicant these. Questions marked * are required.
+            </Text>
+            {questions.map((q) => (
+              <ScreeningQuestionField
+                key={q.id}
+                question={q}
+                value={answers[q.id]}
+                onChange={(v) => setAnswer(q.id, v)}
+                error={answerErrors[q.id]}
+              />
+            ))}
+          </View>
+        )}
+
         {/* Step: Cover Letter */}
         {step === "cover-letter" && (
           <View className="pt-6">
@@ -462,6 +611,20 @@ export default function ApplyScreen() {
               </View>
             </Card>
 
+            {questions.length > 0 && (
+              <Card className="mt-3">
+                <Text className="text-xs font-semibold uppercase text-ink-muted">
+                  Application Questions
+                </Text>
+                <Text className="mt-1 text-sm text-ink">
+                  {questions.filter((q) => isAnswered(answers[q.id])).length} of {questions.length} answered
+                </Text>
+                <TouchableOpacity className="mt-1 self-start" style={{ minHeight: 32, justifyContent: "center" }} onPress={() => setStep("questions")}>
+                  <Text className="text-sm font-semibold text-primary">Edit answers</Text>
+                </TouchableOpacity>
+              </Card>
+            )}
+
             {coverLetter.length > 0 && (
               <Card className="mt-3">
                 <Text className="text-xs font-semibold uppercase text-ink-muted">
@@ -494,6 +657,50 @@ export default function ApplyScreen() {
                 </Text>
               </TouchableOpacity>
             </Card>
+
+            {/* Additional information + consent (required, as on the web form) */}
+            <Card className="mt-3">
+              <Text className="text-xs font-semibold uppercase text-ink-muted">
+                Additional information
+              </Text>
+              <Text className="mt-3 text-sm font-medium text-ink">
+                Notice period <Text className="text-red-600">*</Text>
+              </Text>
+              <ChipSelect
+                options={NOTICE_PERIODS}
+                value={noticePeriod ? [noticePeriod] : []}
+                onChange={(next) => setNoticePeriod(next[0] ?? "")}
+                multiple={false}
+              />
+              <Text className="mt-3 text-sm font-medium text-ink">
+                Remote work preference <Text className="text-red-600">*</Text>
+              </Text>
+              <ChipSelect
+                options={REMOTE_PREFERENCES}
+                value={remotePreference ? [remotePreference] : []}
+                onChange={(next) => setRemotePreference(next[0] ?? "")}
+                multiple={false}
+              />
+            </Card>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => setConsent((c) => !c)}
+              className="mt-3 flex-row items-start rounded-xl border border-border bg-white p-4"
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: consent }}
+            >
+              <Ionicons
+                name={consent ? "checkbox" : "square-outline"}
+                size={22}
+                color={consent ? "#0064EC" : "#9CA3AF"}
+              />
+              <Text className="ml-3 flex-1 text-sm leading-5 text-ink">
+                I agree that {job?.company.name ?? "the employer"} and ContinentJobs may process the
+                information in this application to assess it.{" "}
+                <Text className="text-red-600">*</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -521,12 +728,12 @@ export default function ApplyScreen() {
             <Button
               title="Continue"
               disabled={step === "cv" && !selectedCvId}
-              onPress={() => setStep(steps[currentIndex + 1])}
+              onPress={goNext}
             />
           ) : (
             <Button
               title="Submit Application"
-              disabled={!selectedCvId}
+              disabled={!selectedCvId || !additionalComplete}
               loading={applyMutation.isPending || submitting}
               onPress={handleSubmit}
             />

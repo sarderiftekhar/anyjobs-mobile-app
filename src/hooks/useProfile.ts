@@ -68,6 +68,14 @@ export function useUpdateAvatar() {
   });
 }
 
+export function useDeleteAvatar() {
+  const refreshUser = useAuthStore((s) => s.refreshUser);
+  return useMutation({
+    mutationFn: () => profileApi.deleteAvatar(),
+    onSuccess: () => refreshUser(),
+  });
+}
+
 export function useAddExperience() {
   const refreshUser = useAuthStore((s) => s.refreshUser);
   return useMutation({

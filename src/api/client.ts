@@ -1,6 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { config } from "../constants/config";
 import { storage } from "../lib/storage";
+import { isUpgradeRequired, planLimitMessage } from "../lib/apiErrors";
 
 // Common headers — includes Host header for Laragon virtual host routing
 const commonHeaders: Record<string, string> = {
@@ -67,6 +68,13 @@ apiClient.interceptors.response.use(
         // Store unavailable (e.g. module init order) — storage is already
         // cleared, so the next cold start lands on the welcome screen.
       }
+    }
+
+    // Plan gates: replace the server's web copy ("…on the Plus plan. Upgrade
+    // to unlock it.") so no screen shows purchase wording (see apiErrors.ts).
+    const data = error.response?.data as any;
+    if (isUpgradeRequired(error) && data && typeof data === "object") {
+      data.message = planLimitMessage(error);
     }
 
     if (__DEV__) {

@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { View, Text, FlatList, RefreshControl, TouchableOpacity, Alert } from "react-native";
+import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useSavedJobs, useUnsaveJob } from "../../../src/hooks/useJobs";
@@ -66,7 +67,27 @@ export default function SavedJobsScreen() {
           try {
             const res = await jobsApi.bulkApplySaved(ids);
             const d = res.data.data;
-            Alert.alert("Done", `Applied to ${d?.applied ?? 0}. ${d?.skipped ? `${d.skipped} skipped.` : ""}`);
+            const needsAnswers = d?.needs_answers ?? [];
+            let message = `Applied to ${d?.applied ?? 0}. ${d?.skipped ? `${d.skipped} skipped.` : ""}`;
+            if (needsAnswers.length) {
+              // These employers ask screening questions, so each needs its own application.
+              message += `\n\nThese ask a few questions, so apply to them one at a time:\n${needsAnswers
+                .map((j) => `• ${j.title}`)
+                .join("\n")}`;
+            }
+            Alert.alert(
+              "Done",
+              message,
+              needsAnswers.length
+                ? [
+                    { text: "Later", style: "cancel" },
+                    {
+                      text: needsAnswers.length === 1 ? "Apply now" : `Apply to "${needsAnswers[0].title}"`,
+                      onPress: () => router.push(`/(candidate)/apply/${needsAnswers[0].job_id}`),
+                    },
+                  ]
+                : undefined,
+            );
             await refetch();
             exitSelect();
           } catch {
