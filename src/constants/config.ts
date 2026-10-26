@@ -38,6 +38,5 @@ export const config = {
   // Legal / support destinations surfaced inside the app's Settings menu.
   PRIVACY_POLICY_URL: `${WEB_URL}/privacy-policy`,
   TERMS_URL: `${WEB_URL}/terms`,
-  HELP_URL: `${WEB_URL}/help`,
   SUPPORT_EMAIL: "support@continentjobs.com",
 } as const;

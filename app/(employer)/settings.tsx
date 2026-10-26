@@ -65,8 +65,8 @@ export default function EmployerSettingsScreen() {
       <Card className="mx-4">
         <SettingsRow
           icon="help-circle-outline"
-          title="Help Center"
-          onPress={() => openExternalUrl(config.HELP_URL)}
+          title="Contact Support"
+          onPress={() => openSupportEmail(config.SUPPORT_EMAIL, "ContinentJobs app help")}
         />
         <SettingsRow
           icon="chatbox-outline"
