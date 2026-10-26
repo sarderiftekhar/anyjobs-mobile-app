@@ -6,7 +6,11 @@ export interface ApplyPayload {
   job_id: number;
   cv_id?: number;
   cover_letter?: string;
-  answers?: Record<string, string>;
+  /** Screening answers keyed by question id (job detail `screening_questions`). */
+  answers?: Record<string, string | string[]>;
+  notice_period?: string;
+  remote_work_preference?: string;
+  data_processing_consent?: boolean;
 }
 
 export interface ApplicationConversation {

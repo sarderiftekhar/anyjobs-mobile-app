@@ -9,6 +9,7 @@ import type {
   ReferenceEntry,
 } from "../types/user";
 import type { ApiResponse } from "../types/api";
+import type { WorkAuthorisation, WorkAuthorisationPayload } from "../types/profileExtras";
 
 export interface BasicInfoPayload {
   first_name?: string;
@@ -105,6 +106,19 @@ export const profileApi = {
       headers: { "Content-Type": "multipart/form-data" },
       timeout: 60_000,
     }),
+
+  deleteAvatar: () => apiClient.delete<ApiResponse>("/profile/avatar"),
+
+  // "Where can you work?" (web profile's WorkAuthorisationEditor)
+  getWorkAuthorisation: () =>
+    apiClient
+      .get<ApiResponse<WorkAuthorisation>>("/profile/work-authorisation")
+      .then((r) => r.data.data!),
+
+  updateWorkAuthorisation: (data: WorkAuthorisationPayload) =>
+    apiClient
+      .put<ApiResponse<WorkAuthorisation>>("/profile/work-authorisation", data)
+      .then((r) => r.data.data!),
 
   // Experience
   addExperience: (data: ExperiencePayload) =>

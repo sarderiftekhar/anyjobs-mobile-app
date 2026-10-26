@@ -108,6 +108,27 @@ export interface OnboardingStatus {
   };
 }
 
+/**
+ * "Where can you work?" — countries the candidate may work in and how, plus
+ * where they'd relocate to. Country ids are global_countries ids, sent back
+ * as strings (same as the web editor's props).
+ */
+export interface WorkAuthorisation {
+  items: { country_id: string; status: string }[];
+  relocation_countries: string[];
+  statuses: { value: string; label: string }[];
+}
+
+export interface WorkAuthorisationPayload {
+  authorisations: { country_id: number; status: string }[];
+  relocation_countries: number[];
+}
+
+export interface Country {
+  id: number;
+  name: string;
+}
+
 export interface OnboardingPayload {
   professional_title: string;
   professional_summary?: string;

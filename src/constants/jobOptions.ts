@@ -53,7 +53,7 @@ export const SALARY_TYPES: Option[] = [
 ];
 
 export const APPLICATION_METHODS: Option[] = [
-  { value: "internal", label: "Through AnyJobs" },
+  { value: "internal", label: "Through ContinentJobs" },
   { value: "external", label: "External URL" },
   { value: "email", label: "Email" },
 ];

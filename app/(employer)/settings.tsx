@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,7 @@ import { useAuthStore } from "../../src/stores/authStore";
 import { Card, Button } from "../../src/components/ui";
 import { config } from "../../src/constants/config";
 import { openExternalUrl, openSupportEmail } from "../../src/lib/openExternal";
+import { DeleteAccountModal } from "../../src/components/account/DeleteAccountModal";
 
 function SettingsRow({
   icon,
@@ -38,35 +39,7 @@ function SettingsRow({
 export default function EmployerSettingsScreen() {
   const insets = useSafeAreaInsets();
   const logout = useAuthStore((s) => s.logout);
-  const deleteAccount = useAuthStore((s) => s.deleteAccount);
-  const [deleting, setDeleting] = useState(false);
-
-  const confirmDelete = () => {
-    Alert.alert(
-      "Delete Account",
-      "This permanently deletes your account, company profile and job postings. This cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            setDeleting(true);
-            try {
-              await deleteAccount();
-            } catch (err: any) {
-              Alert.alert(
-                "Couldn't delete account",
-                err?.message ?? "Please try again later.",
-              );
-            } finally {
-              setDeleting(false);
-            }
-          },
-        },
-      ],
-    );
-  };
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
     <ScrollView
@@ -99,7 +72,7 @@ export default function EmployerSettingsScreen() {
           icon="chatbox-outline"
           title="Send Feedback"
           onPress={() =>
-            openSupportEmail(config.SUPPORT_EMAIL, "AnyJobs app feedback")
+            openSupportEmail(config.SUPPORT_EMAIL, "ContinentJobs app feedback")
           }
         />
         <SettingsRow
@@ -121,17 +94,20 @@ export default function EmployerSettingsScreen() {
       <TouchableOpacity
         className="mt-4 items-center py-2"
         style={{ minHeight: 44 }}
-        onPress={confirmDelete}
-        disabled={deleting}
+        onPress={() => setDeleteOpen(true)}
       >
-        <Text className="text-sm font-semibold text-red-600">
-          {deleting ? "Deleting…" : "Delete Account"}
-        </Text>
+        <Text className="text-sm font-semibold text-red-600">Delete Account</Text>
       </TouchableOpacity>
 
       <Text className="mt-4 text-center text-xs text-ink-muted">
         App Version {config.APP_VERSION}
       </Text>
+
+      <DeleteAccountModal
+        visible={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        description="This permanently deletes your account, company profile and job postings. This cannot be undone."
+      />
     </ScrollView>
   );
 }

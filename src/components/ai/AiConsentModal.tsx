@@ -64,17 +64,17 @@ export function AiConsentModal({
             </Text>
 
             <Text className="mt-3 text-base leading-6 text-ink-muted">
-              AnyJobs uses {config.AI_PROVIDER} to power features like job
-              description generation, CV/resume analysis, cover-letter drafting
-              and candidate–job matching.
+              ContinentJobs uses {config.AI_GENERATION_PROVIDER} to write drafts
+              such as cover letters and job descriptions, and{" "}
+              {config.AI_MATCHING_PROVIDER} to score how well a candidate fits a
+              job.
             </Text>
 
             <Text className="mt-3 text-base leading-6 text-ink-muted">
               When you use these features, the content you provide — such as
-              prompts, profile details and uploaded files — is securely
-              transmitted to our AI processing partner to generate results. We
-              don't sell your data, and you can use the rest of the app without
-              AI features.
+              prompts, profile details and CV text — is securely sent to these
+              AI partners to produce the result. We don't sell your data, and
+              you can use the rest of the app without AI features.
             </Text>
 
             <TouchableOpacity

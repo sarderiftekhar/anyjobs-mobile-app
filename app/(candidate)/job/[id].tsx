@@ -7,6 +7,7 @@ import { jobsApi } from "../../../src/api/jobs";
 import { Card, Badge, Button, LoadingSpinner } from "../../../src/components/ui";
 import { MatchScoreCard } from "../../../src/components/ai/MatchScoreCard";
 import { formatDistanceToNow } from "date-fns";
+import { applyButtonTitle, openOutsideApply } from "../../../src/lib/applyRoute";
 
 export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,7 +27,7 @@ export default function JobDetailScreen() {
   const handleShare = async () => {
     if (!job) return;
     await Share.share({
-      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://anyjobs.com/jobs/${job.id}`,
+      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://continentjobs.com/jobs/${job.id}`,
     });
   };
 
@@ -285,12 +286,37 @@ export default function JobDetailScreen() {
               Already Applied
             </Text>
           </View>
+        ) : job.apply_route?.kind === "instructions" ? (
+          <View className="rounded-2xl bg-primary-light px-4 py-3">
+            <Text className="text-xs font-semibold uppercase text-ink-muted">
+              How to apply
+            </Text>
+            <Text className="mt-1 text-sm text-ink">
+              {job.apply_route.instructions || "Follow the employer's application instructions in the job description."}
+            </Text>
+          </View>
+        ) : job.apply_route && job.apply_route.kind !== "in_app" ? (
+          <Button
+            title={applyButtonTitle(job)}
+            size="lg"
+            icon={
+              <Ionicons
+                name={job.apply_route.kind === "email" ? "mail-outline" : "open-outline"}
+                size={18}
+                color="#fff"
+              />
+            }
+            onPress={() => openOutsideApply(job)}
+          />
         ) : (
           <>
             <Button
               title="Apply Now"
               size="lg"
-              onPress={() => router.push(`/(candidate)/apply/${job.id}`)}
+              onPress={() => {
+                jobsApi.recordApplyClick(job.id);
+                router.push(`/(candidate)/apply/${job.id}`);
+              }}
             />
             <TouchableOpacity
               className="mt-2 flex-row items-center justify-center py-1"

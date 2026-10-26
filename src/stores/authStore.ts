@@ -5,7 +5,7 @@ import { authApi } from "../api/auth";
 import { registerPushToken, unregisterPushToken } from "../lib/pushNotifications";
 import { signOutOfGoogle } from "../lib/googleSignIn";
 import type { User } from "../types/user";
-import type { LoginPayload, RegisterPayload } from "../api/auth";
+import type { DeleteAccountProof, LoginPayload, RegisterPayload } from "../api/auth";
 
 interface AuthState {
   user: User | null;
@@ -22,7 +22,7 @@ interface AuthState {
     userType?: "candidate" | "employer",
   ) => Promise<void>;
   logout: () => Promise<void>;
-  deleteAccount: () => Promise<void>;
+  deleteAccount: (proof: DeleteAccountProof) => Promise<void>;
   loadStoredAuth: () => Promise<void>;
   refreshUser: () => Promise<void>;
   clearError: () => void;
@@ -153,20 +153,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
-  deleteAccount: async () => {
+  deleteAccount: async (proof) => {
     // Remove push token while still authenticated, then ask the backend to
     // delete the account. Only clear local auth if the deletion succeeds — on
     // failure we keep the user signed in and surface the error so they can retry.
     await unregisterPushToken().catch(() => {});
     try {
-      await authApi.deleteAccount();
+      await authApi.deleteAccount(proof);
     } catch (err: any) {
+      // Still signed in (e.g. wrong password): keep receiving notifications.
+      registerPushToken().catch(() => {});
       const message =
         err.response?.data?.message ||
         "We couldn't delete your account. Please try again.";
       throw new Error(message);
     }
 
+    // Drop the device's Google session too, so the next sign-in offers a choice.
+    await signOutOfGoogle();
     await storage.remove(config.TOKEN_KEY);
     await storage.remove(config.USER_KEY);
     set({

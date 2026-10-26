@@ -9,6 +9,7 @@ import {
   Alert,
   Modal,
   TextInput,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,7 +32,98 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "danger" | "info" |
   completed: "gray",
   cancelled: "danger",
   "no-show": "danger",
+  awaiting_candidate: "warning",
 };
+
+/** An invitation to pick one of the employer's offered times. */
+function PickTimeCard({ interview, onPick }: { interview: Interview; onPick: () => void }) {
+  return (
+    <Card className="mb-3 border border-primary/30 bg-primary-light">
+      <View className="flex-row items-start justify-between">
+        <View className="flex-1 pr-3">
+          <Text className="text-base font-semibold text-ink" numberOfLines={1}>
+            {interview.job_title}
+          </Text>
+          <Text className="mt-0.5 text-sm text-ink-muted" numberOfLines={1}>
+            {interview.company_name}
+          </Text>
+        </View>
+        <Badge text="Pick a time" variant="warning" />
+      </View>
+      <Text className="mt-3 text-sm text-ink">
+        {interview.slots.length
+          ? `${interview.company_name || "The employer"} offered ${interview.slots.length} time${interview.slots.length === 1 ? "" : "s"}${interview.duration_minutes ? ` for a ${interview.duration_minutes}-minute ${interview.type.replace("-", " ")} interview` : ""}.`
+          : "All the offered times have passed. Message the employer to ask for new ones."}
+      </Text>
+      {interview.slots.length > 0 && (
+        <View className="mt-4">
+          <Button title="Choose a time" size="sm" onPress={onPick} />
+        </View>
+      )}
+    </Card>
+  );
+}
+
+function SlotPickerModal({
+  interview,
+  onClose,
+  onChoose,
+  choosing,
+}: {
+  interview: Interview | null;
+  onClose: () => void;
+  onChoose: (slotId: number) => void;
+  choosing: boolean;
+}) {
+  const insets = useSafeAreaInsets();
+  const [selected, setSelected] = useState<number | null>(null);
+
+  return (
+    <Modal visible={!!interview} transparent animationType="slide" onRequestClose={onClose} onShow={() => setSelected(null)}>
+      <View className="flex-1 justify-end bg-black/40">
+        <View className="rounded-t-3xl bg-white px-5 pt-5" style={{ paddingBottom: insets.bottom + 16, maxHeight: "85%" }}>
+          <Text className="text-lg font-bold text-ink">Choose a time</Text>
+          <Text className="mt-1 text-sm text-ink-muted">
+            Times are shown in your time zone. You'll get a calendar invite once you choose.
+          </Text>
+          <ScrollView className="mt-3" style={{ flexGrow: 0 }}>
+            {interview?.slots.map((slot) => {
+              const start = new Date(slot.starts_at);
+              const end = new Date(slot.ends_at);
+              const active = selected === slot.id;
+              return (
+                <TouchableOpacity
+                  key={slot.id}
+                  activeOpacity={0.8}
+                  onPress={() => setSelected(slot.id)}
+                  className={`mt-2 flex-row items-center rounded-xl border px-4 ${active ? "border-primary bg-primary-light" : "border-border bg-white"}`}
+                  style={{ minHeight: 56 }}
+                >
+                  <Ionicons name={active ? "radio-button-on" : "radio-button-off"} size={20} color={active ? "#0064EC" : "#9CA3AF"} />
+                  <View className="ml-3">
+                    <Text className="text-sm font-semibold text-ink">{format(start, "EEE, MMM d")}</Text>
+                    <Text className="text-sm text-ink-muted">
+                      {format(start, "h:mm a")} – {format(end, "h:mm a")}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+          <View className="mt-5" style={{ gap: 10 }}>
+            <Button
+              title="Confirm this time"
+              disabled={selected === null}
+              loading={choosing}
+              onPress={() => selected !== null && onChoose(selected)}
+            />
+            <Button title="Not now" variant="outline" disabled={choosing} onPress={onClose} />
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
 
 function InterviewCard({
   interview,
@@ -66,7 +158,7 @@ function InterviewCard({
           </Text>
         </View>
         <Badge
-          text={interview.status.replace("-", " ")}
+          text={interview.status.replace(/[-_]/g, " ")}
           variant={STATUS_VARIANT[interview.status] ?? "gray"}
         />
       </View>
@@ -164,18 +256,61 @@ export default function InterviewsScreen() {
   });
 
   const cancelMutation = useMutation({
-    mutationFn: (id: number) => candidateExtrasApi.interviews.cancel(id),
+    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
+      candidateExtrasApi.interviews.cancel(id, reason),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
   });
 
   const rescheduleMutation = useMutation({
-    mutationFn: ({ id, when }: { id: number; when: string }) =>
-      candidateExtrasApi.interviews.reschedule(id, when),
+    mutationFn: ({ id, when, reason }: { id: number; when: string; reason?: string }) =>
+      candidateExtrasApi.interviews.reschedule(id, when, reason),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
   });
 
+  // The employer sees the reason (required on the web too).
+  const [cancelId, setCancelId] = useState<number | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+
+  const submitCancel = async () => {
+    if (!cancelReason.trim()) {
+      Alert.alert("Add a reason", "Let the employer know why you're cancelling.");
+      return;
+    }
+    try {
+      const res = await cancelMutation.mutateAsync({ id: cancelId!, reason: cancelReason.trim() });
+      setCancelId(null);
+      Alert.alert("Interview cancelled", res.message ?? "The employer has been told.");
+    } catch (e: any) {
+      Alert.alert("Couldn't cancel", e?.response?.data?.message ?? "Please try again.");
+    }
+  };
+
+  const chooseSlotMutation = useMutation({
+    mutationFn: ({ id, slotId }: { id: number; slotId: number }) =>
+      candidateExtrasApi.interviews.chooseSlot(id, slotId),
+    onSettled: () => qc.invalidateQueries({ queryKey: ["candidate", "interviews"] }),
+  });
+  const [picking, setPicking] = useState<Interview | null>(null);
+
+  const chooseSlot = async (slotId: number) => {
+    if (!picking) return;
+    try {
+      const res = await chooseSlotMutation.mutateAsync({ id: picking.id, slotId });
+      setPicking(null);
+      Alert.alert("Time confirmed", res.message ?? "The calendar invite is on its way.");
+    } catch (e: any) {
+      // 409: someone else took it, or the employer changed the offer.
+      setPicking(null);
+      Alert.alert(
+        "Time not available",
+        e?.response?.data?.message ?? "That time is no longer available. Please pick another.",
+      );
+    }
+  };
+
   const [rescheduleId, setRescheduleId] = useState<number | null>(null);
   const [whenText, setWhenText] = useState("");
+  const [rescheduleReason, setRescheduleReason] = useState("");
 
   const submitReschedule = async () => {
     const parsed = new Date(whenText.replace(" ", "T"));
@@ -184,9 +319,14 @@ export default function InterviewsScreen() {
       return;
     }
     try {
-      await rescheduleMutation.mutateAsync({ id: rescheduleId!, when: parsed.toISOString() });
+      const res = await rescheduleMutation.mutateAsync({
+        id: rescheduleId!,
+        when: parsed.toISOString(),
+        reason: rescheduleReason.trim() || undefined,
+      });
       setRescheduleId(null);
       setWhenText("");
+      Alert.alert("Interview rescheduled", res.message ?? "The employer has been sent the new time.");
     } catch (e: any) {
       Alert.alert("Couldn't reschedule", e?.response?.data?.message ?? "Please try again.");
     }
@@ -196,16 +336,11 @@ export default function InterviewsScreen() {
     if (!data) return [];
     return tab === "upcoming" ? data.upcoming : data.past;
   }, [data, tab]);
+  const awaiting = tab === "upcoming" ? data?.awaiting ?? [] : [];
 
   const handleCancel = (id: number) => {
-    Alert.alert("Cancel Interview", "Are you sure you want to cancel?", [
-      { text: "Keep", style: "cancel" },
-      {
-        text: "Cancel Interview",
-        style: "destructive",
-        onPress: () => cancelMutation.mutate(id),
-      },
-    ]);
+    setCancelId(id);
+    setCancelReason("");
   };
 
   return (
@@ -244,7 +379,7 @@ export default function InterviewsScreen() {
 
       {isLoading ? (
         <LoadingSpinner fullScreen message="Loading interviews..." />
-      ) : list.length === 0 ? (
+      ) : list.length === 0 && awaiting.length === 0 ? (
         <EmptyState
           icon={tab === "upcoming" ? "calendar-outline" : "time-outline"}
           title={tab === "upcoming" ? "No Upcoming Interviews" : "No Past Interviews"}
@@ -259,6 +394,15 @@ export default function InterviewsScreen() {
           data={list}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}
+          ListHeaderComponent={
+            awaiting.length ? (
+              <View>
+                {awaiting.map((i) => (
+                  <PickTimeCard key={i.id} interview={i} onPick={() => setPicking(i)} />
+                ))}
+              </View>
+            ) : null
+          }
           renderItem={({ item }) => (
             <InterviewCard
               interview={item}
@@ -267,6 +411,7 @@ export default function InterviewsScreen() {
               onReschedule={(id) => {
                 setRescheduleId(id);
                 setWhenText("");
+                setRescheduleReason("");
               }}
             />
           )}
@@ -279,6 +424,43 @@ export default function InterviewsScreen() {
           }
         />
       )}
+
+      <SlotPickerModal
+        interview={picking}
+        onClose={() => setPicking(null)}
+        onChoose={chooseSlot}
+        choosing={chooseSlotMutation.isPending}
+      />
+
+      {/* Cancel modal */}
+      <Modal visible={cancelId !== null} transparent animationType="fade" onRequestClose={() => setCancelId(null)}>
+        <View className="flex-1 items-center justify-center bg-black/40 px-6">
+          <View className="w-full rounded-2xl bg-surface p-5">
+            <Text className="text-lg font-bold text-ink">Cancel interview</Text>
+            <Text className="mt-1 text-sm text-ink-muted">
+              The employer will see your reason and the calendar invite will be withdrawn.
+            </Text>
+            <TextInput
+              className="mt-4 min-h-[90px] rounded-xl border border-border bg-surface px-4 py-3 text-base text-ink"
+              placeholder="Why are you cancelling?"
+              placeholderTextColor="#6B7F94"
+              value={cancelReason}
+              onChangeText={setCancelReason}
+              multiline
+              textAlignVertical="top"
+              maxLength={500}
+            />
+            <View className="mt-4 flex-row">
+              <View className="mr-2 flex-1">
+                <Button title="Keep it" variant="outline" onPress={() => setCancelId(null)} />
+              </View>
+              <View className="ml-2 flex-1">
+                <Button title="Cancel interview" variant="danger" loading={cancelMutation.isPending} onPress={submitCancel} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Reschedule modal */}
       <Modal visible={rescheduleId !== null} transparent animationType="fade" onRequestClose={() => setRescheduleId(null)}>
@@ -293,6 +475,14 @@ export default function InterviewsScreen() {
               value={whenText}
               onChangeText={setWhenText}
               autoCapitalize="none"
+            />
+            <TextInput
+              className="mt-3 rounded-xl border border-border bg-surface px-4 py-3.5 text-base text-ink"
+              placeholder="Reason (optional)"
+              placeholderTextColor="#6B7F94"
+              value={rescheduleReason}
+              onChangeText={setRescheduleReason}
+              maxLength={500}
             />
             <View className="mt-4 flex-row">
               <View className="mr-2 flex-1">

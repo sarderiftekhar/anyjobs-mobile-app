@@ -28,7 +28,7 @@ export default function PublicJobDetailScreen() {
   const handleShare = async () => {
     if (!job) return;
     await Share.share({
-      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://anyjobs.com/jobs/${job.id}`,
+      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://continentjobs.com/jobs/${job.id}`,
     });
   };
 

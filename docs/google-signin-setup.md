@@ -19,7 +19,7 @@ web client `441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent
 ## Android — required before the button works
 
 1. Google Cloud console → Credentials → Create OAuth client → **Android**.
-2. Package name: `com.anyjobs.mobile`.
+2. Package name: `com.continentjobs.mobile`.
 3. SHA-1: the EAS build signing certificate fingerprint — get it with
    `eas credentials` (Android → production keystore). Add the debug SHA-1 too if
    testing dev builds.
@@ -33,7 +33,7 @@ The button is deliberately hidden on iOS until this is done (missing URL scheme
 would make the flow dead-end — an App Store rejection trigger).
 
 1. Google Cloud console → Credentials → Create OAuth client → **iOS**,
-   bundle ID `com.anyjobs.mobile`.
+   bundle ID `com.continentjobs.mobile`.
 2. Set the env var in `eas.json` (all build profiles):
    `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=<ios-client-id>.apps.googleusercontent.com`
 3. Add the config plugin to `app.json` `plugins` (reversed client ID):

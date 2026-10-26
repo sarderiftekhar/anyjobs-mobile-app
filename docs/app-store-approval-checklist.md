@@ -1,4 +1,4 @@
-# App Store Approval Checklist (AnyJobs Mobile)
+# App Store Approval Checklist (ContinentJobs Mobile)
 
 Context: 2026 Apple enforcement wave. Apple bans the AI *creator tools* (Replit, Vibecode, etc.)
 under Guideline 2.5.2, and now reviews any AI-built app closely. Origin of the code doesn't matter
@@ -19,12 +19,24 @@ and tick every box below to clear automated pre-rejection and pass human review 
 - [ ] **Organize code modules** — no single giant file. Clean modular folders (Components, Navigation, Hooks). Keeps future edit/token costs sane.
 
 ## 4. AI Rules & Transparency (Guideline 5.1.2)
-- [ ] **Mandatory AI consent screen** — before the user's first AI action, show an onboarding popup that names the AI provider and gets consent. Example: *"AnyJobs uses Anthropic Claude AI to analyze your input. By continuing, you agree to securely share your data with our AI processing partner."*
+- [ ] **Mandatory AI consent screen** — before the user's first AI action, show an onboarding popup that names the AI provider and gets consent. Example: *"ContinentJobs uses Anthropic Claude AI to analyze your input. By continuing, you agree to securely share your data with our AI processing partner."*
+  - As built (2026-10-26): the screen names **Google Gemini via OpenRouter** (drafting) and **TypeSafe** (match scoring), which is what the backend actually calls (`config/ai.php`, `LaravelOpenRouterService`, `CandidateJobFitService`). If the backend changes vendor, update `AI_GENERATION_PROVIDER` / `AI_MATCHING_PROVIDER` in `src/constants/config.ts` and bump `AI_CONSENT_KEY` so users are asked again. Match scoring runs on every application, so the apply screen's consent tick discloses it too. The website privacy policy must name the same vendors.
 - [ ] **Privacy policy inside the app menu** — a clickable link/button in native Settings or Profile (not just Apple's dashboard).
 - [ ] **Explicit AI data disclaimer** — privacy policy states in plain language that user-uploaded files are transmitted to an external AI vendor for live classification.
 - [ ] **Native "Delete Account" button** — if accounts are required, a clear in-app **Delete Account** button. Email-to-support deletion is not allowed.
 
 ## 5. Payment Rules (Guideline 3.1.1)
+
+**Decision (2026-10-26): no purchases in the app for the first release.** Candidate and employer
+plans are sold on the website only. Plans live on the server, so a web subscriber gets their paid
+features in the app automatically. Everyone else sees a neutral "Not included in your plan"
+message (`src/lib/apiErrors.ts`) that never names a plan, says "upgrade", or links to a checkout.
+Keep it that way: any button, link or wording that sends users to buy on the website is a
+rejection under 3.1.1. `src/api/billing.ts` / `useBilling.ts` (Stripe checkout) must stay unused.
+
+Remaining risk: Guideline 3.1.3(b) expects plans bought elsewhere to also be buyable in-app. If
+review raises it, the fallback is Apple/Google in-app purchases plus the two items below.
+
 - [ ] **Native Apple IAP (no Stripe on mobile)** — premium digital content / subscriptions use Apple's native payment system, not web credit-card links or Stripe forms. RevenueCat makes this easier.
 - [ ] **"Restore Purchases" link** — visible button on the paywall/subscription screen so users recover paid status after reinstall/device change.
 

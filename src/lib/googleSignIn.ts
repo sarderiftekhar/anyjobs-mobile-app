@@ -11,7 +11,7 @@ import { Platform } from "react-native";
 // Mobile\AuthController::google), so no extra backend config is needed.
 //
 // Platform setup (Google Cloud console, same project as the web client):
-// - Android: create an "Android" OAuth client with package com.anyjobs.mobile
+// - Android: create an "Android" OAuth client with package com.continentjobs.mobile
 //   and the EAS build signing SHA-1. No app config needed beyond that.
 // - iOS: create an "iOS" OAuth client, then set EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
 //   and add the plugin to app.json:

@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "AnyJobs",
-    "slug": "anyjobs",
+    "name": "ContinentJobs",
+    "slug": "continentjobs",
     "owner": "sarderiftekhar",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "anyjobs",
+    "scheme": "continentjobs",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anyjobs.mobile"
+      "bundleIdentifier": "com.continentjobs.mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundColor": "#0064EC"
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.anyjobs.mobile",
+      "package": "com.continentjobs.mobile",
       "versionCode": 2
     },
     "web": {
@@ -44,7 +44,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "AnyJobs needs access to your photos so you can upload your company logo, banner and gallery images."
+          "photosPermission": "ContinentJobs needs access to your photos so you can upload your company logo, banner and gallery images."
         }
       ]
     ],

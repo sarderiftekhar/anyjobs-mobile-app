@@ -53,7 +53,7 @@ export default function WelcomeScreen() {
       <Animated.View entering={FadeInDown.duration(600).delay(100)} style={s.headerWrap}>
         <View style={s.headerInner}>
           <Image
-            source={require("../../assets/anyjobs-logo.png")}
+            source={require("../../assets/continentjobs-logo.png")}
             style={s.logo}
             resizeMode="contain"
           />
@@ -170,8 +170,8 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 140,
-    height: 52,
+    width: 160,
+    height: 90,
     alignSelf: "center",
   },
   searchCard: {
