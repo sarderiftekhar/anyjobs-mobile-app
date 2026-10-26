@@ -1,4 +1,4 @@
-# App Store Approval Checklist (AnyJobs Mobile)
+# App Store Approval Checklist (ContinentJobs Mobile)
 
 Context: 2026 Apple enforcement wave. Apple bans the AI *creator tools* (Replit, Vibecode, etc.)
 under Guideline 2.5.2, and now reviews any AI-built app closely. Origin of the code doesn't matter
@@ -19,7 +19,7 @@ and tick every box below to clear automated pre-rejection and pass human review 
 - [ ] **Organize code modules** — no single giant file. Clean modular folders (Components, Navigation, Hooks). Keeps future edit/token costs sane.
 
 ## 4. AI Rules & Transparency (Guideline 5.1.2)
-- [ ] **Mandatory AI consent screen** — before the user's first AI action, show an onboarding popup that names the AI provider and gets consent. Example: *"AnyJobs uses Anthropic Claude AI to analyze your input. By continuing, you agree to securely share your data with our AI processing partner."*
+- [ ] **Mandatory AI consent screen** — before the user's first AI action, show an onboarding popup that names the AI provider and gets consent. Example: *"ContinentJobs uses Anthropic Claude AI to analyze your input. By continuing, you agree to securely share your data with our AI processing partner."*
 - [ ] **Privacy policy inside the app menu** — a clickable link/button in native Settings or Profile (not just Apple's dashboard).
 - [ ] **Explicit AI data disclaimer** — privacy policy states in plain language that user-uploaded files are transmitted to an external AI vendor for live classification.
 - [ ] **Native "Delete Account" button** — if accounts are required, a clear in-app **Delete Account** button. Email-to-support deletion is not allowed.

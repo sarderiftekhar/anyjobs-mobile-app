@@ -1,6 +1,6 @@
-# AnyJobs Mobile Design Guide
+# ContinentJobs Mobile Design Guide
 
-> Mobile counterpart to [`docs/design/DESIGN-GUIDE.md`](../anyjobs/docs/design/DESIGN-GUIDE.md) in the web project. The web guide is the source of truth for **brand identity** (color, typography, voice). This document translates those decisions to **React Native + NativeWind** idioms and calls out where mobile diverges from web (and why).
+> Mobile counterpart to [`docs/design/DESIGN-GUIDE.md`](../continentjobs/docs/design/DESIGN-GUIDE.md) in the web project. The web guide is the source of truth for **brand identity** (color, typography, voice). This document translates those decisions to **React Native + NativeWind** idioms and calls out where mobile diverges from web (and why).
 
 ---
 

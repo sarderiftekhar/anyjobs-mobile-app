@@ -1,4 +1,4 @@
-# AnyJobs Mobile — Production Plan
+# ContinentJobs Mobile — Production Plan
 
 Scope is mobile-to-web parity for **Candidate**, **Employer**, and **Admin** roles only.
 Agent and Editor roles, CV Builder suite, Market Trends, CV Library, CV Verification,
@@ -6,7 +6,7 @@ Support Tickets, Smart Matches, Career Events, Video Calls, Two-Factor Auth, Ema
 Verification flow, Appearance/Theme, and the admin items listed below are **out of scope**.
 
 Each item notes whether it needs backend work (a new `Mobile\*` controller + route in
-`C:\laragon\www\anyjobs\routes\api.php` under `/v1/mobile`) or can be built client-only
+`C:\laragon\www\continentjobs\routes\api.php` under `/v1/mobile`) or can be built client-only
 against existing mobile endpoints. Sizes: **S** ≈ ½ day, **M** ≈ 1–2 days, **L** ≈ 3+ days.
 
 ---
@@ -153,8 +153,8 @@ support tickets (admin side), reports, broadcast messaging, progress tracker.
 ## Backend work notes
 
 Most of this requires new `Mobile\*` controllers and routes in
-`C:\laragon\www\anyjobs\app\Http\Controllers\Api\Mobile\` and
-`C:\laragon\www\anyjobs\routes\api.php` under the `/v1/mobile` prefix. Current mobile
+`C:\laragon\www\continentjobs\app\Http\Controllers\Api\Mobile\` and
+`C:\laragon\www\continentjobs\routes\api.php` under the `/v1/mobile` prefix. Current mobile
 API surface covers only auth, jobs, applications, profile (partial), CV upload,
 messages, notifications, device token, employer basics, cover-letter AI, version check.
 Everything else needs a thin `Mobile\*` wrapper over existing business logic — not a

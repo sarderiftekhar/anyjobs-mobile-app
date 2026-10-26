@@ -186,7 +186,7 @@ export default function SettingsScreen() {
           icon="chatbox-outline"
           title="Send Feedback"
           onPress={() =>
-            openSupportEmail(config.SUPPORT_EMAIL, "AnyJobs app feedback")
+            openSupportEmail(config.SUPPORT_EMAIL, "ContinentJobs app feedback")
           }
         />
         <SettingsRow

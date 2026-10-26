@@ -1,6 +1,6 @@
 # App Store Readiness — Deep Audit Findings
 
-Date: 2026-06-13 · Scope: `anyjobs-mobile-app` (Expo SDK 54, React Native 0.81, expo-router)
+Date: 2026-06-13 · Scope: `continentjobs-mobile-app` (Expo SDK 54, React Native 0.81, expo-router)
 Method: direct review of config/security files + 5 parallel code-sweep agents, key findings re-verified by hand.
 
 ## Verdict: NOT READY — 4 hard blockers + several polish issues

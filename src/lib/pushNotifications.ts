@@ -5,7 +5,7 @@ import * as Notifications from "expo-notifications";
 import apiClient from "../api/client";
 import { storage } from "./storage";
 
-const STORED_TOKEN_KEY = "anyjobs_push_token";
+const STORED_TOKEN_KEY = "continentjobs_push_token";
 
 // Expo Go on Android dropped remote-push support in SDK 53+. Only a
 // development build / standalone APK can get a real push token there.

@@ -148,7 +148,7 @@ export default function RegisterScreen() {
           Create Account
         </Text>
         <Text className="mt-1 text-base text-ink-soft">
-          Join AnyJobs today
+          Join ContinentJobs today
         </Text>
 
         {/* Error message */}

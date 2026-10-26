@@ -64,7 +64,7 @@ export function AiConsentModal({
             </Text>
 
             <Text className="mt-3 text-base leading-6 text-ink-muted">
-              AnyJobs uses {config.AI_PROVIDER} to power features like job
+              ContinentJobs uses {config.AI_PROVIDER} to power features like job
               description generation, CV/resume analysis, cover-letter drafting
               and candidate–job matching.
             </Text>

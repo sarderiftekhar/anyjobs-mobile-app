@@ -21,7 +21,7 @@ export async function openExternalUrl(url: string): Promise<void> {
 /** Open the user's mail composer to a support address. */
 export async function openSupportEmail(
   email: string,
-  subject = "AnyJobs support",
+  subject = "ContinentJobs support",
 ): Promise<void> {
   const url = `mailto:${email}?subject=${encodeURIComponent(subject)}`;
   try {
