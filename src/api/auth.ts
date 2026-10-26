@@ -21,6 +21,8 @@ export interface GoogleAuthPayload {
   user_type?: "candidate" | "employer";
 }
 
+export type DeleteAccountProof = { password?: string; google_id_token?: string };
+
 export const authApi = {
   login: (data: LoginPayload) =>
     apiClient.post<ApiResponse<AuthResponse>>("/auth/login", data),
@@ -35,11 +37,10 @@ export const authApi = {
 
   // Permanently delete the authenticated user's account and all associated data.
   // Required by App Store Guideline 5.1.1(v) for apps with account registration.
-  // The backend requires `password` for accounts that have one.
-  deleteAccount: (password?: string) =>
-    apiClient.delete<ApiResponse>("/auth/account", {
-      data: password ? { password } : {},
-    }),
+  // The backend needs proof it's the owner: the password, or for an account
+  // linked to Google a fresh Google ID token for that Google account.
+  deleteAccount: (proof: DeleteAccountProof) =>
+    apiClient.delete<ApiResponse>("/auth/account", { data: proof }),
 
   getUser: () => apiClient.get<ApiResponse<User>>("/auth/user"),
 

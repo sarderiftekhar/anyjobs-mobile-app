@@ -141,7 +141,10 @@ export interface User {
   email_verified: boolean;
   subscription_tier: string;
   has_google: boolean;
-  /** False for Google-only accounts (nothing to re-enter on delete). */
+  /**
+   * Whether a password is stored. Google sign-ups get a random one they never
+   * saw, so for has_google accounts deletion is confirmed with Google instead.
+   */
   has_password?: boolean;
   onboarding_completed?: boolean;
   needs_onboarding?: boolean;
