@@ -15,7 +15,8 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://dev.continentjobs.com/api",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent.com",
+        "EXPO_PUBLIC_WEB_URL": "https://dev.continentjobs.com"
       },
       "android": {
         "buildType": "apk"
@@ -24,7 +25,8 @@
     "production": {
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.continentjobs.com/api",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent.com"
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent.com",
+        "EXPO_PUBLIC_WEB_URL": "https://continentjobs.com"
       },
       "android": {
         "buildType": "app-bundle"

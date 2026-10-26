@@ -8,6 +8,7 @@ import { Card, Badge, Button, LoadingSpinner } from "../../../src/components/ui"
 import { MatchScoreCard } from "../../../src/components/ai/MatchScoreCard";
 import { formatDistanceToNow } from "date-fns";
 import { applyButtonTitle, openOutsideApply } from "../../../src/lib/applyRoute";
+import { config } from "../../../src/constants/config";
 
 export default function JobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,7 +28,7 @@ export default function JobDetailScreen() {
   const handleShare = async () => {
     if (!job) return;
     await Share.share({
-      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://continentjobs.com/jobs/${job.id}`,
+      message: `Check out this job: ${job.title} at ${job.company.name}\n${config.WEB_URL}/jobs/${job.id}`,
     });
   };
 

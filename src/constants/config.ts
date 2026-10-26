@@ -13,8 +13,12 @@ const FALLBACK_API_URL = __DEV__
 
 const API_URL = ENV_API_URL ?? FALLBACK_API_URL;
 
-// Public marketing/legal site (separate from the API host).
-const WEB_URL = "https://continentjobs.com";
+// Public website that serves /privacy-policy and /terms. Per build profile via
+// EXPO_PUBLIC_WEB_URL (eas.json), so preview builds open the dev server's
+// pages; release builds default to the public domain.
+const WEB_URL =
+  process.env.EXPO_PUBLIC_WEB_URL ??
+  (__DEV__ ? "https://dev.continentjobs.com" : "https://continentjobs.com");
 
 export const config = {
   API_BASE_URL: API_URL,
@@ -34,6 +38,8 @@ export const config = {
   // and application matching through TypeSafe (CandidateJobFitService).
   AI_GENERATION_PROVIDER: "Google Gemini, accessed through OpenRouter",
   AI_MATCHING_PROVIDER: "TypeSafe",
+
+  WEB_URL,
 
   // Legal / support destinations surfaced inside the app's Settings menu.
   PRIVACY_POLICY_URL: `${WEB_URL}/privacy-policy`,

@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useJobDetail } from "../../../src/hooks/useJobs";
 import { Card, Badge, Button, LoadingSpinner } from "../../../src/components/ui";
 import { formatDistanceToNow } from "date-fns";
+import { config } from "../../../src/constants/config";
 
 export default function PublicJobDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,7 +29,7 @@ export default function PublicJobDetailScreen() {
   const handleShare = async () => {
     if (!job) return;
     await Share.share({
-      message: `Check out this job: ${job.title} at ${job.company.name}\nhttps://continentjobs.com/jobs/${job.id}`,
+      message: `Check out this job: ${job.title} at ${job.company.name}\n${config.WEB_URL}/jobs/${job.id}`,
     });
   };
 
