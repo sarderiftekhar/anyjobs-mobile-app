@@ -44,7 +44,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "ContinentJobs needs access to your photos so you can upload your company logo, banner and gallery images."
+          "photosPermission": "ContinentJobs needs access to your photos so you can add a profile photo or upload your company logo, banner and gallery images.",
+          "microphonePermission": false
         }
       ]
     ],
@@ -52,8 +53,9 @@
       "color": "#0064EC"
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "0b02ebb7-6338-4aa9-bf0a-4ee93177d50f"
+        "projectId": "6de38191-ca96-4837-a8c5-463f8d605b98"
       }
     }
   }

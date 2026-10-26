@@ -27,7 +27,7 @@
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "441305853801-1ksa9cb7vo534667msudeg5m8c7950op.apps.googleusercontent.com"
       },
       "android": {
-        "buildType": "aab"
+        "buildType": "app-bundle"
       }
     }
   },
