@@ -42,8 +42,12 @@ try {
 
 // On iOS the flow can't complete without an iOS OAuth client + URL scheme,
 // so the feature stays hidden there until EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
-// is provided. Android only needs the web client ID at runtime.
+// is provided. Android only needs the web client ID at runtime — but builds
+// installed from Google Play are re-signed with Play's key, so sign-in fails
+// until that key's SHA-1 is on an Android OAuth client. Such build profiles
+// set EXPO_PUBLIC_GOOGLE_SIGNIN=off to hide the button until then.
 export const isGoogleSignInAvailable =
+  process.env.EXPO_PUBLIC_GOOGLE_SIGNIN !== "off" &&
   !!GoogleSignin &&
   !!GOOGLE_WEB_CLIENT_ID &&
   (Platform.OS !== "ios" || !!GOOGLE_IOS_CLIENT_ID);
