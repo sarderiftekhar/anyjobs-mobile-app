@@ -4,9 +4,7 @@ import type {
   GenerateJobDescriptionPayload,
   GenerateJobDescriptionResult,
   JobTemplate,
-  ParseJobImageResult,
   MatchJobResult,
-  ParseResumeResult,
 } from "../types/ai";
 
 /**
@@ -41,29 +39,10 @@ export const aiApi = {
       payload,
     ),
 
-  // 3. OCR + LLM extract a job posting from an image upload.
-  //    Backend: POST /v1/mobile/ai/parse-job-image  (FALLBACK — multipart)
-  parseJobImage: (formData: FormData) =>
-    apiClient.post<ApiResponse<ParseJobImageResult>>(
-      "/ai/parse-job-image",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60_000,
-      },
-    ),
-
-  // 4. Score a candidate <-> job match using the logged-in candidate's profile/CV.
+  // 3. Score a candidate <-> job match using the logged-in candidate's profile/CV.
   //    Backend: POST /v1/mobile/ai/match-job  (STUB backend handler exists at /v1/ai/job-matching)
   matchJob: (jobId: number) =>
     apiClient.post<ApiResponse<MatchJobResult>>("/ai/match-job", {
       job_id: jobId,
-    }),
-
-  // 5. Parse an uploaded CV to extract profile fields.
-  //    Backend: POST /v1/mobile/ai/parse-resume  (STUB backend handler exists at /v1/ai/resume-parsing)
-  parseResume: (cvId: number) =>
-    apiClient.post<ApiResponse<ParseResumeResult>>("/ai/parse-resume", {
-      cv_id: cvId,
     }),
 };

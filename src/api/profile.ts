@@ -134,9 +134,6 @@ export const profileApi = {
   addEducation: (data: EducationPayload) =>
     apiClient.post<ApiResponse<Education>>("/profile/educations", data),
 
-  updateEducation: (id: number, data: EducationPayload) =>
-    apiClient.put<ApiResponse<Education>>(`/profile/educations/${id}`, data),
-
   deleteEducation: (id: number) =>
     apiClient.delete<ApiResponse>(`/profile/educations/${id}`),
 

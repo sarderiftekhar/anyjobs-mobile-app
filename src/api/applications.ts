@@ -31,9 +31,6 @@ export const applicationsApi = {
   list: (params?: { status?: string; page?: number }) =>
     apiClient.get<PaginatedResponse<Application>>("/applications", { params }),
 
-  getById: (id: number) =>
-    apiClient.get<ApiResponse<Application>>(`/applications/${id}`),
-
   apply: (data: ApplyPayload) =>
     apiClient.post<ApiResponse<Application>>("/applications", data),
 

@@ -14,14 +14,6 @@ export function useApplications(status?: string) {
   });
 }
 
-export function useApplicationDetail(id: number) {
-  return useQuery({
-    queryKey: ["applications", "detail", id],
-    queryFn: () => applicationsApi.getById(id).then((r) => r.data.data!),
-    enabled: !!id,
-  });
-}
-
 export function useApplyToJob() {
   const queryClient = useQueryClient();
   return useMutation({
