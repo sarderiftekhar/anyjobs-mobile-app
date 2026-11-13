@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AppState, StyleSheet, View } from "react-native";
+import { AppState, Platform, StyleSheet, View } from "react-native";
 import { Slot, router, useRouter, useSegments } from "expo-router";
 import { QueryClient, QueryClientProvider, focusManager } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -121,6 +121,8 @@ export default function RootLayout() {
 
   // Navigate when the user taps a push notification (warm and cold start).
   useEffect(() => {
+    // Push notifications don't exist in the web preview; the calls below throw there.
+    if (Platform.OS === "web") return;
     const navigate = (response: Notifications.NotificationResponse) => {
       const { isAuthenticated, user } = useAuthStore.getState();
       // Cold-start taps can land before stored auth loads; skip rather than
