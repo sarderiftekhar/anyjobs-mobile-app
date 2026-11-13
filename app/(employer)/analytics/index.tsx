@@ -192,7 +192,7 @@ function DashboardBody({ data }: { data: DashboardAnalytics }) {
           icon="briefcase-outline"
           label="Active Jobs"
           value={overview.active_jobs}
-          color="#7C3AED"
+          color="#1E3A8A"
         />
       </View>
 

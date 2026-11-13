@@ -12,15 +12,15 @@ module.exports = {
         // All shades come from this hex; opacity tiers (primary/10, /20, /30) for tints.
         primary: {
           DEFAULT: "#0064EC",
-          dark: "#0050C7",
+          dark: "#0052C4",
           light: "#E5F0FE",
         },
         brand: {
           DEFAULT: "#0064EC",
-          dark: "#0050C7",
+          dark: "#0052C4",
           light: "#E5F0FE",
-          navy: "#0A2540",
-          "navy-dark": "#061A2E",
+          navy: "#1E3A8A",
+          "navy-dark": "#163284",
         },
         ink: {
           DEFAULT: "#1A2230",
@@ -29,9 +29,9 @@ module.exports = {
         },
         accent: "#0064EC",
         success: "#22C55E",
-        warning: "#EAB308",
+        warning: "#F59E0B",
         danger: "#EF4444",
-        info: "#3B82F6",
+        info: "#0064EC",
         surface: "#FFFFFF",
         background: "#F6F8FB",
         border: "#E5E9F0",

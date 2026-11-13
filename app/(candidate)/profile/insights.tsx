@@ -5,7 +5,7 @@ import { ScreenHeader } from "../../../src/components/form";
 import { useInsights } from "../../../src/hooks/useInsights";
 
 function ScoreRing({ score }: { score: number }) {
-  const tone = score >= 75 ? "#22C55E" : score >= 50 ? "#0064EC" : "#EAB308";
+  const tone = score >= 75 ? "#22C55E" : score >= 50 ? "#0064EC" : "#F59E0B";
   return (
     <View className="items-center justify-center rounded-full" style={{ width: 92, height: 92, borderWidth: 6, borderColor: tone }}>
       <Text className="text-2xl font-bold text-ink">{Math.round(score)}</Text>

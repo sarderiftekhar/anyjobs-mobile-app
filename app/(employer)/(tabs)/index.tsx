@@ -15,9 +15,9 @@ export default function EmployerDashboard() {
 
   const metrics = [
     { label: "Active Jobs", value: dashboard?.active_jobs ?? 0, icon: "briefcase-outline" as const, color: "#0064EC", route: "/(employer)/(tabs)/jobs" as const },
-    { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#3B82F6", route: "/(employer)/(tabs)/applicants" as const },
+    { label: "Applicants", value: dashboard?.total_applicants ?? 0, icon: "people-outline" as const, color: "#1E3A8A", route: "/(employer)/(tabs)/applicants" as const },
     { label: "New Today", value: dashboard?.new_today ?? 0, icon: "trending-up-outline" as const, color: "#22C55E", route: "/(employer)/(tabs)/applicants" as const },
-    { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#EAB308", route: "/(employer)/interviews" as const },
+    { label: "Interviews", value: dashboard?.interviews_this_week ?? 0, icon: "calendar-outline" as const, color: "#F59E0B", route: "/(employer)/interviews" as const },
   ];
 
   return (
@@ -74,7 +74,7 @@ export default function EmployerDashboard() {
                   activeOpacity={0.7}
                   onPress={() => router.push(m.route)}
                   className="rounded-2xl border border-border bg-surface px-3.5 py-3"
-                  style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+                  style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
                 >
                   <View className="flex-row items-center justify-between">
                     <View
@@ -151,7 +151,7 @@ export default function EmployerDashboard() {
                 </View>
                 <View className="items-end">
                   <View className="flex-row items-center">
-                    <Ionicons name="star" size={12} color="#EAB308" />
+                    <Ionicons name="star" size={12} color="#F59E0B" />
                     <Text className="ml-1 text-xs font-semibold text-ink">
                       {app.match_score}%
                     </Text>

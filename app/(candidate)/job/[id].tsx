@@ -122,7 +122,7 @@ export default function JobDetailScreen() {
           <View className="mt-5 flex-row items-center">
             <View
               className="mr-3 h-14 w-14 items-center justify-center rounded-2xl bg-white"
-              style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 }}
+              style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 }}
             >
               <Text className="text-base font-bold text-primary">
                 {job.company.name.slice(0, 2).toUpperCase()}
@@ -155,7 +155,7 @@ export default function JobDetailScreen() {
         {/* Meta card — overlaps hero edge */}
         <View
           className="-mt-7 mx-4 rounded-2xl border border-border bg-surface p-4"
-          style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+          style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
         >
           <View className="flex-row items-center">
             <Ionicons name="location-outline" size={16} color="#6B7F94" />

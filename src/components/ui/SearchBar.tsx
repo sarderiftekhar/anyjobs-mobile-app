@@ -30,8 +30,8 @@ const TYPE_META: Record<
   { icon: keyof typeof Ionicons.glyphMap; tint: string; label: string }
 > = {
   role: { icon: "briefcase", tint: colors.primary.DEFAULT, label: "Role" },
-  skill: { icon: "sparkles", tint: "#7C3AED", label: "Skill" },
-  company: { icon: "business", tint: "#0EA5E9", label: "Company" },
+  skill: { icon: "sparkles", tint: "#1E3A8A", label: "Skill" },
+  company: { icon: "business", tint: "#4A6E8E", label: "Company" },
 };
 
 export function SearchBar({

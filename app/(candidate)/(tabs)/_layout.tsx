@@ -135,7 +135,7 @@ const ts = StyleSheet.create({
     paddingBottom: 8,
     paddingTop: 8,
     paddingHorizontal: 8,
-    shadowColor: "#0A2540",
+    shadowColor: "#1E3A8A",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
     shadowRadius: 20,

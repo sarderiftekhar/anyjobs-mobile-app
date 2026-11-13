@@ -57,7 +57,7 @@ export function ApplicationCard({ application, index = 0 }: ApplicationCardProps
         {/* Match score */}
         {application.match_score && (
           <View className="mt-2 flex-row items-center">
-            <Ionicons name="star" size={14} color="#EAB308" />
+            <Ionicons name="star" size={14} color="#F59E0B" />
             <Text className="ml-1 text-xs font-medium text-ink-muted">
               {application.match_score}% Match
             </Text>

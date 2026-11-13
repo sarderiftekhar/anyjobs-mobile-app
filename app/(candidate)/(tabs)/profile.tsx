@@ -299,7 +299,7 @@ export default function ProfileScreen() {
         <View className="mt-2 items-center">
           <View
             className="rounded-full bg-white p-1.5"
-            style={{ shadowColor: "#0A2540", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
+            style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
           >
             <TouchableOpacity
               activeOpacity={0.8}
@@ -337,7 +337,7 @@ export default function ProfileScreen() {
       {/* Stats row — overlaps the hero edge */}
       <View
         className="-mt-7 mx-4 flex-row rounded-2xl border border-border bg-surface p-4"
-        style={{ shadowColor: "#0A2540", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+        style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
       >
         <View className="flex-1 items-center">
           <Text className="text-2xl font-bold text-primary">0</Text>

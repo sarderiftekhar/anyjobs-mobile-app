@@ -48,13 +48,13 @@ export default function AdminDashboard() {
       label: "Active Jobs",
       value: (stats as any)?.jobs_active ?? 0,
       icon: "briefcase-outline" as const,
-      color: "#3B82F6",
+      color: "#1E3A8A",
     },
     {
       label: "New 24h",
       value: stats?.new_signups_24h ?? 0,
       icon: "trending-up-outline" as const,
-      color: "#EAB308",
+      color: "#F59E0B",
     },
   ];
 

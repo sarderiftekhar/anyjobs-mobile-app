@@ -59,7 +59,7 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
         <View className="mt-2 flex-row items-center justify-between">
           <Text className="text-xs text-ink-muted">For: {applicant.job_title}</Text>
           <View className="flex-row items-center">
-            <Ionicons name="star" size={14} color="#EAB308" />
+            <Ionicons name="star" size={14} color="#F59E0B" />
             <Text className="ml-1 text-sm font-bold text-primary">{applicant.match_score}%</Text>
           </View>
         </View>

@@ -3,15 +3,15 @@
 export const colors = {
   primary: {
     DEFAULT: "#0064EC",
-    dark: "#0050C7",
+    dark: "#0052C4",
     light: "#E5F0FE",
   },
   brand: {
     DEFAULT: "#0064EC",
-    dark: "#0050C7",
+    dark: "#0052C4",
     light: "#E5F0FE",
-    navy: "#0A2540",
-    navyDark: "#061A2E",
+    navy: "#1E3A8A",
+    navyDark: "#163284",
   },
   ink: {
     DEFAULT: "#1A2230",
@@ -20,9 +20,9 @@ export const colors = {
   },
   accent: "#0064EC",
   success: "#22C55E",
-  warning: "#EAB308",
+  warning: "#F59E0B",
   danger: "#EF4444",
-  info: "#3B82F6",
+  info: "#0064EC",
   surface: "#FFFFFF",
   background: "#F6F8FB",
   border: "#E5E9F0",

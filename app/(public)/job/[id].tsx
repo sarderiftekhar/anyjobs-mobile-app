@@ -101,7 +101,7 @@ export default function PublicJobDetailScreen() {
           <View
             className="mr-3 h-14 w-14 items-center justify-center rounded-2xl bg-white"
             style={{
-              shadowColor: "#0A2540",
+              shadowColor: "#1E3A8A",
               shadowOpacity: 0.08,
               shadowRadius: 10,
               shadowOffset: { width: 0, height: 4 },
@@ -142,7 +142,7 @@ export default function PublicJobDetailScreen() {
         <View
           className="mt-4 mx-4 rounded-2xl border border-border bg-surface p-4"
           style={{
-            shadowColor: "#0A2540",
+            shadowColor: "#1E3A8A",
             shadowOpacity: 0.06,
             shadowRadius: 14,
             shadowOffset: { width: 0, height: 3 },

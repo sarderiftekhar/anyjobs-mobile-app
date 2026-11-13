@@ -14,7 +14,7 @@ const FUNNEL_COLOR: Record<string, string> = {
   viewed: "#0064EC",
   applied: "#059669",
   shortlisted: "#D97706",
-  interviewed: "#7C3AED",
+  interviewed: "#1E3A8A",
   hired: "#16A34A",
   rejected: "#DC2626",
 };
