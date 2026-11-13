@@ -14,6 +14,7 @@ import { Button, Badge } from "../ui";
 import { aiApi } from "../../api/ai";
 import { useConsentStore } from "../../stores/consentStore";
 import { AiConsentModal } from "./AiConsentModal";
+import { ReportAiContent } from "./ReportAiContent";
 import type { GenerateJobDescriptionResult } from "../../types/ai";
 
 /**
@@ -157,6 +158,10 @@ export function AIGenerateModal({
               <Text className="mt-2 text-sm text-ink-muted" numberOfLines={8}>
                 {result.description}
               </Text>
+              <ReportAiContent
+                feature="job_description"
+                content={[result.title, result.description].filter(Boolean).join("\n\n")}
+              />
 
               {result.skills?.length > 0 && (
                 <>

@@ -113,6 +113,8 @@ export interface Applicant {
   applied_at: string;
   cover_letter?: string;
   cv_url?: string;
+  /** Employer's 1–5 rating, null until rated. */
+  rating?: number | null;
 }
 
 export interface CompanyProfile {

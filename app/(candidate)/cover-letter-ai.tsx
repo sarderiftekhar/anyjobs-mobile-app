@@ -8,6 +8,7 @@ import { ScreenHeader, ChipSelect } from "../../src/components/form";
 import { useGenerateCoverLetter, useCreateCoverLetter } from "../../src/hooks/useCoverLetters";
 import { AiConsentGuard } from "../../src/components/ai/AiConsentGuard";
 import { alertIfUpgradeRequired } from "../../src/lib/apiErrors";
+import { ReportAiContent } from "../../src/components/ai/ReportAiContent";
 
 const TONES = ["professional", "friendly", "formal", "enthusiastic"];
 
@@ -99,6 +100,9 @@ function CoverLetterAIScreen() {
         {content ? (
           <View className="mt-4">
             <Input label="Your cover letter" value={content} onChangeText={setContent} multiline style={{ minHeight: 260, textAlignVertical: "top" }} />
+            {typeof generate.data === "string" && generate.data ? (
+              <ReportAiContent feature="cover_letter" content={generate.data} />
+            ) : null}
           </View>
         ) : null}
       </ScrollView>

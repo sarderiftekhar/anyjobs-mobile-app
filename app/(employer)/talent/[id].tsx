@@ -4,6 +4,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { talentApi } from "../../../src/api/talent";
+import { alertIfUpgradeRequired } from "../../../src/lib/apiErrors";
+import { useUserSafety } from "../../../src/components/safety/useUserSafety";
+import { CandidateNotes } from "../../../src/components/employer/CandidateNotes";
 import {
   Avatar,
   Badge,
@@ -24,20 +27,26 @@ export default function TalentDetailScreen() {
     enabled: Number.isFinite(candidateId),
   });
 
+  // Opens (or reuses) the conversation; the employer writes the first message
+  // in the chat, as on the website.
   const startChat = useMutation({
-    mutationFn: (text: string) => talentApi.startConversation(candidateId, text),
+    mutationFn: () => talentApi.startConversation(candidateId),
     onSuccess: (res) => {
       const conversationId = res.data.data?.conversation_id;
-      if (conversationId) {
-        router.push(`/(employer)/chat/${conversationId}`);
-      } else {
-        Alert.alert("Message sent", "A message was sent to this candidate.");
-      }
+      if (conversationId) router.push(`/(employer)/chat/${conversationId}`);
     },
-    onError: () => {
-      Alert.alert("Could not open chat", "Please try again later.");
+    onError: (err: any) => {
+      if (alertIfUpgradeRequired(err)) return;
+      // 422: not accepting recruiter messages; 403: blocked.
+      const reason = [403, 422].includes(err?.response?.status) ? err.response.data?.message : null;
+      Alert.alert("Can't message this candidate", reason ?? "Please try again later.");
     },
   });
+
+  const safety = useUserSafety(
+    data?.candidate ? { id: data.candidate.id, name: data.candidate.name } : null,
+    { onBlocked: () => router.back() },
+  );
 
   if (isLoading) {
     return <LoadingSpinner fullScreen message="Loading candidate..." />;
@@ -63,7 +72,8 @@ export default function TalentDetailScreen() {
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
-      <Header onBack={() => router.back()} title="Candidate" />
+      <Header onBack={() => router.back()} title="Candidate" onMenu={safety.openMenu} />
+      {safety.element}
 
       <ScrollView
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24 }}
@@ -116,14 +126,12 @@ export default function TalentDetailScreen() {
               className="flex-1"
               loading={startChat.isPending}
               icon={<Ionicons name="chatbubble-outline" size={16} color="#fff" />}
-              onPress={() =>
-                startChat.mutate(
-                  `Hi ${c.name.split(" ")[0] || ""}, I came across your profile and would like to connect.`
-                )
-              }
+              onPress={() => startChat.mutate()}
             />
           </View>
         </Card>
+
+        <CandidateNotes candidateId={c.id} />
 
         {/* Summary */}
         {p.professional_summary ? (
@@ -244,7 +252,7 @@ export default function TalentDetailScreen() {
   );
 }
 
-function Header({ onBack, title }: { onBack: () => void; title: string }) {
+function Header({ onBack, title, onMenu }: { onBack: () => void; title: string; onMenu?: () => void }) {
   return (
     <View className="flex-row items-center border-b border-border bg-white px-4 py-3">
       <TouchableOpacity
@@ -253,7 +261,16 @@ function Header({ onBack, title }: { onBack: () => void; title: string }) {
       >
         <Ionicons name="arrow-back" size={20} color="#1A2230" />
       </TouchableOpacity>
-      <Text className="text-lg font-bold text-ink">{title}</Text>
+      <Text className="flex-1 text-lg font-bold text-ink">{title}</Text>
+      {onMenu ? (
+        <TouchableOpacity
+          onPress={onMenu}
+          className="h-10 w-10 items-center justify-center"
+          accessibilityLabel="Report or block this candidate"
+        >
+          <Ionicons name="ellipsis-vertical" size={20} color="#1A2230" />
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }

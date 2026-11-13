@@ -2,7 +2,9 @@ import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useApplicantDetail, useUpdateApplicantStatus } from "../../../src/hooks/useEmployer";
+import { useApplicantDetail, useUpdateApplicantStatus, useRateApplicant } from "../../../src/hooks/useEmployer";
+import { CandidateNotes } from "../../../src/components/employer/CandidateNotes";
+import { openExternalUrl } from "../../../src/lib/openExternal";
 import { Avatar, Badge, Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 
 export default function ApplicantDetailScreen() {
@@ -12,6 +14,7 @@ export default function ApplicantDetailScreen() {
 
   const { data: applicant, isLoading } = useApplicantDetail(applicantId);
   const updateStatus = useUpdateApplicantStatus();
+  const rate = useRateApplicant();
 
   const handleAction = (status: string, label: string) => {
     Alert.alert(`${label} Applicant`, `Mark this applicant as ${label.toLowerCase()}?`, [
@@ -83,6 +86,29 @@ export default function ApplicantDetailScreen() {
           </View>
         </View>
 
+        {/* Rating (same 1–5 rating as the website's applicant page) */}
+        <View className="mb-4 flex-row items-center justify-center">
+          {[1, 2, 3, 4, 5].map((star) => {
+            const value = rate.isPending ? rate.variables?.rating ?? applicant.rating ?? 0 : applicant.rating ?? 0;
+            return (
+              <TouchableOpacity
+                key={star}
+                onPress={() =>
+                  rate.mutate(
+                    { id: applicantId, rating: star },
+                    { onError: () => Alert.alert("Couldn't save rating", "Please try again.") },
+                  )
+                }
+                hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+                className="px-1"
+                accessibilityLabel={`Rate ${star} out of 5`}
+              >
+                <Ionicons name={star <= value ? "star" : "star-outline"} size={26} color="#F59E0B" />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         {/* Applied for */}
         <Card className="mb-3">
           <Text className="text-xs font-semibold uppercase text-ink-muted">Applied For</Text>
@@ -115,7 +141,11 @@ export default function ApplicantDetailScreen() {
         {/* CV link */}
         {applicant.cv_url && (
           <Card className="mb-3">
-            <TouchableOpacity className="flex-row items-center">
+            <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => applicant.cv_url && openExternalUrl(applicant.cv_url)}
+              accessibilityRole="link"
+            >
               <Ionicons name="document-text" size={20} color="#0064EC" />
               <Text className="ml-2 text-sm font-medium text-primary">View Resume / CV</Text>
             </TouchableOpacity>
@@ -130,6 +160,8 @@ export default function ApplicantDetailScreen() {
             <Text className="ml-2 text-sm text-ink-muted">{applicant.candidate.email}</Text>
           </View>
         </Card>
+
+        {applicant.candidate.id ? <CandidateNotes candidateId={applicant.candidate.id} /> : null}
       </ScrollView>
 
       {/* Bottom actions */}

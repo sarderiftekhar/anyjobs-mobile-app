@@ -19,6 +19,7 @@ import { useAuthStore } from "../../../src/stores/authStore";
 import { Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import { ChipSelect } from "../../../src/components/form";
 import { config } from "../../../src/constants/config";
+import { ReportAiContent } from "../../../src/components/ai/ReportAiContent";
 import apiClient from "../../../src/api/client";
 import { applicationsApi } from "../../../src/api/applications";
 import {
@@ -79,6 +80,8 @@ export default function ApplyScreen() {
   const [coverLetter, setCoverLetter] = useState("");
   const [selectedCvId, setSelectedCvId] = useState<number | undefined>();
   const [aiGenerating, setAiGenerating] = useState(false);
+  // Last AI-written draft, so it can be reported (Play AI-content policy).
+  const [aiDraft, setAiDraft] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [documents, setDocuments] = useState<PickedDoc[]>([]);
@@ -165,6 +168,7 @@ export default function ApplyScreen() {
       const generated = response.data?.data?.cover_letter;
       if (generated) {
         setCoverLetter(generated);
+        setAiDraft(generated);
       } else {
         Alert.alert("No Result", "AI couldn't generate a cover letter. Please write one manually.");
       }
@@ -553,6 +557,7 @@ export default function ApplyScreen() {
               value={coverLetter}
               onChangeText={setCoverLetter}
             />
+            {aiDraft ? <ReportAiContent feature="cover_letter" content={aiDraft} /> : null}
 
             <TouchableOpacity
               className="mt-3 flex-row items-center self-start rounded-full bg-primary-light px-4 py-3"

@@ -143,6 +143,11 @@ export default function SettingsScreen() {
           title="Job Preferences"
           onPress={() => router.push("/(candidate)/profile/edit/preferences")}
         />
+        <SettingsRow
+          icon="ban-outline"
+          title="Blocked users"
+          onPress={() => router.push("/(candidate)/blocked-users")}
+        />
       </Card>
 
       <Text className="px-4 pb-2 pt-6 text-xs font-semibold uppercase text-ink-muted">

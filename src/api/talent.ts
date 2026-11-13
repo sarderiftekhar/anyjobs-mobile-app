@@ -33,10 +33,13 @@ export const talentApi = {
       )
       .then((r) => r.data),
 
-  // Start / open a chat with a candidate — re-uses the mobile messages API.
-  startConversation: (candidateId: number, text: string) =>
+  // Open (or reuse) a conversation with the candidate, optionally sending a
+  // first message. Same rules as the website's Browse Talent "Message"
+  // (applicants always; others need the Professional plan and the candidate's
+  // consent). Errors: 403 upgrade_required / blocked, 422 not accepting.
+  startConversation: (candidateId: number, text?: string) =>
     apiClient.post<ApiResponse<{ conversation_id: number }>>(
-      "/messages/conversations",
-      { recipient_id: candidateId, text }
+      `/employer/talent/${candidateId}/message`,
+      text ? { text } : {}
     ),
 };

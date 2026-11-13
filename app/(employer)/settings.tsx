@@ -64,6 +64,11 @@ export default function EmployerSettingsScreen() {
       </Text>
       <Card className="mx-4">
         <SettingsRow
+          icon="ban-outline"
+          title="Blocked users"
+          onPress={() => router.push("/(employer)/blocked-users")}
+        />
+        <SettingsRow
           icon="help-circle-outline"
           title="Contact Support"
           onPress={() => openSupportEmail(config.SUPPORT_EMAIL, "ContinentJobs app help")}
