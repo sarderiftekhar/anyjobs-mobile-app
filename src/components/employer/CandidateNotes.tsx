@@ -86,7 +86,7 @@ export function CandidateNotes({ candidateId }: { candidateId: number }) {
 
             {data?.length ? (
               data.map((n) => (
-                <View key={n.id} className="mt-3 border-t border-gray-100 pt-3">
+                <View key={`${n.kind}-${n.id}`} className="mt-3 border-t border-gray-100 pt-3">
                   <View className="flex-row items-center">
                     <Text className="flex-1 text-xs font-semibold text-ink">{n.author.name}</Text>
                     <Text className="text-[11px] text-ink-muted">

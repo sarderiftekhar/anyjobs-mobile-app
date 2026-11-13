@@ -13,6 +13,12 @@ export interface CandidateNote {
   author: { id: number; name: string };
   created_at: string;
   can_delete: boolean;
+  /**
+   * "candidate" notes are the notebook's; "application" notes come from an
+   * application's notes (read-only here). The two kinds have separate id
+   * sequences, so key lists on kind + id.
+   */
+  kind: "candidate" | "application";
 }
 
 export const candidateNotesApi = {

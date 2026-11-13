@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useApplicantDetail, useUpdateApplicantStatus, useRateApplicant } from "../../../src/hooks/useEmployer";
 import { CandidateNotes } from "../../../src/components/employer/CandidateNotes";
 import { openExternalUrl } from "../../../src/lib/openExternal";
+import { employerApi } from "../../../src/api/employer";
 import { Avatar, Badge, Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 
 export default function ApplicantDetailScreen() {
@@ -143,7 +144,15 @@ export default function ApplicantDetailScreen() {
           <Card className="mb-3">
             <TouchableOpacity
               className="flex-row items-center"
-              onPress={() => applicant.cv_url && openExternalUrl(applicant.cv_url)}
+              onPress={async () => {
+                // cv_url needs the login token, which a browser can't send, so
+                // open a short-lived signed link instead.
+                try {
+                  openExternalUrl(await employerApi.applicantCvLink(applicantId));
+                } catch (e: any) {
+                  Alert.alert("Couldn't open CV", e?.response?.data?.message ?? "Please try again.");
+                }
+              }}
               accessibilityRole="link"
             >
               <Ionicons name="document-text" size={20} color="#0064EC" />

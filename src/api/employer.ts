@@ -177,6 +177,12 @@ export const employerApi = {
   updateApplicantStatus: (id: number, status: string, note?: string) =>
     apiClient.patch<ApiResponse>(`/employer/applicants/${id}/status`, { status, note }),
 
+  /** 10-minute signed URL for the applicant's CV, openable in a browser (no token needed). */
+  applicantCvLink: (id: number) =>
+    apiClient
+      .get<ApiResponse<{ url: string; expires_in: number }>>(`/employer/applicants/${id}/cv-link`)
+      .then((r) => r.data.data!.url),
+
   rateApplicant: (id: number, rating: number) =>
     apiClient.patch<ApiResponse>(`/employer/applicants/${id}/rate`, { rating }),
 
