@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { AppState } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, StyleSheet, View } from "react-native";
 import { Slot, router, useRouter, useSegments } from "expo-router";
 import { QueryClient, QueryClientProvider, focusManager } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -11,9 +11,16 @@ import { useAuthStore } from "../src/stores/authStore";
 import { useConsentStore } from "../src/stores/consentStore";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { AiConsentModal } from "../src/components/ai/AiConsentModal";
+import { AnimatedSplash } from "../src/components/animation/AnimatedSplash";
+import { armIntro, isIntroPending } from "../src/components/animation/introState";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
+// The JS intro (AnimatedSplash) starts pixel-identical to the native splash,
+// so the native one only needs a very short fade when it hands over.
+SplashScreen.setOptions({ duration: 150, fade: true });
+// Once per cold start: later remounts of the root layout skip the intro.
+armIntro();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,6 +94,12 @@ export default function RootLayout() {
   const loadStoredAuth = useAuthStore((s) => s.loadStoredAuth);
   const loadConsent = useConsentStore((s) => s.loadConsent);
 
+  const [introVisible, setIntroVisible] = useState(isIntroPending);
+  // Whether this mount owns the intro. If it does, AnimatedSplash hides the
+  // native splash itself once its first frame is on screen.
+  const playsIntro = useRef(introVisible).current;
+  const handleIntroFinish = useCallback(() => setIntroVisible(false), []);
+
   const [fontsLoaded] = useFonts({
     "Satoshi-Variable": require("../assets/fonts/Satoshi-Variable.ttf"),
   });
@@ -134,23 +147,35 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded && !playsIntro) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, playsIntro]);
 
   if (!fontsLoaded) return null;
 
   return (
-    <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <QueryClientProvider client={queryClient}>
-            <AuthRedirect />
-            <AiConsentGate />
-          </QueryClientProvider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    </ErrorBoundary>
+    <View style={styles.root}>
+      <ErrorBoundary>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+              <AuthRedirect />
+              {/* Hold the consent sheet (a native Modal, which would sit above
+                  the intro) until the launch intro has finished. */}
+              {!introVisible && <AiConsentGate />}
+            </QueryClientProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </ErrorBoundary>
+      {/* Outside the ErrorBoundary so a render error underneath can never
+          leave the native splash stuck on screen. The app keeps rendering and
+          loading data underneath while it plays. */}
+      {introVisible && <AnimatedSplash onFinish={handleIntroFinish} />}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});
