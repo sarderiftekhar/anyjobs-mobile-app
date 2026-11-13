@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import {
-  View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, Platform,
+  View, Text, FlatList, RefreshControl, ActivityIndicator, Alert, Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,6 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEmployerJobs, useUpdateJobStatus, useDeleteJob } from "../../../src/hooks/useEmployer";
 import { Card, Badge, Button, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import type { EmployerJob } from "../../../src/api/employer";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { MAX_ANIMATED_INDEX, staggerDelay } from "../../../src/components/animation/entrance";
 
 const STATUS_TABS = [
   { key: "all", label: "All" },
@@ -21,7 +23,7 @@ const STATUS_BADGE: Record<string, "success" | "warning" | "gray" | "danger" | "
   active: "success", draft: "warning", paused: "info", closed: "gray", expired: "danger",
 };
 
-function EmployerJobCard({ job }: { job: EmployerJob }) {
+function EmployerJobCard({ job, index = 0 }: { job: EmployerJob; index?: number }) {
   const updateStatus = useUpdateJobStatus();
   const deleteJob = useDeleteJob();
 
@@ -45,7 +47,11 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
   };
 
   return (
-    <Card className="mb-3">
+    <Card
+      className="mb-3"
+      animated={index < MAX_ANIMATED_INDEX}
+      delay={staggerDelay(index)}
+    >
       <Text className="text-base font-semibold text-ink" numberOfLines={1}>
         {job.title}
       </Text>
@@ -95,12 +101,15 @@ function EmployerJobCard({ job }: { job: EmployerJob }) {
         {job.status === "paused" && (
           <Button title="Resume" size="sm" radius="lg" style={{ flex: 1 }} loading={updateStatus.isPending} onPress={() => handleStatusAction("active")} />
         )}
-        <TouchableOpacity
+        <PressableScale
           className="h-9 w-9 items-center justify-center rounded-lg border border-border"
           onPress={handleDelete}
+          scaleTo={0.9}
+          accessibilityRole="button"
+          accessibilityLabel="Delete job"
         >
           <Ionicons name="trash-outline" size={18} color="#EF4444" />
-        </TouchableOpacity>
+        </PressableScale>
       </View>
     </Card>
   );
@@ -136,16 +145,19 @@ export default function EmployerJobsScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, gap: 4, paddingVertical: 8 }}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <PressableScale
               className={`rounded-full px-4 py-2 ${
                 activeTab === item.key ? "bg-primary" : "bg-white border border-border"
               }`}
               onPress={() => setActiveTab(item.key)}
+              scaleTo={0.95}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activeTab === item.key }}
             >
               <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-ink-muted"}`}>
                 {item.label}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           )}
           keyExtractor={(item) => item.key}
         />
@@ -164,7 +176,7 @@ export default function EmployerJobsScreen() {
       ) : (
         <FlatList
           data={jobs}
-          renderItem={({ item }) => <EmployerJobCard job={item as EmployerJob} />}
+          renderItem={({ item, index }) => <EmployerJobCard job={item as EmployerJob} index={index} />}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}
           showsVerticalScrollIndicator={false}

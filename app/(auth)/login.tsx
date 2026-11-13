@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,6 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "../../src/stores/authStore";
 import { Button, Input } from "../../src/components/ui";
+import { PressableScale } from "../../src/components/animation/PressableScale";
+import { enterFade, enterUp } from "../../src/components/animation/entrance";
 import {
   signInWithGoogle,
   isGoogleSignInAvailable,
@@ -34,6 +36,10 @@ export default function LoginScreen() {
   const { login, googleLogin, isLoading, error, clearError } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [enterHeader, enterForm, enterAlt, enterFooter] = useMemo(
+    () => [enterUp(0), enterUp(70), enterUp(140), enterUp(200)],
+    []
+  );
 
   // Clear any stale error (e.g. a failed register) when this screen mounts
   useEffect(() => {
@@ -98,31 +104,39 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Back button */}
-        <TouchableOpacity
+        <PressableScale
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/(auth)/welcome")
           }
           className="mb-8 h-10 w-10 items-center justify-center rounded-full bg-background"
+          scaleTo={0.9}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
         >
           <Ionicons name="arrow-back" size={20} color="#1A2230" />
-        </TouchableOpacity>
+        </PressableScale>
 
         {/* Header */}
-        <Text className="text-3xl font-bold text-ink">
-          Welcome Back
-        </Text>
-        <Text className="mt-1 text-base text-ink-soft">
-          Sign in to continue
-        </Text>
+        <Animated.View entering={enterHeader}>
+          <Text className="text-3xl font-bold text-ink">
+            Welcome Back
+          </Text>
+          <Text className="mt-1 text-base text-ink-soft">
+            Sign in to continue
+          </Text>
+        </Animated.View>
 
         {/* Error message */}
         {error && (
-          <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
-            <Text className="text-sm text-danger">{error}</Text>
-          </View>
+          <Animated.View entering={enterFade(0, 200)}>
+            <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
+              <Text className="text-sm text-danger">{error}</Text>
+            </View>
+          </Animated.View>
         )}
 
         {/* Form */}
+        <Animated.View entering={enterForm}>
         <View className="mt-8">
           <Controller
             control={control}
@@ -160,14 +174,16 @@ export default function LoginScreen() {
             )}
           />
 
-          <TouchableOpacity
+          <PressableScale
             className="mb-6 self-end"
             onPress={() => router.push("/(auth)/forgot-password")}
+            activeOpacity={0.6}
+            accessibilityRole="link"
           >
             <Text className="text-sm font-semibold text-primary">
               Forgot Password?
             </Text>
-          </TouchableOpacity>
+          </PressableScale>
 
           <Button
             title="Sign In"
@@ -176,10 +192,11 @@ export default function LoginScreen() {
             onPress={handleSubmit(onSubmit)}
           />
         </View>
+        </Animated.View>
 
         {/* Google — hidden when the native module isn't in this build */}
         {isGoogleSignInAvailable && (
-          <>
+          <Animated.View entering={enterAlt}>
             <View className="my-6 flex-row items-center">
               <View className="flex-1 border-b border-border" />
               <Text className="mx-4 text-sm text-ink-muted">
@@ -196,18 +213,24 @@ export default function LoginScreen() {
               icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
               onPress={handleGoogleSignIn}
             />
-          </>
+          </Animated.View>
         )}
 
         {/* Register link */}
+        <Animated.View entering={enterFooter}>
         <View className="mt-8 flex-row items-center justify-center">
           <Text className="text-sm text-ink-soft">
             Don't have an account?{" "}
           </Text>
-          <TouchableOpacity onPress={() => router.replace("/(auth)/register")}>
+          <PressableScale
+            onPress={() => router.replace("/(auth)/register")}
+            activeOpacity={0.6}
+            accessibilityRole="link"
+          >
             <Text className="text-sm font-bold text-primary">Sign Up</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

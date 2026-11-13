@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import {
-  View, Text, FlatList, TouchableOpacity, RefreshControl, ActivityIndicator, Alert,
+  View, Text, FlatList, RefreshControl, ActivityIndicator, Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,6 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useApplicants, useUpdateApplicantStatus } from "../../../src/hooks/useEmployer";
 import { Avatar, Badge, Button, Card, EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import type { Applicant } from "../../../src/api/employer";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { MAX_ANIMATED_INDEX, staggerDelay } from "../../../src/components/animation/entrance";
 
 const STATUS_TABS = [
   { key: "all", label: "All" },
@@ -17,7 +19,7 @@ const STATUS_TABS = [
   { key: "rejected", label: "Rejected" },
 ];
 
-function ApplicantCard({ applicant }: { applicant: Applicant }) {
+function ApplicantCard({ applicant, index = 0 }: { applicant: Applicant; index?: number }) {
   const updateStatus = useUpdateApplicantStatus();
 
   const handleAction = (status: string) => {
@@ -34,12 +36,14 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
   };
 
   return (
-    <TouchableOpacity
+    <PressableScale
       className="mb-3"
-      activeOpacity={0.7}
+      scaleTo={0.98}
+      activeOpacity={0.9}
       onPress={() => router.push(`/(employer)/applicant/${applicant.id}`)}
+      accessibilityRole="button"
     >
-      <Card>
+      <Card animated={index < MAX_ANIMATED_INDEX} delay={staggerDelay(index)}>
         <View className="flex-row items-center">
           <Avatar name={applicant.candidate.name} uri={applicant.candidate.avatar_url} size="lg" />
           <View className="ml-3 flex-1">
@@ -89,15 +93,18 @@ function ApplicantCard({ applicant }: { applicant: Applicant }) {
           {applicant.status === "shortlisted" && (
             <Button title="Schedule Interview" size="sm" className="flex-1" onPress={() => handleAction("interviewed")} />
           )}
-          <TouchableOpacity
+          <PressableScale
             className="items-center justify-center rounded-md border border-border px-3 py-2"
             onPress={() => router.push(`/(employer)/chat/${applicant.candidate.id}`)}
+            scaleTo={0.9}
+            accessibilityRole="button"
+            accessibilityLabel="Message candidate"
           >
             <Ionicons name="chatbubble-outline" size={16} color="#0064EC" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
       </Card>
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -126,14 +133,17 @@ export default function ApplicantsScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, gap: 4, paddingVertical: 8 }}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <PressableScale
               className={`rounded-full px-4 py-2 ${activeTab === item.key ? "bg-primary" : "bg-white border border-border"}`}
               onPress={() => setActiveTab(item.key)}
+              scaleTo={0.95}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activeTab === item.key }}
             >
               <Text className={`text-sm font-medium ${activeTab === item.key ? "text-white" : "text-ink-muted"}`}>
                 {item.label}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           )}
           keyExtractor={(item) => item.key}
         />
@@ -142,13 +152,15 @@ export default function ApplicantsScreen() {
       {/* Sort */}
       <View className="flex-row items-center justify-end px-4 py-2">
         <Text className="text-xs text-ink-muted">Sort by: </Text>
-        <TouchableOpacity
+        <PressableScale
           onPress={() => setSortBy(sortBy === "match_score" ? "applied_at" : "match_score")}
+          activeOpacity={0.6}
+          accessibilityRole="button"
         >
           <Text className="text-xs font-medium text-primary">
             {sortBy === "match_score" ? "Match Score" : "Date Applied"}
           </Text>
-        </TouchableOpacity>
+        </PressableScale>
       </View>
 
       {isLoading ? (
@@ -162,7 +174,7 @@ export default function ApplicantsScreen() {
       ) : (
         <FlatList
           data={applicants}
-          renderItem={({ item }) => <ApplicantCard applicant={item} />}
+          renderItem={({ item, index }) => <ApplicantCard applicant={item} index={index} />}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}
           showsVerticalScrollIndicator={false}

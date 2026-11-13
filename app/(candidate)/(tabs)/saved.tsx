@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, RefreshControl, Alert } from "react-native";
+import Animated, { ReduceMotion, SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +8,11 @@ import { useSavedJobs, useUnsaveJob } from "../../../src/hooks/useJobs";
 import { JobCard } from "../../../src/components/job";
 import { EmptyState, LoadingSpinner, Button } from "../../../src/components/ui";
 import { jobsApi } from "../../../src/api/jobs";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { enterFade } from "../../../src/components/animation/entrance";
+
+const BAR_IN = SlideInDown.springify(320).dampingRatio(1).reduceMotion(ReduceMotion.System);
+const BAR_OUT = SlideOutDown.duration(180).reduceMotion(ReduceMotion.System);
 
 export default function SavedJobsScreen() {
   const insets = useSafeAreaInsets();
@@ -106,13 +112,13 @@ export default function SavedJobsScreen() {
         <Text className="text-2xl font-bold text-ink">Saved Jobs</Text>
         {savedJobs && savedJobs.length > 0 && (
           selectMode ? (
-            <TouchableOpacity onPress={exitSelect}>
+            <PressableScale onPress={exitSelect} activeOpacity={0.6} accessibilityRole="button">
               <Text className="text-sm font-semibold text-primary">Cancel</Text>
-            </TouchableOpacity>
+            </PressableScale>
           ) : (
-            <TouchableOpacity onPress={() => setSelectMode(true)}>
+            <PressableScale onPress={() => setSelectMode(true)} activeOpacity={0.6} accessibilityRole="button">
               <Text className="text-sm font-semibold text-primary">Select</Text>
-            </TouchableOpacity>
+            </PressableScale>
           )
         )}
       </View>
@@ -129,11 +135,15 @@ export default function SavedJobsScreen() {
       ) : (
         <FlatList
           data={savedJobs}
-          renderItem={({ item }) =>
+          renderItem={({ item, index }) =>
             selectMode ? (
-              <TouchableOpacity
+              <Animated.View entering={enterFade(0, 180)}>
+              <PressableScale
                 className="mb-3 flex-row items-center rounded-2xl border border-border bg-surface p-4"
                 onPress={() => toggleSelect(item.id)}
+                scaleTo={0.98}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected.has(item.id) }}
               >
                 <Ionicons
                   name={selected.has(item.id) ? "checkbox" : "square-outline"}
@@ -146,9 +156,10 @@ export default function SavedJobsScreen() {
                     {(item as any).company?.name ?? (item as any).company_name ?? ""}
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </PressableScale>
+              </Animated.View>
             ) : (
-              <JobCard job={{ ...item, is_saved: true }} onSaveToggle={(id) => handleUnsave(id)} />
+              <JobCard job={{ ...item, is_saved: true }} index={index} onSaveToggle={(id) => handleUnsave(id)} />
             )
           }
           keyExtractor={(item) => item.id.toString()}
@@ -161,8 +172,9 @@ export default function SavedJobsScreen() {
       )}
 
       {selectMode && (
+        <Animated.View entering={BAR_IN} exiting={BAR_OUT} style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
         <View
-          className="absolute inset-x-0 bottom-0 flex-row border-t border-border bg-surface px-4 pt-3"
+          className="flex-row border-t border-border bg-surface px-4 pt-3"
           style={{ paddingBottom: insets.bottom + 12 }}
         >
           <View className="mr-2 flex-1">
@@ -172,6 +184,7 @@ export default function SavedJobsScreen() {
             <Button title={`Apply (${ids.length})`} loading={busy} disabled={!ids.length} onPress={bulkApply} />
           </View>
         </View>
+        </Animated.View>
       )}
     </View>
   );

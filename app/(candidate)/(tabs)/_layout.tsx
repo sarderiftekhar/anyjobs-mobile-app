@@ -1,5 +1,12 @@
-import { useEffect, useRef } from "react";
-import { Animated, Platform, StyleSheet } from "react-native";
+import { useEffect } from "react";
+import { Platform, StyleSheet } from "react-native";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,36 +20,29 @@ function TabIcon({
   color: string;
   focused: boolean;
 }) {
-  // Scale lives on a NATIVE-driven node.
-  const scaleAnim = useRef(new Animated.Value(focused ? 1 : 0.9)).current;
-  // Background opacity lives on a SEPARATE JS-driven node so the two drivers
-  // never share an animated node (prevents RN's "JS driven animation on node
-  // moved to native" error).
-  const bgOpacity = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  // Both the scale and the tint run on the UI thread (Reanimated).
+  const scale = useSharedValue(focused ? 1 : 0.9);
+  const bgOpacity = useSharedValue(focused ? 1 : 0);
 
   useEffect(() => {
-    Animated.spring(scaleAnim, {
-      toValue: focused ? 1 : 0.85,
-      useNativeDriver: true,
-      speed: 16,
-      bounciness: focused ? 12 : 4,
-    }).start();
-
-    Animated.timing(bgOpacity, {
-      toValue: focused ? 1 : 0,
+    scale.value = withSpring(focused ? 1 : 0.85, {
+      damping: focused ? 10 : 18,
+      stiffness: 260,
+      mass: 0.7,
+      reduceMotion: ReduceMotion.System,
+    });
+    bgOpacity.value = withTiming(focused ? 1 : 0, {
       duration: 200,
-      useNativeDriver: false,
-    }).start();
-  }, [focused]);
+      reduceMotion: ReduceMotion.System,
+    });
+  }, [focused, scale, bgOpacity]);
+
+  const wrapStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const bgStyle = useAnimatedStyle(() => ({ opacity: bgOpacity.value }));
 
   return (
-    <Animated.View
-      style={[ts.iconWrap, { transform: [{ scale: scaleAnim }] }]}
-    >
-      <Animated.View
-        pointerEvents="none"
-        style={[ts.iconBg, { opacity: bgOpacity }]}
-      />
+    <Animated.View style={[ts.iconWrap, wrapStyle]}>
+      <Animated.View pointerEvents="none" style={[ts.iconBg, bgStyle]} />
       <Ionicons name={name} size={21} color={color} />
     </Animated.View>
   );

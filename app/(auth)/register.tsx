@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   Alert,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -17,6 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "../../src/stores/authStore";
 import { Button, Input } from "../../src/components/ui";
+import { PressableScale } from "../../src/components/animation/PressableScale";
+import { enterFade, enterUp } from "../../src/components/animation/entrance";
 import { config } from "../../src/constants/config";
 import { openExternalUrl } from "../../src/lib/openExternal";
 import {
@@ -45,6 +47,10 @@ export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
   const { register, googleLogin, isLoading, error, clearError } = useAuthStore();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [enterHeader, enterToggle, enterForm, enterAlt, enterFooter] = useMemo(
+    () => [enterUp(0), enterUp(60), enterUp(110), enterUp(170), enterUp(220)],
+    []
+  );
 
   // Clear any stale error (e.g. a failed login) when this screen mounts
   useEffect(() => {
@@ -134,37 +140,47 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Back button */}
-        <TouchableOpacity
+        <PressableScale
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/(auth)/welcome")
           }
           className="mb-6 h-10 w-10 items-center justify-center rounded-full bg-background"
+          scaleTo={0.9}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
         >
           <Ionicons name="arrow-back" size={20} color="#1A2230" />
-        </TouchableOpacity>
+        </PressableScale>
 
         {/* Header */}
-        <Text className="text-3xl font-bold text-ink">
-          Create Account
-        </Text>
-        <Text className="mt-1 text-base text-ink-soft">
-          Join ContinentJobs today
-        </Text>
+        <Animated.View entering={enterHeader}>
+          <Text className="text-3xl font-bold text-ink">
+            Create Account
+          </Text>
+          <Text className="mt-1 text-base text-ink-soft">
+            Join ContinentJobs today
+          </Text>
+        </Animated.View>
 
         {/* Error message */}
         {error && (
-          <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
-            <Text className="text-sm text-danger">{error}</Text>
-          </View>
+          <Animated.View entering={enterFade(0, 200)}>
+            <View className="mt-4 rounded-xl bg-danger/10 p-3.5">
+              <Text className="text-sm text-danger">{error}</Text>
+            </View>
+          </Animated.View>
         )}
 
         {/* User type toggle */}
+        <Animated.View entering={enterToggle}>
         <View className="mt-6 flex-row rounded-full bg-background p-1">
-          <TouchableOpacity
+          <PressableScale
             className={`flex-1 items-center rounded-full py-2.5 ${
               userType === "candidate" ? "bg-primary" : ""
             }`}
             onPress={() => setValue("user_type", "candidate")}
+            accessibilityRole="button"
+            accessibilityState={{ selected: userType === "candidate" }}
           >
             <Text
               className={`font-semibold ${
@@ -173,12 +189,14 @@ export default function RegisterScreen() {
             >
               Candidate
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </PressableScale>
+          <PressableScale
             className={`flex-1 items-center rounded-full py-2.5 ${
               userType === "employer" ? "bg-primary" : ""
             }`}
             onPress={() => setValue("user_type", "employer")}
+            accessibilityRole="button"
+            accessibilityState={{ selected: userType === "employer" }}
           >
             <Text
               className={`font-semibold ${
@@ -187,10 +205,12 @@ export default function RegisterScreen() {
             >
               Employer
             </Text>
-          </TouchableOpacity>
+          </PressableScale>
         </View>
+        </Animated.View>
 
         {/* Form */}
+        <Animated.View entering={enterForm}>
         <View className="mt-6">
           <View className="flex-row gap-3">
             <View className="flex-1">
@@ -284,9 +304,12 @@ export default function RegisterScreen() {
             control={control}
             name="terms"
             render={({ field: { onChange, value } }) => (
-              <TouchableOpacity
+              <PressableScale
                 className="mb-6 flex-row items-start"
                 onPress={() => onChange(!value)}
+                scaleTo={0.98}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: !!value }}
               >
                 <Ionicons
                   name={value ? "checkbox" : "square-outline"}
@@ -311,7 +334,7 @@ export default function RegisterScreen() {
                     Privacy Policy
                   </Text>
                 </Text>
-              </TouchableOpacity>
+              </PressableScale>
             )}
           />
           {errors.terms && (
@@ -327,10 +350,11 @@ export default function RegisterScreen() {
             onPress={handleSubmit(onSubmit)}
           />
         </View>
+        </Animated.View>
 
         {/* Google — hidden when the native module isn't in this build */}
         {isGoogleSignInAvailable && (
-          <>
+          <Animated.View entering={enterAlt}>
             <View className="my-6 flex-row items-center">
               <View className="flex-1 border-b border-border" />
               <Text className="mx-4 text-sm text-ink-muted">or</Text>
@@ -345,18 +369,24 @@ export default function RegisterScreen() {
               icon={<Ionicons name="logo-google" size={20} color="#0064EC" />}
               onPress={handleGoogleSignUp}
             />
-          </>
+          </Animated.View>
         )}
 
         {/* Login link */}
+        <Animated.View entering={enterFooter}>
         <View className="mt-8 flex-row items-center justify-center">
           <Text className="text-sm text-ink-soft">
             Already have an account?{" "}
           </Text>
-          <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
+          <PressableScale
+            onPress={() => router.replace("/(auth)/login")}
+            activeOpacity={0.6}
+            accessibilityRole="link"
+          >
             <Text className="text-sm font-bold text-primary">Sign In</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

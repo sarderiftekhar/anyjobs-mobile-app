@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -6,16 +6,17 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
-  TouchableOpacity,
   Keyboard,
 } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Button, OrbitHalo } from "../../src/components/ui";
+import { PressableScale } from "../../src/components/animation/PressableScale";
+import { enterUp } from "../../src/components/animation/entrance";
 import { colors } from "../../src/theme/colors";
 import { config } from "../../src/constants/config";
 import { openExternalUrl } from "../../src/lib/openExternal";
@@ -25,6 +26,12 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState("");
+  // On a cold start this screen mounts under the launch intro; enterUp waits
+  // for the intro to lift so the cascade is actually seen.
+  const [enterHeader, enterSearch, enterCtas] = useMemo(
+    () => [enterUp(60), enterUp(140), enterUp(220)],
+    []
+  );
 
   const submitSearch = () => {
     Keyboard.dismiss();
@@ -50,7 +57,7 @@ export default function WelcomeScreen() {
       </View>
 
       {/* Header — logo + heading */}
-      <Animated.View entering={FadeInDown.duration(600).delay(100)} style={s.headerWrap}>
+      <Animated.View entering={enterHeader} style={s.headerWrap}>
         <View style={s.headerInner}>
           <Image
             source={require("../../assets/continentjobs-logo.png")}
@@ -71,10 +78,7 @@ export default function WelcomeScreen() {
           </View>
 
           {/* Search card — sits where the tagline used to */}
-          <Animated.View
-            entering={FadeInDown.duration(600).delay(200)}
-            style={s.searchCard}
-          >
+          <Animated.View entering={enterSearch} style={s.searchCard}>
             <View style={s.searchWrap}>
               <Ionicons name="search-outline" size={18} color={colors.ink.muted} />
               <TextInput
@@ -86,27 +90,30 @@ export default function WelcomeScreen() {
                 placeholderTextColor={colors.ink.muted}
                 style={s.searchInput}
               />
-              <TouchableOpacity
+              <PressableScale
                 onPress={submitSearch}
                 activeOpacity={0.85}
+                scaleTo={0.9}
                 style={s.searchBtn}
                 hitSlop={6}
+                accessibilityRole="button"
+                accessibilityLabel="Search jobs"
               >
                 <Ionicons name="arrow-forward" size={18} color="#fff" />
-              </TouchableOpacity>
+              </PressableScale>
             </View>
-            <TouchableOpacity onPress={submitSearch} hitSlop={6}>
+            <PressableScale onPress={submitSearch} hitSlop={6} activeOpacity={0.6} accessibilityRole="link">
               <Text className="mt-2.5 text-center text-[11px] font-medium text-primary">
                 Browse all jobs without signing up →
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           </Animated.View>
         </View>
       </View>
 
       {/* CTAs */}
       <Animated.View
-        entering={FadeInDown.duration(600).delay(300)}
+        entering={enterCtas}
         style={{ paddingBottom: insets.bottom + 20, paddingHorizontal: 24 }}
       >
         <View style={s.ctaInner}>

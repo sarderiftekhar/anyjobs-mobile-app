@@ -3,11 +3,11 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
   Alert,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +15,8 @@ import { useApplications } from "../../../src/hooks/useApplications";
 import { ApplicationCard } from "../../../src/components/application";
 import { EmptyState, LoadingSpinner } from "../../../src/components/ui";
 import { applicationsApi } from "../../../src/api/applications";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { listItemEntering } from "../../../src/components/animation/entrance";
 
 function MessageButton({ id }: { id: number }) {
   const [loading, setLoading] = useState(false);
@@ -30,9 +32,11 @@ function MessageButton({ id }: { id: number }) {
     }
   };
   return (
-    <TouchableOpacity
+    <PressableScale
       onPress={open}
       className="mb-4 -mt-1 flex-row items-center self-start rounded-full bg-primary/10 px-3 py-1.5"
+      scaleTo={0.95}
+      accessibilityRole="button"
     >
       {loading ? (
         <ActivityIndicator size="small" color="#0064EC" />
@@ -40,7 +44,7 @@ function MessageButton({ id }: { id: number }) {
         <Ionicons name="chatbubble-ellipses-outline" size={14} color="#0064EC" />
       )}
       <Text className="ml-1.5 text-xs font-semibold text-primary">Message employer</Text>
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -83,9 +87,9 @@ export default function ApplicationsScreen() {
           <Text className="text-2xl font-bold text-ink">
             My Applications
           </Text>
-          <TouchableOpacity>
+          <PressableScale scaleTo={0.88} accessibilityRole="button" accessibilityLabel="Search applications">
             <Ionicons name="search-outline" size={22} color="#1A2230" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
       </View>
 
@@ -97,11 +101,14 @@ export default function ApplicationsScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 16, gap: 4 }}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <PressableScale
               className={`rounded-full px-4 py-2 ${
                 activeTab === item.key ? "bg-primary" : "bg-white border border-border"
               }`}
               onPress={() => setActiveTab(item.key)}
+              scaleTo={0.95}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activeTab === item.key }}
             >
               <Text
                 className={`text-sm font-medium ${
@@ -111,7 +118,7 @@ export default function ApplicationsScreen() {
                 {item.label}
                 {item.key === "all" && totalCount > 0 ? ` (${totalCount})` : ""}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           )}
           keyExtractor={(item) => item.key}
         />
@@ -135,10 +142,11 @@ export default function ApplicationsScreen() {
         <FlatList
           data={applications}
           renderItem={({ item, index }) => (
-            <View>
-              <ApplicationCard application={item} index={index} />
+            // Card and its message chip enter together (mount-only, staggered).
+            <Animated.View entering={listItemEntering(index)}>
+              <ApplicationCard application={item} index={index} animated={false} />
               <MessageButton id={item.id} />
-            </View>
+            </Animated.View>
           )}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ padding: 16 }}

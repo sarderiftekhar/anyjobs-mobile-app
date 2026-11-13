@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   TextInput,
   Alert,
   Modal,
   ActivityIndicator,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,6 +25,8 @@ import {
   useDeleteAvatar,
 } from "../../../src/hooks/useProfile";
 import { Avatar, Card, Badge, Button } from "../../../src/components/ui";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { enterUp } from "../../../src/components/animation/entrance";
 import type { Experience, Education } from "../../../src/types/user";
 import { format } from "date-fns";
 
@@ -40,16 +42,19 @@ function LinkRow({
   last?: boolean;
 }) {
   return (
-    <TouchableOpacity
+    <PressableScale
       className={`flex-row items-center justify-between py-3.5 ${last ? "" : "border-b border-gray-100"}`}
       onPress={onPress}
+      scaleTo={0.985}
+      activeOpacity={0.7}
+      accessibilityRole="button"
     >
       <View className="flex-row items-center">
         <Ionicons name={icon} size={20} color="#6B7F94" />
         <Text className="ml-3 text-base text-ink">{label}</Text>
       </View>
       <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -85,9 +90,9 @@ function ExperienceModal({
       <View className="flex-1 bg-white p-6">
         <View className="flex-row items-center justify-between">
           <Text className="text-xl font-bold text-ink">Add Experience</Text>
-          <TouchableOpacity onPress={onClose}>
+          <PressableScale onPress={onClose} scaleTo={0.88} accessibilityRole="button" accessibilityLabel="Close">
             <Ionicons name="close" size={24} color="#1A2230" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
 
         <ScrollView className="mt-6" showsVerticalScrollIndicator={false}>
@@ -192,6 +197,7 @@ export default function ProfileScreen() {
   const updateAvatar = useUpdateAvatar();
   const deleteAvatar = useDeleteAvatar();
   const avatarBusy = updateAvatar.isPending || deleteAvatar.isPending;
+  const [enterIdentity, enterStats] = useMemo(() => [enterUp(0), enterUp(40)], []);
 
   const pickAvatar = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -288,23 +294,29 @@ export default function ProfileScreen() {
         style={{ paddingTop: insets.top + 12 }}
       >
         <View className="flex-row items-center justify-end">
-          <TouchableOpacity
+          <PressableScale
             className="h-10 w-10 items-center justify-center rounded-full bg-white/70"
             onPress={() => router.push("/(candidate)/settings")}
+            scaleTo={0.9}
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
           >
             <Ionicons name="settings-outline" size={20} color="#1A2230" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
 
+        <Animated.View entering={enterIdentity}>
         <View className="mt-2 items-center">
           <View
             className="rounded-full bg-white p-1.5"
             style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4 }}
           >
-            <TouchableOpacity
+            <PressableScale
               activeOpacity={0.8}
+              scaleTo={0.95}
               onPress={handleAvatarPress}
               disabled={avatarBusy}
+              accessibilityRole="button"
               accessibilityLabel="Change profile photo"
             >
               <Avatar name={user?.name} size="xl" uri={user?.profile?.avatar_url} />
@@ -317,7 +329,7 @@ export default function ProfileScreen() {
                   <Ionicons name="camera" size={15} color="#fff" />
                 )}
               </View>
-            </TouchableOpacity>
+            </PressableScale>
           </View>
           <Text className="mt-3 text-xl font-bold text-ink">{user?.name}</Text>
           <Text className="mt-0.5 text-sm text-ink-soft">
@@ -332,11 +344,14 @@ export default function ProfileScreen() {
             </View>
           )}
         </View>
+        </Animated.View>
       </View>
 
       {/* Stats row — overlaps the hero edge */}
+      <View className="-mt-7">
+      <Animated.View entering={enterStats}>
       <View
-        className="-mt-7 mx-4 flex-row rounded-2xl border border-border bg-surface p-4"
+        className="mx-4 flex-row rounded-2xl border border-border bg-surface p-4"
         style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
       >
         <View className="flex-1 items-center">
@@ -353,6 +368,8 @@ export default function ProfileScreen() {
           <Text className="text-2xl font-bold text-primary">0</Text>
           <Text className="mt-0.5 text-xs font-medium text-ink-muted">Interviews</Text>
         </View>
+      </View>
+      </Animated.View>
       </View>
 
       {/* Profile strength */}
@@ -385,9 +402,9 @@ export default function ProfileScreen() {
       <Card className="mx-4 mt-4" delay={120}>
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">Experience</Text>
-          <TouchableOpacity onPress={() => setShowExpModal(true)}>
+          <PressableScale onPress={() => setShowExpModal(true)} scaleTo={0.85} accessibilityRole="button" accessibilityLabel="Add experience">
             <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
         {user?.experiences && user.experiences.length > 0 ? (
           user.experiences.map((exp) => (
@@ -405,9 +422,9 @@ export default function ProfileScreen() {
                     {exp.start_date} — {exp.is_current ? "Present" : exp.end_date}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={() => handleDeleteExperience(exp.id)}>
+                <PressableScale onPress={() => handleDeleteExperience(exp.id)} scaleTo={0.85} accessibilityRole="button" accessibilityLabel="Delete experience">
                   <Ionicons name="trash-outline" size={16} color="#EF4444" />
-                </TouchableOpacity>
+                </PressableScale>
               </View>
               {exp.description && (
                 <Text className="mt-1 text-xs text-ink-muted" numberOfLines={2}>
@@ -427,9 +444,9 @@ export default function ProfileScreen() {
       <Card className="mx-4 mt-3" delay={180}>
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">Education</Text>
-          <TouchableOpacity>
+          <PressableScale scaleTo={0.85} accessibilityRole="button" accessibilityLabel="Add education">
             <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
         {user?.educations && user.educations.length > 0 ? (
           user.educations.map((edu) => (
@@ -453,9 +470,9 @@ export default function ProfileScreen() {
       <Card className="mx-4 mt-3" delay={240}>
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">Skills</Text>
-          <TouchableOpacity>
+          <PressableScale scaleTo={0.85} accessibilityRole="button" accessibilityLabel="Add skills">
             <Ionicons name="add-circle-outline" size={22} color="#0064EC" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
         {user?.skills && user.skills.length > 0 ? (
           <View className="mt-2 flex-row flex-wrap gap-1.5">
@@ -474,9 +491,9 @@ export default function ProfileScreen() {
       <Card className="mx-4 mt-3" delay={300}>
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">About</Text>
-          <TouchableOpacity onPress={() => router.push("/(candidate)/profile/edit/professional")}>
+          <PressableScale onPress={() => router.push("/(candidate)/profile/edit/professional")} scaleTo={0.85} accessibilityRole="button" accessibilityLabel="Edit about">
             <Ionicons name="create-outline" size={20} color="#0064EC" />
-          </TouchableOpacity>
+          </PressableScale>
         </View>
         <Text className="mt-2 text-sm text-ink-muted">
           {user?.profile?.bio ?? "Tell employers about yourself, your career goals, and what makes you unique."}

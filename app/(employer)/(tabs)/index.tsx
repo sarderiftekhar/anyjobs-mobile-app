@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
+import { View, Text, ScrollView, RefreshControl } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,6 +7,8 @@ import { useAuthStore } from "../../../src/stores/authStore";
 import { useEmployerDashboard } from "../../../src/hooks/useEmployer";
 import { useUnreadNotificationCount } from "../../../src/hooks/useNotifications";
 import { Card, Button, Avatar, LoadingSpinner } from "../../../src/components/ui";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { listItemEntering } from "../../../src/components/animation/entrance";
 
 export default function EmployerDashboard() {
   const insets = useSafeAreaInsets();
@@ -42,9 +45,12 @@ export default function EmployerDashboard() {
             </Text>
             <Text className="mt-0.5 text-xs text-ink-soft">Here's your hiring overview</Text>
           </View>
-          <TouchableOpacity
+          <PressableScale
             className="relative h-11 w-11 items-center justify-center rounded-full bg-white/70"
             onPress={() => router.push("/(employer)/notifications")}
+            scaleTo={0.9}
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
           >
             <Ionicons name="notifications-outline" size={22} color="#1A2230" />
             {(unreadCount ?? 0) > 0 && (
@@ -54,7 +60,7 @@ export default function EmployerDashboard() {
                 </Text>
               </View>
             )}
-          </TouchableOpacity>
+          </PressableScale>
         </View>
       </View>
 
@@ -68,13 +74,16 @@ export default function EmployerDashboard() {
       ) : (
         <View className="-mt-7 mx-4">
           <View className="-mx-1.5 flex-row flex-wrap">
-            {metrics.map((m) => (
+            {metrics.map((m, i) => (
               <View key={m.label} className="w-1/2 p-1.5">
-                <TouchableOpacity
-                  activeOpacity={0.7}
+                <Animated.View entering={listItemEntering(i)}>
+                <PressableScale
+                  activeOpacity={0.85}
+                  scaleTo={0.96}
                   onPress={() => router.push(m.route)}
                   className="rounded-2xl border border-border bg-surface px-3.5 py-3"
                   style={{ shadowColor: "#1E3A8A", shadowOpacity: 0.06, shadowRadius: 14, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}
+                  accessibilityRole="button"
                 >
                   <View className="flex-row items-center justify-between">
                     <View
@@ -87,7 +96,8 @@ export default function EmployerDashboard() {
                   </View>
                   <Text className="mt-2 text-2xl font-bold text-ink">{m.value}</Text>
                   <Text className="text-xs font-medium text-ink-muted">{m.label}</Text>
-                </TouchableOpacity>
+                </PressableScale>
+                </Animated.View>
               </View>
             ))}
           </View>
@@ -127,20 +137,27 @@ export default function EmployerDashboard() {
       <View className="px-4 pt-6">
         <View className="mb-3 flex-row items-center justify-between">
           <Text className="text-base font-semibold text-ink">Recent Applications</Text>
-          <TouchableOpacity onPress={() => router.push("/(employer)/(tabs)/applicants")}>
+          <PressableScale
+            onPress={() => router.push("/(employer)/(tabs)/applicants")}
+            activeOpacity={0.6}
+            accessibilityRole="link"
+          >
             <Text className="text-sm font-medium text-primary">See all</Text>
-          </TouchableOpacity>
+          </PressableScale>
         </View>
 
         {dashboard?.recent_applications && dashboard.recent_applications.length > 0 ? (
-          <Card>
+          <Card delay={120}>
             {dashboard.recent_applications.map((app, i) => (
-              <TouchableOpacity
+              <PressableScale
                 key={app.id}
                 className={`flex-row items-center py-3 ${
                   i > 0 ? "border-t border-gray-100" : ""
                 }`}
                 onPress={() => router.push(`/(employer)/applicant/${app.id}`)}
+                scaleTo={0.985}
+                activeOpacity={0.7}
+                accessibilityRole="button"
               >
                 <Avatar name={app.candidate_name} uri={app.candidate_avatar} size="md" />
                 <View className="ml-3 flex-1">
@@ -160,11 +177,11 @@ export default function EmployerDashboard() {
                     {new Date(app.applied_at).toLocaleDateString()}
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </PressableScale>
             ))}
           </Card>
         ) : (
-          <Card>
+          <Card delay={120}>
             <Text className="text-center text-sm text-ink-muted">
               No recent applications. Post a job to start receiving applicants.
             </Text>
@@ -178,7 +195,7 @@ export default function EmployerDashboard() {
           Upcoming Interviews
         </Text>
         {dashboard?.upcoming_interviews && dashboard.upcoming_interviews.length > 0 ? (
-          <Card>
+          <Card delay={180}>
             {dashboard.upcoming_interviews.map((interview, i) => (
               <View
                 key={interview.id}
@@ -217,7 +234,7 @@ export default function EmployerDashboard() {
             ))}
           </Card>
         ) : (
-          <Card>
+          <Card delay={180}>
             <Text className="text-center text-sm text-ink-muted">
               No upcoming interviews scheduled.
             </Text>

@@ -1,4 +1,11 @@
-import { Platform, View } from "react-native";
+import { useEffect } from "react";
+import { Platform, StyleSheet, View } from "react-native";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,16 +19,41 @@ function TabIcon({
   color: string;
   focused: boolean;
 }) {
+  // Focus springs the icon up and fades the tint pill in (UI thread).
+  const progress = useSharedValue(focused ? 1 : 0);
+  useEffect(() => {
+    progress.value = withSpring(focused ? 1 : 0, {
+      damping: focused ? 11 : 18,
+      stiffness: 240,
+      mass: 0.7,
+      reduceMotion: ReduceMotion.System,
+    });
+  }, [focused, progress]);
+
+  const pillStyle = useAnimatedStyle(() => ({
+    opacity: Math.min(1, Math.max(0, progress.value)),
+  }));
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: 0.9 + 0.1 * progress.value }],
+  }));
+
   return (
-    <View
-      className={`items-center justify-center rounded-xl px-4 py-1.5 ${
-        focused ? "bg-primary/10" : ""
-      }`}
-    >
-      <Ionicons name={name} size={22} color={color} />
+    <View className="items-center justify-center rounded-xl px-4 py-1.5">
+      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, ts.pill, pillStyle]} />
+      <Animated.View style={iconStyle}>
+        <Ionicons name={name} size={22} color={color} />
+      </Animated.View>
     </View>
   );
 }
+
+const ts = StyleSheet.create({
+  // Matches the previous "rounded-xl bg-primary/10" focus pill.
+  pill: {
+    borderRadius: 16,
+    backgroundColor: "rgba(0, 100, 236, 0.1)",
+  },
+});
 
 export default function EmployerTabLayout() {
   const insets = useSafeAreaInsets();

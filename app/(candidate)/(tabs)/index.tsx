@@ -3,10 +3,10 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,6 +18,8 @@ import { useUnreadNotificationCount } from "../../../src/hooks/useNotifications"
 import { SearchBar, LocationInput } from "../../../src/components/ui";
 import { JobCard, FilterModal } from "../../../src/components/job";
 import { LoadingSpinner, EmptyState } from "../../../src/components/ui";
+import { PressableScale } from "../../../src/components/animation/PressableScale";
+import { enterFade } from "../../../src/components/animation/entrance";
 import type { Job, JobFilters, WorkArrangement } from "../../../src/types/job";
 
 const QUICK_FILTERS: { label: string; key: string; value: Partial<JobFilters> }[] = [
@@ -113,9 +115,12 @@ export default function JobFeedScreen() {
             <Text style={hs.subtitle}>Welcome back</Text>
             <Text style={hs.name}>{user?.first_name ?? "there"}</Text>
           </View>
-          <TouchableOpacity
+          <PressableScale
             style={hs.notifBtn}
             onPress={() => router.push("/(candidate)/notifications")}
+            scaleTo={0.9}
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
           >
             <Ionicons name="notifications-outline" size={22} color="#1A2230" />
             {(unreadCount ?? 0) > 0 && (
@@ -125,7 +130,7 @@ export default function JobFeedScreen() {
                 </Text>
               </View>
             )}
-          </TouchableOpacity>
+          </PressableScale>
         </View>
 
         {/* Search — zIndex above location so its dropdown overlays the field below */}
@@ -152,14 +157,17 @@ export default function JobFeedScreen() {
         {/* Quick filter chips — lower zIndex so location dropdown appears above */}
         <View style={[hs.chipsRow, { zIndex: 1, position: "relative" }]}>
           {QUICK_FILTERS.map((f) => (
-            <TouchableOpacity
+            <PressableScale
               key={f.key}
               style={[
                 hs.chip,
                 activeQuickFilter === f.key ? hs.chipActive : hs.chipInactive,
               ]}
               onPress={() => handleQuickFilter(f.key, f.value)}
-              activeOpacity={0.7}
+              activeOpacity={0.85}
+              scaleTo={0.95}
+              accessibilityRole="button"
+              accessibilityState={{ selected: activeQuickFilter === f.key }}
             >
               <Text
                 style={[
@@ -169,7 +177,7 @@ export default function JobFeedScreen() {
               >
                 {f.label}
               </Text>
-            </TouchableOpacity>
+            </PressableScale>
           ))}
         </View>
       </View>
@@ -180,9 +188,9 @@ export default function JobFeedScreen() {
           {searchQuery ? "Search Results" : "Recommended for you"}
         </Text>
         {jobs.length > 0 && (
-          <Text style={hs.jobCount}>
+          <Animated.Text entering={enterFade(0, 220)} style={hs.jobCount}>
             {data?.pages[0]?.meta.total ?? 0} jobs
-          </Text>
+          </Animated.Text>
         )}
       </View>
 
@@ -213,9 +221,10 @@ export default function JobFeedScreen() {
       ) : (
         <FlatList
           data={jobs}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <JobCard
               job={item}
+              index={index}
               onSaveToggle={handleSaveToggle}
             />
           )}
