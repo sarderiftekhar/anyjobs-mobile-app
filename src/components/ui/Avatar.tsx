@@ -27,6 +27,8 @@ export function Avatar({ uri, name, size = "md" }: AvatarProps) {
           source={{ uri }}
           style={{ width: s.px - 2, height: s.px - 2, borderRadius: (s.px - 2) / 2 }}
           contentFit="cover"
+          // Soft fade as the photo arrives instead of a hard pop-in.
+          transition={180}
         />
       </View>
     );

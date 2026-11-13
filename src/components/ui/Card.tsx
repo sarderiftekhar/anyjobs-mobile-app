@@ -1,11 +1,15 @@
-import { useEffect, useRef } from "react";
-import { View, Animated, type ViewProps } from "react-native";
+import { useMemo } from "react";
+import { View, type ViewProps } from "react-native";
+import Animated from "react-native-reanimated";
+import { enterUp } from "../animation/entrance";
 import { shadows } from "../../theme/shadows";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
   variant?: "default" | "flat" | "elevated";
+  /** Fade/rise in when the card mounts (Reanimated entering). Default true. */
   animated?: boolean;
+  /** Entrance delay in ms (e.g. for staggering cards in a list). */
   delay?: number;
 }
 
@@ -18,26 +22,9 @@ export function Card({
   style,
   ...props
 }: CardProps) {
-  const fadeAnim = useRef(new Animated.Value(animated ? 0 : 1)).current;
-  const slideAnim = useRef(new Animated.Value(animated ? 15 : 0)).current;
-
-  useEffect(() => {
-    if (!animated) return;
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 400,
-        delay,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [animated, delay]);
+  // Layout animations only run on mount, so a re-render or refetch never
+  // replays them. Memoised so we don't rebuild the animation every render.
+  const entering = useMemo(() => (animated ? enterUp(delay) : undefined), [animated, delay]);
 
   const shadowStyle =
     variant === "elevated"
@@ -47,16 +34,7 @@ export function Card({
         : undefined;
 
   return (
-    <Animated.View
-      style={[
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
-        },
-        shadowStyle,
-        style,
-      ]}
-    >
+    <Animated.View entering={entering} style={[shadowStyle, style]}>
       <View
         className={`rounded-2xl bg-surface p-4 ${
           variant === "flat" ? "" : "border border-border"

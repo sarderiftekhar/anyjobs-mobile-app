@@ -1,9 +1,12 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import { useMemo } from "react";
+import { View, Text } from "react-native";
+import Animated from "react-native-reanimated";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
+import { PressableScale } from "../animation/PressableScale";
+import { listItemEntering } from "../animation/entrance";
 import type { Application, ApplicationStatus } from "../../types/application";
 import { format } from "date-fns";
 
@@ -21,16 +24,18 @@ const STATUS_CONFIG: Record<ApplicationStatus, { variant: "primary" | "success" 
 interface ApplicationCardProps {
   application: Application;
   index?: number;
+  /** Staggered entrance on mount. Set false when a parent row animates instead. */
+  animated?: boolean;
 }
 
-export function ApplicationCard({ application, index = 0 }: ApplicationCardProps) {
+export function ApplicationCard({ application, index = 0, animated = true }: ApplicationCardProps) {
   const statusConfig = STATUS_CONFIG[application.status] ?? STATUS_CONFIG.applied;
+  // Computed once: entering only applies on mount, so refetches never replay it.
+  const entering = useMemo(() => (animated ? listItemEntering(index) : undefined), []);
 
   return (
-    <Animated.View
-      entering={FadeInDown.duration(400).delay(Math.min(index * 60, 360))}
-    >
-      <TouchableOpacity className="mb-3" activeOpacity={0.7}>
+    <Animated.View entering={entering}>
+      <PressableScale className="mb-3" scaleTo={0.98} activeOpacity={0.9}>
         <Card animated={false}>
         {/* Company */}
         <View className="flex-row items-center">
@@ -72,7 +77,7 @@ export function ApplicationCard({ application, index = 0 }: ApplicationCardProps
           <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
         </View>
         </Card>
-      </TouchableOpacity>
+      </PressableScale>
     </Animated.View>
   );
 }

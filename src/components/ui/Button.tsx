@@ -1,12 +1,10 @@
-import { useRef } from "react";
 import {
-  TouchableOpacity,
   Text,
   ActivityIndicator,
-  Animated,
   View,
   type TouchableOpacityProps,
 } from "react-native";
+import { PressableScale } from "../animation/PressableScale";
 import { colors } from "../../theme/colors";
 import { shadows } from "../../theme/shadows";
 
@@ -69,42 +67,25 @@ export function Button({
   className,
   style,
   radius = "full",
+  activeOpacity = 0.85,
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.97,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 4,
-    }).start();
-  };
-
   const showBrandShadow = variant === "primary" && !isDisabled;
 
+  // Same two-layer shape as before: `style` (and the brand shadow) sit on the
+  // outer, scaling pressable; `className` styles the inner surface.
   return (
-    <Animated.View
-      style={[{ transform: [{ scale: scaleAnim }] }, showBrandShadow && shadows.brand, style]}
+    <PressableScale
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!isDisabled, busy: !!loading }}
+      activeOpacity={activeOpacity}
+      {...(props as Omit<TouchableOpacityProps, "style">)}
+      disabled={isDisabled}
+      style={[showBrandShadow && shadows.brand, style]}
     >
-      <TouchableOpacity
+      <View
         className={`flex-row items-center justify-center ${radiusStyles[radius]} ${variantStyles[variant]} ${sizeStyles[size]} ${isDisabled ? "opacity-50" : ""} ${className ?? ""}`}
-        disabled={isDisabled}
-        activeOpacity={0.85}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        {...props}
       >
         {loading ? (
           <ActivityIndicator
@@ -121,7 +102,7 @@ export function Button({
             </Text>
           </>
         )}
-      </TouchableOpacity>
-    </Animated.View>
+      </View>
+    </PressableScale>
   );
 }

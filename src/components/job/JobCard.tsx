@@ -1,7 +1,17 @@
-import { useRef, useEffect } from "react";
-import { View, Text, TouchableOpacity, Animated, StyleSheet } from "react-native";
+import { useRef, useEffect, useMemo } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { PressableScale } from "../animation/PressableScale";
+import { listItemEntering } from "../animation/entrance";
 import type { Job } from "../../types/job";
 import { formatDistanceToNow } from "date-fns";
 import { colors } from "../../theme/colors";
@@ -24,34 +34,23 @@ export function JobCard({
   showApplyButton = true,
   index = 0,
 }: JobCardProps) {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(25)).current;
+  // Entrance runs once, on mount (staggered by list index, capped).
+  const entering = useMemo(() => listItemEntering(index), []);
 
+  // Little "pop" on the heart when the job becomes saved (not on first render).
+  const heartScale = useSharedValue(1);
+  const wasSaved = useRef(!!job.is_saved);
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        delay: Math.min(index * 100, 400),
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        speed: 12,
-        bounciness: 4,
-        delay: Math.min(index * 100, 400),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
-
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, { toValue: 0.975, useNativeDriver: true, speed: 50 }).start();
-  };
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, speed: 50, bounciness: 6 }).start();
-  };
+    const saved = !!job.is_saved;
+    if (saved && !wasSaved.current) {
+      heartScale.value = withSequence(
+        withTiming(1.3, { duration: 110, reduceMotion: ReduceMotion.System }),
+        withSpring(1, { damping: 7, stiffness: 320, mass: 0.6, reduceMotion: ReduceMotion.System })
+      );
+    }
+    wasSaved.current = saved;
+  }, [job.is_saved, heartScale]);
+  const heartStyle = useAnimatedStyle(() => ({ transform: [{ scale: heartScale.value }] }));
 
   const postedAgo = job.posted_at
     ? formatDistanceToNow(new Date(job.posted_at), { addSuffix: true })
@@ -62,25 +61,15 @@ export function JobCard({
     : null;
 
   return (
-    <Animated.View
-      style={[
-        s.cardWrap,
-        shadows.card,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
-        },
-      ]}
-    >
-      <TouchableOpacity
+    <Animated.View entering={entering} style={[s.cardWrap, shadows.card]}>
+      <PressableScale
+        scaleTo={0.975}
+        accessibilityRole="button"
         onPress={() =>
           onPress
             ? onPress(job.id)
             : router.push(`/(candidate)/job/${job.id}`)
         }
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        activeOpacity={1}
       >
         <View style={s.card}>
           {/* Company row */}
@@ -94,17 +83,22 @@ export function JobCard({
               <Text style={s.companyName} numberOfLines={1}>{job.company.name}</Text>
             </View>
             {onSaveToggle && (
-              <TouchableOpacity
+              <PressableScale
                 onPress={() => onSaveToggle(job.id, !!job.is_saved)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 style={s.saveBtn}
+                scaleTo={0.88}
+                accessibilityRole="button"
+                accessibilityLabel={job.is_saved ? "Remove from saved jobs" : "Save job"}
               >
-                <Ionicons
-                  name={job.is_saved ? "heart" : "heart-outline"}
-                  size={18}
-                  color={job.is_saved ? colors.danger : colors.ink.muted}
-                />
-              </TouchableOpacity>
+                <Animated.View style={heartStyle}>
+                  <Ionicons
+                    name={job.is_saved ? "heart" : "heart-outline"}
+                    size={18}
+                    color={job.is_saved ? colors.danger : colors.ink.muted}
+                  />
+                </Animated.View>
+              </PressableScale>
             )}
           </View>
 
@@ -167,19 +161,20 @@ export function JobCard({
               <Text style={s.appliedText}>Applied</Text>
             </View>
           ) : showApplyButton ? (
-            <TouchableOpacity
+            <PressableScale
               style={s.applyBtn}
               activeOpacity={0.85}
+              accessibilityRole="button"
               onPress={() => {
                 if (onApply) onApply(job.id);
                 else router.push(`/(candidate)/apply/${job.id}`);
               }}
             >
               <Text style={s.applyBtnText}>Quick Apply</Text>
-            </TouchableOpacity>
+            </PressableScale>
           ) : null}
         </View>
-      </TouchableOpacity>
+      </PressableScale>
     </Animated.View>
   );
 }
