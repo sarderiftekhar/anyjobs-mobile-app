@@ -4,7 +4,7 @@ import {
   Text,
   Image,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   TextInput,
   Keyboard,
 } from "react-native";
@@ -21,10 +21,11 @@ import { colors } from "../../src/theme/colors";
 import { config } from "../../src/constants/config";
 import { openExternalUrl } from "../../src/lib/openExternal";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const LOGO_ASPECT = 509 / 296; // assets/continentjobs-logo.png
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [query, setQuery] = useState("");
   // On a cold start this screen mounts under the launch intro; enterUp waits
   // for the intro to lift so the cascade is actually seen.
@@ -39,8 +40,13 @@ export default function WelcomeScreen() {
     router.push(q ? `/(public)/jobs?q=${encodeURIComponent(q)}` : "/(public)/jobs");
   };
 
-  // Halo radius scales with viewport — leave room at the edges so icons don't clip
-  const haloRadius = Math.min(140, SCREEN_WIDTH * 0.33);
+  // Halo radius scales with viewport (width and height) so icons don't clip and
+  // the heading + search + CTAs still fit below it on short phones.
+  const haloRadius = Math.min(140, screenWidth * 0.33, screenHeight * 0.16);
+  const iconSize = Math.min(40, haloRadius * 0.3);
+  const haloBox = haloRadius * 2 + iconSize * 1.4;
+  // Logo is the hero: as wide as fits comfortably inside the orbit ring.
+  const logoWidth = haloRadius * 1.45;
 
   return (
     <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
@@ -56,29 +62,30 @@ export default function WelcomeScreen() {
         />
       </View>
 
-      {/* Header — logo + heading */}
-      <Animated.View entering={enterHeader} style={s.headerWrap}>
-        <View style={s.headerInner}>
-          <Image
-            source={require("../../assets/continentjobs-logo.png")}
-            style={s.logo}
-            resizeMode="contain"
-          />
-          <Text className="mt-4 text-center text-3xl font-bold text-ink leading-[1.1]">
+      {/* Hero — logo centred inside the orbit halo, heading + search below */}
+      <View className="flex-1 items-center justify-center px-6">
+        <Animated.View
+          entering={enterHeader}
+          style={[s.haloWrap, { width: haloBox, height: haloBox }]}
+        >
+          <View style={{ position: "absolute" }}>
+            <OrbitHalo radius={haloRadius} iconSize={iconSize} />
+          </View>
+          <View pointerEvents="none">
+            <Image
+              source={require("../../assets/continentjobs-logo.png")}
+              style={{ width: logoWidth, height: logoWidth / LOGO_ASPECT }}
+              resizeMode="contain"
+            />
+          </View>
+        </Animated.View>
+
+        <Animated.View entering={enterSearch} style={s.searchBlock}>
+          <Text className="text-center text-xl font-bold text-ink">
             Find your <Text className="text-primary">dream job</Text>
           </Text>
-        </View>
-      </Animated.View>
 
-      {/* Orbit halo with search input centered inside */}
-      <View className="flex-1 items-center justify-center px-6">
-        <View className="items-center justify-center">
-          <View style={{ position: "absolute" }}>
-            <OrbitHalo radius={haloRadius} iconSize={Math.min(44, haloRadius * 0.32)} />
-          </View>
-
-          {/* Search card — sits where the tagline used to */}
-          <Animated.View entering={enterSearch} style={s.searchCard}>
+          <View style={s.searchCard}>
             <View style={s.searchWrap}>
               <Ionicons name="search-outline" size={18} color={colors.ink.muted} />
               <TextInput
@@ -107,8 +114,8 @@ export default function WelcomeScreen() {
                 Browse all jobs without signing up →
               </Text>
             </PressableScale>
-          </Animated.View>
-        </View>
+          </View>
+        </Animated.View>
       </View>
 
       {/* CTAs */}
@@ -167,22 +174,19 @@ const s = StyleSheet.create({
   backdrop: {
     flex: 1,
   },
-  headerWrap: {
-    width: "100%",
-    paddingHorizontal: 32,
-    paddingTop: 24,
-  },
-  headerInner: {
-    width: "100%",
+  haloWrap: {
     alignItems: "center",
+    justifyContent: "center",
   },
-  logo: {
-    width: 160,
-    height: 90,
-    alignSelf: "center",
+  searchBlock: {
+    width: "100%",
+    maxWidth: 300,
+    alignItems: "center",
+    marginTop: 8,
   },
   searchCard: {
-    width: 260,
+    width: "100%",
+    marginTop: 14,
     backgroundColor: "rgba(255,255,255,0.96)",
     borderRadius: 18,
     borderWidth: 1,
